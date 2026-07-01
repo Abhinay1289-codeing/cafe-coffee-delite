@@ -1,0 +1,18 @@
+{
+  "name": "cafe-coffee-delight",
+  "version": "1.0.0",
+  "description": "Cafe Coffee Delight Digital Menu",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npm run inject-env && node server.js",
+    "inject-env": "node scripts/inject-env.js",
+    "build": "node scripts/netlify-build.js"
+  },
+  "keywords": ["cafe", "menu", "coffee"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
