@@ -81,3 +81,4 @@ Now update `netlify.toml` to use this build script:
 - Enable RLS on all tables!
 - Set proper RLS policies to restrict writes!
 - Never use the service_role key in frontend code!
+
