@@ -37,6 +37,12 @@ if (loginForm) {
 }
 
 async function checkLogin() {
+    if (!sb) {
+        // No Supabase configured yet, just show the editor with local data
+        if (loginOverlay) loginOverlay.classList.add("is-hidden");
+        initVisualEditor();
+        return;
+    }
     const { data: { session } } = await sb.auth.getSession();
 
     if (session) {
@@ -48,7 +54,9 @@ async function checkLogin() {
 }
 
 async function logoutAdmin() {
-    await sb.auth.signOut();
+    if (sb) {
+        await sb.auth.signOut();
+    }
     window.location.reload();
 }
 

@@ -43,9 +43,17 @@ Object.entries(templateMap).forEach(([targetFile, templateFile]) => {
   if (fs.existsSync(templatePath)) {
     let html = fs.readFileSync(templatePath, 'utf8');
     
-    // Replace placeholders with actual env vars
-    html = html.replace('YOUR_SUPABASE_URL', process.env.SUPABASE_URL);
-    html = html.replace('YOUR_SUPABASE_ANON_KEY', process.env.SUPABASE_KEY);
+    // Only replace if we have real values, otherwise keep placeholders
+    const useUrl = (process.env.SUPABASE_URL && !process.env.SUPABASE_URL.includes('YOUR') && !process.env.SUPABASE_URL.includes('your-project')) 
+      ? process.env.SUPABASE_URL 
+      : 'YOUR_SUPABASE_URL';
+    
+    const useKey = (process.env.SUPABASE_KEY && !process.env.SUPABASE_KEY.includes('YOUR') && !process.env.SUPABASE_KEY.includes('your-anon')) 
+      ? process.env.SUPABASE_KEY 
+      : 'YOUR_SUPABASE_ANON_KEY';
+    
+    html = html.replace('YOUR_SUPABASE_URL', useUrl);
+    html = html.replace('YOUR_SUPABASE_ANON_KEY', useKey);
     
     fs.writeFileSync(targetPath, html, 'utf8');
     console.log(`✅ Injected env vars into ${targetFile}`);
