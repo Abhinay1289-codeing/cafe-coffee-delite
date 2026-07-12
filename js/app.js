@@ -827,6 +827,11 @@ function initModals() {
 
 /* ===== INIT ===== */
 function init() {
+    // Skip init on admin pages (check for admin-only elements)
+    if (document.getElementById('adminToolbar') || document.getElementById('adminLoginOverlay')) {
+        return;
+    }
+
     initWelcome();
     initHeader();
     renderCategories();
@@ -836,29 +841,29 @@ function init() {
     updateCartUI();
 
     // Load from Supabase
-loadDataFromSupabase().then(async () => {
-  // Seed local menu data to Supabase if there are no items
-  if (window.sb && menuItemsCache.length === 0) {
-    await sbSeedMenuIfEmpty(menuData.restaurant);
-    await loadDataFromSupabase();
-  }
-});
+    loadDataFromSupabase().then(async () => {
+      // Seed local menu data to Supabase if there are no items
+      if (window.sb && menuItemsCache.length === 0) {
+        await sbSeedMenuIfEmpty(menuData.restaurant);
+        await loadDataFromSupabase();
+      }
+    });
 
-// Subscribe to real-time changes for all relevant tables
-if (window.sb) {
-    const refreshAll = () => loadDataFromSupabase();
-    // Subscribe to menu items
-    sbSubscribeMenuChanges(refreshAll);
-    // Subscribe to config changes (hero, etc.)
-    sbSubscribeConfigChanges(refreshAll);
-    // Subscribe to category overrides changes
-    sbSubscribeCategoryOverridesChanges(refreshAll);
-}
+    // Subscribe to real-time changes for all relevant tables
+    if (window.sb) {
+      const refreshAll = () => loadDataFromSupabase();
+      // Subscribe to menu items
+      sbSubscribeMenuChanges(refreshAll);
+      // Subscribe to config changes (hero, etc.)
+      sbSubscribeConfigChanges(refreshAll);
+      // Subscribe to category overrides changes
+      sbSubscribeCategoryOverridesChanges(refreshAll);
+    }
 
     // Apply tagline
     if ($("welcomeTagline")) $("welcomeTagline").textContent = CONFIG.tagline;
     if ($("heroTagline")) $("heroTagline").textContent = CONFIG.tagline;
-}
+  }
 
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
