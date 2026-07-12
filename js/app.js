@@ -796,12 +796,18 @@ function init() {
     updateCartUI();
 
     // Load from Supabase
-    loadDataFromSupabase();
+loadDataFromSupabase().then(async () => {
+  // Seed local menu data to Supabase if there are no items
+  if (window.sb && menuItemsCache.length === 0) {
+    await sbSeedMenuIfEmpty(menuData.restaurant);
+    await loadDataFromSupabase();
+  }
+});
 
-    // Subscribe to real-time changes
-    if (window.sb) {
-        sbSubscribeMenuChanges(() => loadDataFromSupabase());
-    }
+// Subscribe to real-time changes
+if (window.sb) {
+    sbSubscribeMenuChanges(() => loadDataFromSupabase());
+}
 
     // Apply tagline
     if ($("welcomeTagline")) $("welcomeTagline").textContent = CONFIG.tagline;
