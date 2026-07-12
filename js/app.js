@@ -552,8 +552,7 @@ function removeFromCart(name) {
 function updateCartUI() {
     let count = 0, subtotal = 0;
     cart.forEach(i => { count += i.qty; subtotal += i.price * i.qty; });
-    const gst = Math.round(subtotal * CONFIG.gstRate);
-    const total = subtotal + gst;
+    const total = subtotal;
 
     ["headerCartCount", "floatCartCount"].forEach(id => {
         const el = $(id);
@@ -562,8 +561,6 @@ function updateCartUI() {
     if ($("floatCartTotal")) $("floatCartTotal").textContent = total;
     $("floatCart")?.classList.toggle("is-hidden", count === 0);
     $("headerCartBtn")?.classList.toggle("has-items", count > 0);
-    if ($("cartSubtotal")) $("cartSubtotal").textContent = subtotal;
-    if ($("cartGst")) $("cartGst").textContent = gst;
     if ($("cartTotal")) $("cartTotal").textContent = total;
 
     const body = $("cartItems");
@@ -652,7 +649,7 @@ function openCheckout() {
         sum.innerHTML = cart.map(i => {
             sub += i.price * i.qty;
             return `<p><span>${i.qty}× ${esc(i.name)}</span><span>₹${i.price * i.qty}</span></p>`;
-        }).join("") + `<p style="font-weight:800;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><span>Total (incl. GST)</span><span>₹${sub + Math.round(sub * CONFIG.gstRate)}</span></p>`;
+        }).join("") + `<p style="font-weight:800;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><span>Total</span><span>₹${sub}</span></p>`;
     }
 
     $("screenCheckout")?.classList.add("open");
@@ -750,6 +747,8 @@ function startOrderTracking() {
 function initWaiter() {
     $("waiterFab")?.addEventListener("click", () => {
         $("waiterModal")?.classList.add("open");
+        $("waiterModal")?.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
     });
     document.querySelectorAll(".waiter-card").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -759,8 +758,18 @@ function initWaiter() {
             const msg = `🛎️ *${labels[type] || "Request"}*\n🪑 Table #${tableNum}\n— ${CONFIG.restaurantName}`;
             window.open(`https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`, "_blank");
             $("waiterModal")?.classList.remove("open");
+            $("waiterModal")?.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
             showToast("Request sent to staff ✅");
         });
+    });
+    // Close waiter modal on backdrop/close button
+    document.addEventListener("click", (e) => {
+        if (e.target.closest("#waiterModal [data-close]") || e.target.closest("#waiterModal .modal-backdrop")) {
+            $("waiterModal")?.classList.remove("open");
+            $("waiterModal")?.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        }
     });
 }
 
