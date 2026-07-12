@@ -184,6 +184,20 @@ function sbSubscribeMenuChanges(callback) {
         .subscribe();
 }
 
+function sbSubscribeConfigChanges(callback) {
+    if (!_supaClient) return null;
+    return _supaClient.channel('config_realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'config' }, callback)
+        .subscribe();
+}
+
+function sbSubscribeCategoryOverridesChanges(callback) {
+    if (!_supaClient) return null;
+    return _supaClient.channel('category_realtime')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'category_overrides' }, callback)
+        .subscribe();
+}
+
 function sbSubscribeOrderChanges(callback) {
     if (!_supaClient) return null;
     return _supaClient.channel('orders_realtime')

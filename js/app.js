@@ -804,9 +804,15 @@ loadDataFromSupabase().then(async () => {
   }
 });
 
-// Subscribe to real-time changes
+// Subscribe to real-time changes for all relevant tables
 if (window.sb) {
-    sbSubscribeMenuChanges(() => loadDataFromSupabase());
+    const refreshAll = () => loadDataFromSupabase();
+    // Subscribe to menu items
+    sbSubscribeMenuChanges(refreshAll);
+    // Subscribe to config changes (hero, etc.)
+    sbSubscribeConfigChanges(refreshAll);
+    // Subscribe to category overrides changes
+    sbSubscribeCategoryOverridesChanges(refreshAll);
 }
 
     // Apply tagline
