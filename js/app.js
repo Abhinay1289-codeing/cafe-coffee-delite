@@ -330,23 +330,10 @@ function renderMenu() {
         }
         empty?.classList.add("is-hidden");
 
-        const showSections = activeCategory === "all" && !searchTerm;
         let html = "";
         let idx = 0;
 
-        if (showSections) {
-            const byCat = {};
-            items.forEach(i => {
-                if (!byCat[i.category]) byCat[i.category] = [];
-                byCat[i.category].push(i);
-            });
-            Object.keys(byCat).forEach(cat => {
-                html += `<h2 class="menu-section-title">${esc(cat)}</h2>`;
-                byCat[cat].forEach(item => { html += buildCard(item, idx++); });
-            });
-        } else {
-            items.forEach(item => { html += buildCard(item, idx++); });
-        }
+        items.forEach(item => { html += buildCard(item, idx++); });
 
         grid.innerHTML = html;
         bindCardEvents(grid);
