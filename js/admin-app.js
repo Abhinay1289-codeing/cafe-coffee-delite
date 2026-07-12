@@ -1,5 +1,5 @@
 /**
- * Cafe Coffee Delight — Admin Panel Visual Editor Script
+ * Cafe Coffee Delite — Admin Panel Visual Editor Script
  */
 
 /* ===== AUTHENTICATION (Supabase) ===== */
@@ -94,6 +94,9 @@ function initVisualEditor() {
     window.openFoodModal = function(item) {
         openItemEditForm(item);
     };
+
+    // Load data from Supabase first
+    loadDataFromSupabaseAdmin();
 
     // 3. Re-render Categories and Menu with new Admin cards
     renderCategories();
@@ -704,16 +707,91 @@ function bindHeroControl(control, handler, eventNames = ["input"]) {
 
 // Mouse and touch move/end events
 window.addEventListener("mousemove", (event) => {
-    onHeroResizeMove(event);
     onHeroDragMove(event);
+    onHeroResizeMove(event);
 });
 window.addEventListener("mouseup", stopHeroInteraction);
 window.addEventListener("touchmove", (event) => {
-    onHeroResizeMove(event);
     onHeroDragMove(event);
+    onHeroResizeMove(event);
 }, { passive: false });
 window.addEventListener("touchend", stopHeroInteraction);
 window.addEventListener("touchcancel", stopHeroInteraction);
+
+/* ===== CORE VISUAL EDITOR FUNCTIONS ===== */
+function getItems() {
+  if (menuItemsCache.length > 0) {
+    return menuItemsCache.map(item => ({
+      ...item,
+      category: categoryOverrides[item.category] || item.category
+    }));
+  }
+  return menuData.restaurant || [];
+}
+
+async function loadDataFromSupabaseAdmin() {
+  if (!window.sb) return;
+
+  try {
+    const [menuItems, configData, catOverrides] = await Promise.all([
+      sbGetMenuItems(),
+      sbGetConfig(),
+      sbGetCategoryOverrides()
+    ]);
+
+    if (menuItems && menuItems.length > 0) {
+      menuItemsCache = menuItems.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    }
+
+    if (configData) {
+      Object.assign(CONFIG, configData);
+    }
+
+    if (catOverrides) {
+      categoryOverrides = catOverrides;
+    }
+
+    renderCategories();
+    renderMenu();
+    applyBrand();
+  } catch (e) {
+    console.error("Failed to load from Supabase (admin):", e);
+  }
+}
+
+// Override saveItems to use sbSaveAllMenuItems
+function saveItems(items, deletedName = null) {
+    // Strip any enriched-only computed fields before saving
+    const clean = items.map((item, i) => ({
+        name: item.name,
+        price: Number(item.price),
+        category: item.category,
+        image: item.image || '',
+        description: item.description || '',
+        available: item.available !== false,
+        sort_order: i
+    }));
+    // Update in-memory cache immediately so UI stays responsive
+    menuItemsCache = clean;
+    // If an item was renamed, delete the old DB row first
+    if (deletedName) {
+        sbDeleteMenuItem(deletedName).catch(e => console.error('Failed to delete old item row:', e));
+    }
+    // Persist to Supabase (fire-and-forget, non-blocking)
+    sbSaveAllMenuItems(clean).catch(e => {
+        console.error('Failed to save items to Supabase:', e);
+        showToast('⚠️ Save failed — check connection', true);
+    });
+}
+
+// Override saveConfig to use sbSaveConfig
+function saveConfig() {
+    // Persist config to Supabase
+    sbSaveConfig(CONFIG).catch(e => {
+        console.error('Failed to save config to Supabase:', e);
+        showToast('⚠️ Config save failed', true);
+    });
+}
 
 /* ===== CORE VISUAL EDITOR FUNCTIONS ===== */
 
@@ -1062,38 +1140,6 @@ document.getElementById("settingsModalCloseBackdrop")?.addEventListener("click",
 
 
 /* ===== TOOLBAR BUTTON ACTIONS ===== */
-
-function saveItems(items, deletedName = null) {
-    // Strip any enriched-only computed fields before saving
-    const clean = items.map((item, i) => ({
-        name: item.name,
-        price: Number(item.price),
-        category: item.category,
-        image: item.image || '',
-        description: item.description || '',
-        available: item.available !== false,
-        sort_order: i
-    }));
-    // Update in-memory cache immediately so UI stays responsive
-    menuItemsCache = clean;
-    // If an item was renamed, delete the old DB row first
-    if (deletedName) {
-        sbDeleteMenuItem(deletedName).catch(e => console.error('Failed to delete old item row:', e));
-    }
-    // Persist to Supabase (fire-and-forget, non-blocking)
-    sbSaveAllMenuItems(clean).catch(e => {
-        console.error('Failed to save items to Supabase:', e);
-        showToast('⚠️ Save failed — check connection', true);
-    });
-}
-
-function saveConfig() {
-    // Persist config to Supabase
-    sbSaveConfig(CONFIG).catch(e => {
-        console.error('Failed to save config to Supabase:', e);
-        showToast('⚠️ Config save failed', true);
-    });
-}
 
 async function resetMenuData() {
     if (confirm("Are you sure you want to reset all modifications? This will clear Supabase data and restore the original menu from local data.")) {

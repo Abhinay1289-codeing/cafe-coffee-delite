@@ -1,5 +1,5 @@
 -- ================================================
--- Cafe Coffee Delight — Secure Supabase Setup
+-- Cafe Coffee Delite — Secure Supabase Setup
 -- ================================================
 -- IMPORTANT: THIS SETUP FOLLOWS SECURITY BEST PRACTICES!
 -- ================================================

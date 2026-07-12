@@ -1,4 +1,4 @@
-# Cafe Coffee Delight — Digital Menu
+# Cafe Coffee Delite — Digital Menu
 
 ## 🚀 Netlify Deployment Instructions
 

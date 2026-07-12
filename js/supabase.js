@@ -1,5 +1,5 @@
 /**
- * Cafe Coffee Delight — Supabase Client & DB Helpers
+ * Cafe Coffee Delite — Supabase Client & DB Helpers
  *
  * ================================================================
  *  IMPORTANT: FIRST-TIME SETUP

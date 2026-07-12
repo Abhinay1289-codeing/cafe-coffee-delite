@@ -1,11 +1,11 @@
 /**
- * Cafe Coffee Delight — Pure Frontend Menu App
+ * Cafe Coffee Delite — Pure Frontend Menu App
  * No backend required. WhatsApp integration for ordering.
  */
 
 /* ===== CONFIG ===== */
 const CONFIG = {
-    restaurantName: "Cafe Coffee Delight",
+    restaurantName: "Cafe Coffee Delite",
     tagline: "Sip, Savour, Smile",
     whatsappPhone: "9390952712",   // ← Change to your WhatsApp number
     gstRate: 0.05,
@@ -51,6 +51,8 @@ let cart = [];
 let searchTerm = "";
 let modalItem = null;
 let modalQty = 1;
+let menuItemsCache = [];
+let categoryOverrides = {};
 
 /* ===== TABLE (from URL QR) ===== */
 const urlParams = new URLSearchParams(window.location.search);
@@ -118,7 +120,43 @@ function enrichItem(item) {
 }
 
 function getItems() {
-    return (menuData.restaurant || []).map(enrichItem);
+  if (menuItemsCache.length > 0) {
+    return menuItemsCache.map(item => ({
+      ...item,
+      category: categoryOverrides[item.category] || item.category
+    })).map(enrichItem);
+  }
+  return (menuData.restaurant || []).map(enrichItem);
+}
+
+async function loadDataFromSupabase() {
+  if (!window.sb) return;
+
+  try {
+    const [menuItems, configData, catOverrides] = await Promise.all([
+      sbGetMenuItems(),
+      sbGetConfig(),
+      sbGetCategoryOverrides()
+    ]);
+
+    if (menuItems && menuItems.length > 0) {
+      menuItemsCache = menuItems.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    }
+
+    if (configData) {
+      Object.assign(CONFIG, configData);
+    }
+
+    if (catOverrides) {
+      categoryOverrides = catOverrides;
+    }
+
+    renderCategories();
+    renderMenu();
+    applyBrand();
+  } catch (e) {
+    console.error("Failed to load from Supabase:", e);
+  }
 }
 
 function filterItems(items) {
@@ -257,9 +295,10 @@ function updateTableUI() {
 function renderCategories() {
     const nav = $("categoryNav");
     if (!nav) return;
-    nav.innerHTML = CATEGORIES.map(c =>
-        `<button type="button" class="cat-pill${c.id === activeCategory ? " active" : ""}" data-cat="${c.id}">${c.icon || ""} ${c.label}</button>`
-    ).join("");
+    nav.innerHTML = CATEGORIES.map(c => {
+      const label = categoryOverrides[c.label] || c.label;
+      return `<button type="button" class="cat-pill${c.id === activeCategory ? " active" : ""}" data-cat="${c.id}">${c.icon || ""} ${label}</button>`;
+    }).join("");
     nav.querySelectorAll(".cat-pill").forEach(p => {
         p.addEventListener("click", () => {
             activeCategory = p.dataset.cat;
@@ -622,7 +661,7 @@ GST (5%) : ₹${gst}
 
 📝 ${notes || "No special notes"}
 
-— Cafe Coffee Delight Digital Menu`;
+— Cafe Coffee Delite Digital Menu`;
 
     const url = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
@@ -755,6 +794,14 @@ function init() {
     initModals();
     initWaiter();
     updateCartUI();
+
+    // Load from Supabase
+    loadDataFromSupabase();
+
+    // Subscribe to real-time changes
+    if (window.sb) {
+        sbSubscribeMenuChanges(() => loadDataFromSupabase());
+    }
 
     // Apply tagline
     if ($("welcomeTagline")) $("welcomeTagline").textContent = CONFIG.tagline;

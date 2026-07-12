@@ -1,7 +1,7 @@
 {
-  "name": "cafe-coffee-delight",
+  "name": "cafe-coffee-delite",
   "version": "1.0.0",
-  "description": "Cafe Coffee Delight Digital Menu",
+  "description": "Cafe Coffee Delite Digital Menu",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
