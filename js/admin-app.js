@@ -98,6 +98,14 @@ function initVisualEditor() {
     // Load data from Supabase first
     loadDataFromSupabaseAdmin();
 
+    // Subscribe to real-time changes in admin too
+    if (window.sb) {
+        const refreshAllAdmin = () => loadDataFromSupabaseAdmin();
+        sbSubscribeMenuChanges(refreshAllAdmin);
+        sbSubscribeConfigChanges(refreshAllAdmin);
+        sbSubscribeCategoryOverridesChanges(refreshAllAdmin);
+    }
+
     // 3. Re-render Categories and Menu with new Admin cards
     renderCategories();
     renderMenu();
@@ -757,6 +765,46 @@ async function loadDataFromSupabaseAdmin() {
   } catch (e) {
     console.error("Failed to load from Supabase (admin):", e);
   }
+}
+
+function applyBrand() {
+  // Update hero background
+  const heroBgImg = document.querySelector('.hero-clean-bg img');
+  if (heroBgImg && CONFIG.heroBg) {
+    heroBgImg.src = CONFIG.heroBg;
+  }
+
+  // Update hero tagline
+  const welcomeTagline = document.getElementById('welcomeTagline');
+  const heroTagline = document.getElementById('heroTagline');
+  if (welcomeTagline) welcomeTagline.textContent = CONFIG.tagline || 'Sip, Savour, Smile';
+  if (heroTagline) heroTagline.textContent = CONFIG.tagline || 'Sip, Savour, Smile';
+
+  // Update hero offers
+  const heroOffersContainer = document.querySelector('.hero-offers');
+  if (heroOffersContainer && Array.isArray(CONFIG.offers) && CONFIG.offers.length > 0) {
+    heroOffersContainer.innerHTML = CONFIG.offers.map(offer => `
+      <article class="hero-offer" role="listitem">
+        <span class="hero-offer-icon" aria-hidden="true">${esc(offer.icon || '🎉')}</span>
+        <div class="hero-offer-text">
+          <strong>${esc(offer.title || '')}</strong>
+          <span>${esc(offer.desc || '')}</span>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  // Apply custom theme color if set
+  const customColor = localStorage.getItem('cafeCustomThemeColor');
+  if (customColor) {
+    applyCustomThemeColor(customColor);
+  }
+}
+
+function applyCustomThemeColor(hexColor) {
+  document.documentElement.style.setProperty('--primary', hexColor);
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.content = hexColor;
 }
 
 // Override saveItems to use sbSaveAllMenuItems
