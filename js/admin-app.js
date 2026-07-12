@@ -969,6 +969,9 @@ if (itemForm) {
                     available
                 };
             }
+            // If the name changed, pass old name so the old DB row gets deleted
+            const nameChanged = originalName !== name;
+            saveItems(allItems, nameChanged ? originalName : null);
             showToast("Item updated successfully!");
         } else { // CREATE
             // Check duplicate name
@@ -984,10 +987,10 @@ if (itemForm) {
                 description,
                 available
             });
+            saveItems(allItems);
             showToast("Item added successfully!");
         }
 
-        saveItems(allItems);
         closeItemForm();
         renderMenu();
     });
@@ -1060,11 +1063,25 @@ document.getElementById("settingsModalCloseBackdrop")?.addEventListener("click",
 
 /* ===== TOOLBAR BUTTON ACTIONS ===== */
 
-function saveItems(items) {
+function saveItems(items, deletedName = null) {
+    // Strip any enriched-only computed fields before saving
+    const clean = items.map((item, i) => ({
+        name: item.name,
+        price: Number(item.price),
+        category: item.category,
+        image: item.image || '',
+        description: item.description || '',
+        available: item.available !== false,
+        sort_order: i
+    }));
     // Update in-memory cache immediately so UI stays responsive
-    menuItemsCache = items.map((item, i) => ({ ...item, sort_order: i }));
+    menuItemsCache = clean;
+    // If an item was renamed, delete the old DB row first
+    if (deletedName) {
+        sbDeleteMenuItem(deletedName).catch(e => console.error('Failed to delete old item row:', e));
+    }
     // Persist to Supabase (fire-and-forget, non-blocking)
-    sbSaveAllMenuItems(items).catch(e => {
+    sbSaveAllMenuItems(clean).catch(e => {
         console.error('Failed to save items to Supabase:', e);
         showToast('⚠️ Save failed — check connection', true);
     });
@@ -1088,15 +1105,13 @@ async function resetMenuData() {
     }
 }
 
-function logoutAdmin() {
-    sessionStorage.removeItem("cafeAdminLoggedIn");
-    window.location.reload();
-}
+// Note: logoutAdmin() is defined above (line 56) and uses Supabase signOut.
+// The duplicate sessionStorage-only version has been removed.
 
 // Escape Key Closes Modals
 document.addEventListener("keydown", e => {
     if (e.key === "Escape") {
-        closeHeroEditor();
+        if (heroEditorState.isOpen) toggleHeroEditor();
         closeItemForm();
         closeSettingsForm();
     }
