@@ -1,58 +1,14 @@
 /**
  * Cafe Coffee Delight — Supabase Client & DB Helpers
  *
- * ============================================================
- *  ONE-TIME SETUP: Run the SQL below in Supabase SQL Editor
- *  Dashboard → SQL Editor → New Query → Paste → Run ▶
- * ============================================================
- *
- *  create table if not exists public.menu_items (
- *    id uuid default gen_random_uuid() primary key,
- *    name text unique not null,
- *    price integer not null default 0,
- *    category text not null default '',
- *    image text default '',
- *    description text default '',
- *    available boolean default true,
- *    sort_order integer default 0,
- *    created_at timestamptz default now()
- *  );
- *
- *  create table if not exists public.config (
- *    id integer primary key default 1,
- *    data jsonb not null default '{}'
- *  );
- *
- *  create table if not exists public.category_overrides (
- *    cat_id text primary key,
- *    label text not null
- *  );
- *
- *  create table if not exists public.orders (
- *    id uuid default gen_random_uuid() primary key,
- *    table_number text,
- *    customer_name text default 'Guest',
- *    customer_phone text,
- *    items jsonb not null default '[]',
- *    subtotal integer default 0,
- *    gst integer default 0,
- *    total integer default 0,
- *    notes text,
- *    status text default 'pending',
- *    created_at timestamptz default now()
- *  );
- *
- *  alter table public.menu_items enable row level security;
- *  alter table public.config enable row level security;
- *  alter table public.category_overrides enable row level security;
- *  alter table public.orders enable row level security;
- *
- *  create policy "allow_all" on public.menu_items for all using (true) with check (true);
- *  create policy "allow_all" on public.config for all using (true) with check (true);
- *  create policy "allow_all" on public.category_overrides for all using (true) with check (true);
- *  create policy "allow_all" on public.orders for all using (true) with check (true);
- *
- * ============================================================
+ * ================================================================
+ *  IMPORTANT: FIRST-TIME SETUP
+ *  1. Create a Supabase project at https://supabase.com/dashboard
+ *  2. Copy your Project URL and anon/public key from Project Settings → API
+ *  3. Run the SQL in `setup.sql` in your Supabase project's SQL Editor
+ *     (Dashboard → SQL Editor → New Query → Paste → Run ▶)
+ *  4. Configure environment variables (see .env.example for details)
+ * ================================================================
  */
 
 const SUPABASE_URL = window.ENV?.SUPABASE_URL || '';
