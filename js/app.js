@@ -15,7 +15,9 @@ const CONFIG = {
         "Cold Coffee",
         "Chicken Burger",
         "Chocolate Brownie"
-    ]
+    ],
+    biryanisComingSoon: true,
+    chineseComingSoon: true
 };
 
 /* ===== CATEGORIES ===== */
@@ -42,7 +44,9 @@ const CATEGORIES = [
     { id: "pasta",             label: "Pasta",               icon: "🍝", match: ["Pasta"] },
     { id: "pizzas",            label: "Pizzas",              icon: "🍕", match: ["Pizzas"] },
     { id: "burgers",           label: "Burgers",             icon: "🍔", match: ["Burgers"] },
-    { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] }
+    { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] },
+    { id: "biryanis",          label: "Biryanis",            icon: "🍚", match: ["Biryanis"] },
+    { id: "chinese",           label: "Chinese",             icon: "🍜", match: ["Chinese"] }
 ];
 
 /* ===== STATE ===== */
@@ -366,16 +370,23 @@ function showSkeleton(show) {
     }
 }
 
+function isCategoryComingSoon(category) {
+    return (category === "Biryanis" && CONFIG.biryanisComingSoon) || 
+           (category === "Chinese" && CONFIG.chineseComingSoon);
+}
+
 function buildCard(item, i) {
     const inCart = cart.find(c => c.name === item.name);
     const avail = item.available !== false;
-    const btnLabel = !avail ? "Not Available" : inCart ? `In Cart (${inCart.qty})` : "Add";
-    const btnClass = !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
+    const comingSoon = isCategoryComingSoon(item.category);
+    const btnLabel = comingSoon ? "Coming Soon" : !avail ? "Not Available" : inCart ? `In Cart (${inCart.qty})` : "Add";
+    const btnClass = comingSoon || !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
     return `
     <article class="food-card${!avail ? ' food-card--unavailable' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
         <div class="food-card-img">
             <img src="${item.image}" alt="${esc(item.name)}" loading="lazy">
-            ${item.popular && avail ? '<span class="food-card-badge">Popular</span>' : ''}
+            ${item.popular && avail && !comingSoon ? '<span class="food-card-badge">Popular</span>' : ''}
+            ${comingSoon ? '<span class="food-card-badge">Coming Soon</span>' : ''}
             ${!avail ? '<span class="food-card-badge unavailable-badge">Unavailable</span>' : ''}
             <span class="veg-indicator ${item.isVeg ? 'veg' : 'nonveg'}"></span>
         </div>
@@ -386,8 +397,8 @@ function buildCard(item, i) {
                 <div class="food-card-meta"><span>⭐ ${item.rating}</span><span>· ${item.prepTime}</span></div>
             </div>
             <div class="food-card-foot">
-                <span class="food-card-price">₹${item.price}</span>
-                <button type="button" class="${btnClass}" data-add="${esc(item.name)}">${btnLabel}</button>
+                ${!comingSoon ? `<span class="food-card-price">₹${item.price}</span>` : '<span class="food-card-price" style="opacity: 0.5;">Price TBA</span>'}
+                <button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${comingSoon ? 'disabled' : ''}>${btnLabel}</button>
             </div>
         </div>
     </article>`;
@@ -429,7 +440,7 @@ function renderAlsoBuy() {
 
     if (searchTerm) { section.classList.add("is-hidden"); return; }
 
-    const popular = getPopularItems();
+    const popular = getPopularItems().filter(item => !isCategoryComingSoon(item.category));
     if (!popular.length) { section.classList.add("is-hidden"); return; }
 
     section.classList.remove("is-hidden");
@@ -442,7 +453,7 @@ function renderAlsoBuy() {
                 <h3>${esc(item.name)}</h3>
                 <p>₹${item.price} · ⭐ ${item.rating}</p>
             </div>
-            <button type="button" class="also-buy-add${inCart ? " in-cart" : ""}" data-add="${esc(item.name)}" aria-label="Add ${esc(item.name)}">${inCart ? "✓" : "+"}</button>
+            <button type="button" class="also-buy-add${inCart ? ' in-cart' : ''}" data-add="${esc(item.name)}" aria-label="Add ${esc(item.name)}">${inCart ? '✓' : '+'}</button>
         </article>`;
     }).join("");
 
@@ -468,14 +479,20 @@ function bindCardEvents(grid) {
             if (e.target.closest(".add-btn")) return;
             const item = getItems().find(i => i.name === card.dataset.name);
             if (!item) return;
-            if (item.available === false) { showToast("⛔ Item currently unavailable", true); return; }
+            if (item.available === false || isCategoryComingSoon(item.category)) { 
+                showToast("⛔ Item coming soon or currently unavailable", true); 
+                return; 
+            }
             openFoodModal(item);
         });
     });
     grid.querySelectorAll(".add-btn").forEach(btn => {
         btn.addEventListener("click", e => {
             e.stopPropagation();
-            if (btn.classList.contains("unavailable-btn")) { showToast("⛔ Item currently unavailable", true); return; }
+            if (btn.classList.contains("unavailable-btn")) { 
+                showToast("⛔ Item coming soon or currently unavailable", true); 
+                return; 
+            }
             const item = getItems().find(i => i.name === btn.dataset.add);
             if (!item) return;
             if (cart.find(c => c.name === item.name)) openCart();

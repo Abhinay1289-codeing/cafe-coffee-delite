@@ -5,12 +5,12 @@ const menuData = {
     { name: "Pizza Combo", price: 349, category: "Combo Offers", description: "French Fries + Veg Pizza + Virgin Mojito", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" },
     { name: "Chicken Combo", price: 379, category: "Combo Offers", description: "Chicken Popcorn + Chicken Sandwich + Caramel Mojito", image: "https://images.unsplash.com/photo-1562967914-608f82629710?w=500" },
 
-    // 🥟 SAMOSAS & MOMOS
+    // SAMOSAS & MOMOS
     { name: "Corn Samosa (4 Pcs)", price: 49, category: "Samosas & Momos", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500" },
     { name: "Veg Momos (Steamed/Fried) (5 Pcs)", price: 129, category: "Samosas & Momos", image: "https://images.unsplash.com/photo-1534422298391-e4f8517b9ff4?w=500" },
     { name: "Chicken Momos (Steamed/Fried) (5 Pcs)", price: 159, category: "Samosas & Momos", image: "https://images.unsplash.com/photo-1534422298391-e4f8517b9ff4?w=500" },
 
-    // ☕ BEVERAGES - Teas
+    // TEAS
     { name: "Tea", price: 30, category: "Teas", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500" },
     { name: "Black Tea", price: 30, category: "Teas", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500" },
     { name: "Green Tea", price: 30, category: "Teas", image: "https://images.unsplash.com/photo-1627435601357-374b1e045af6?w=500" },
@@ -24,7 +24,7 @@ const menuData = {
     { name: "Masala Tea", price: 49, category: "Teas", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500" },
     { name: "Dum Tea", price: 49, category: "Teas", image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500" },
 
-    // ☕ BEVERAGES - Hot Beverages
+    // HOT BEVERAGES
     { name: "Milk", price: 20, category: "Hot Beverages", image: "https://images.unsplash.com/photo-1600718374662-0483d2b9da44?w=500" },
     { name: "Black Coffee", price: 30, category: "Hot Beverages", image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500" },
     { name: "Coffee", price: 40, category: "Hot Beverages", image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500" },
@@ -37,7 +37,7 @@ const menuData = {
     { name: "CCD Special Filter Coffee", price: 69, category: "Hot Beverages", image: "https://images.unsplash.com/photo-1485808191679-5f86510bd9d4?w=500" },
     { name: "Hot Chocolate", price: 79, category: "Hot Beverages", image: "https://images.unsplash.com/photo-1542990253-a781e04da0d5?w=500" },
 
-    // ☕ BEVERAGES - Hot Brews
+    // HOT BREWS
     { name: "Espresso", price: 59, category: "Hot Brews", image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500" },
     { name: "Americano", price: 79, category: "Hot Brews", image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500" },
     { name: "Cappuccino", price: 99, category: "Hot Brews", image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500" },
@@ -47,12 +47,12 @@ const menuData = {
     { name: "Vanilla Cappuccino", price: 129, category: "Hot Brews", image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500" },
     { name: "Caramel Cappuccino", price: 129, category: "Hot Brews", image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500" },
 
-    // ☕ BEVERAGES - Cold Brews
+    // COLD BREWS
     { name: "Iced Americano", price: 99, category: "Cold Brews", image: "https://images.unsplash.com/photo-1517701600551-5aa6db14a3f5?w=500" },
     { name: "Coffee Mojito", price: 99, category: "Cold Brews", image: "https://images.unsplash.com/photo-1517701600551-5aa6db14a3f5?w=500" },
     { name: "Cold Mocha", price: 119, category: "Cold Brews", image: "https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=500" },
 
-    // ☕ BEVERAGES - Blended Brews
+    // BLENDED BREWS
     { name: "Cold Coffee", price: 119, category: "Blended Brews", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
     { name: "Irish Cold Coffee", price: 129, category: "Blended Brews", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
     { name: "Hazelnut Cold Coffee", price: 129, category: "Blended Brews", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
@@ -62,7 +62,7 @@ const menuData = {
     { name: "Nutella Cold Coffee", price: 139, category: "Blended Brews", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
     { name: "Peanut Butter Cold Coffee", price: 139, category: "Blended Brews", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
 
-    // ☕ BEVERAGES - Milk Shakes
+    // MILK SHAKES
     { name: "Chocolate Milkshake", price: 99, category: "Milk Shakes", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
     { name: "Vanilla Milkshake", price: 99, category: "Milk Shakes", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
     { name: "Oreo Milkshake", price: 119, category: "Milk Shakes", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
@@ -70,12 +70,12 @@ const menuData = {
     { name: "Ferrero Rocher Milkshake", price: 139, category: "Milk Shakes", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
     { name: "Dry Fruits Milkshake", price: 139, category: "Milk Shakes", image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500" },
 
-    // ☕ BEVERAGES - Soft Drinks
+    // SOFT DRINKS
     { name: "Coke", price: 40, category: "Soft Drinks", image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=500" },
     { name: "Sprite", price: 40, category: "Soft Drinks", image: "https://images.unsplash.com/photo-155679343-c7306c1976bc?w=500" },
     { name: "Masala Soda", price: 50, category: "Soft Drinks", image: "https://images.unsplash.com/photo-155679343-c7306c1976bc?w=500" },
 
-    // ☕ BEVERAGES - Mocktails
+    // MOCKTAILS
     { name: "Fresh Lime Soda (Sweet / Salt)", price: 40, category: "Mocktails", image: "https://images.unsplash.com/photo-155679343-c7306c1976bc?w=500" },
     { name: "Iced Tea", price: 69, category: "Mocktails", image: "https://images.unsplash.com/photo-1497534446932-c925b458314e?w=500" },
     { name: "Virgin Mojito", price: 69, category: "Mocktails", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500" },
@@ -84,45 +84,48 @@ const menuData = {
     { name: "Orange Mojito", price: 69, category: "Mocktails", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500" },
     { name: "Blue Ocean", price: 69, category: "Mocktails", image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500" },
 
-    // ☕ BEVERAGES - Lassis
+    // LASSIS
     { name: "Sweet Lassi", price: 69, category: "Lassis", image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500" },
     { name: "Banana Lassi", price: 79, category: "Lassis", image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500" },
 
-    // 🍔 FOOD - Omelettes
+    // OMELETTES
     { name: "Omelette", price: 79, category: "Omelettes", image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=500" },
     { name: "Cheese Omelette", price: 89, category: "Omelettes", image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=500" },
     { name: "Bread Omelette", price: 89, category: "Omelettes", image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=500" },
     { name: "Cheese Bread Omelette", price: 99, category: "Omelettes", image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?w=500" },
 
-    // 🍔 FOOD - Maggi
+    // MAGGI - VEG
     { name: "Veg Maggi", price: 70, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Cheese Maggi", price: 90, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Paneer Maggi", price: 119, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
+    // MAGGI - EGG & NON-VEG
     { name: "Egg Maggi", price: 89, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Egg Cheese Maggi", price: 99, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Double Egg Maggi", price: 119, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Chicken Maggi", price: 119, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Double Egg Cheese Maggi", price: 129, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
+    { name: "Chicken Cheese Maggi", price: 129, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Double Egg Chicken Maggi", price: 130, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
     { name: "Double Egg Chicken Cheese Maggi", price: 149, category: "Maggi", image: "https://images.unsplash.com/photo-1645177628172-a788a2e7dabb?w=500" },
 
-    // 🍔 FOOD - Sandwiches
+    // SANDWICHES - VEG
     { name: "Veg Sandwich", price: 70, category: "Sandwiches", image: "https://images.unsplash.com/photo-1538220856186-0be0c085984d?w=500" },
     { name: "Cheese Sandwich", price: 89, category: "Sandwiches", image: "https://images.unsplash.com/photo-1538220856186-0be0c085984d?w=500" },
     { name: "Paneer Sandwich", price: 129, category: "Sandwiches", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500" },
+    // SANDWICHES - EGG & NON-VEG
     { name: "Egg Sandwich", price: 99, category: "Sandwiches", image: "https://images.unsplash.com/photo-1538220856186-0be0c085984d?w=500" },
     { name: "Cheese Egg Sandwich", price: 129, category: "Sandwiches", image: "https://images.unsplash.com/photo-1538220856186-0be0c085984d?w=500" },
     { name: "Chicken Sandwich", price: 139, category: "Sandwiches", image: "https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=500" },
     { name: "CCD Club Sandwich (Served with Fries)", price: 169, category: "Sandwiches", image: "https://images.unsplash.com/photo-1521390188846-e2a3a97453a0?w=500" },
-    { name: "Extra Cheese", price: 25, category: "Sandwiches", description: "Add-on", image: "https://images.unsplash.com/photo-1538220856186-0be0c085984d?w=500" },
+    { name: "Extra Cheese (Add-on)", price: 25, category: "Sandwiches", image: "https://images.unsplash.com/photo-1538220856186-0be0c085984d?w=500" },
 
-    // 🍔 FOOD - Waffles & Pancakes
+    // WAFFLES & PANCAKES
     { name: "Classic Waffle", price: 119, category: "Waffles & Pancakes", image: "https://images.unsplash.com/photo-1562376502-6f769499c886?w=500" },
     { name: "Classic Pancake", price: 119, category: "Waffles & Pancakes", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500" },
     { name: "Chocolate Waffle", price: 139, category: "Waffles & Pancakes", image: "https://images.unsplash.com/photo-1562376502-6f769499c886?w=500" },
     { name: "Chocolate Pancake", price: 139, category: "Waffles & Pancakes", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500" },
 
-    // 🍔 FOOD - Fried Food & Quick Bites
+    // FRIED FOOD & QUICK BITES - VEG
     { name: "Nachos with Salsa", price: 79, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500" },
     { name: "Onion Rings (10 Pcs)", price: 89, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1639024471283-03518883512d?w=500" },
     { name: "Veg Spring Roll (6 Pcs)", price: 89, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500" },
@@ -133,14 +136,15 @@ const menuData = {
     { name: "Cheese Shots (4 Pcs)", price: 99, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500" },
     { name: "Chilli Garlic Potato Shots (10 Pcs)", price: 99, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500" },
     { name: "Peri Peri Fries", price: 119, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500" },
-    { name: "Cheese Chilli Toast (8 Pcs)", price: 129, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573145959956-e9fae6b8bd42?w=500" },
+    { name: "Cheese Chilli Toast (8 Pcs)", price: 129, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573145959567-e9fae6b8bd42?w=500" },
     { name: "Cheese Loaded Fries", price: 169, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500" },
     { name: "Veg Nuggets (16 Pcs)", price: 189, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1562967914-608f82629710?w=500" },
+    // FRIED FOOD & QUICK BITES - NON-VEG
     { name: "Fried Chicken Cheese Nachos", price: 139, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500" },
-    { name: "Chicken Cheese Chilli Toast", price: 149, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573145959956-e9fae6b8bd42?w=500" },
+    { name: "Chicken Cheese Chilli Toast", price: 149, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573145959567-e9fae6b8bd42?w=500" },
     { name: "Chicken Cheese Loaded Fries", price: 199, category: "Fried Food & Quick Bites", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500" },
 
-    // 🍔 FOOD - Fried Chicken & Fish
+    // FRIED CHICKEN & FISH
     { name: "Chicken Nuggets (8 Pcs)", price: 149, category: "Fried Chicken & Fish", image: "https://images.unsplash.com/photo-1562967914-608f82629710?w=500" },
     { name: "Chicken Wings (4 Pcs)", price: 149, category: "Fried Chicken & Fish", image: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=500" },
     { name: "Chicken Popcorn (12 Pcs)", price: 159, category: "Fried Chicken & Fish", image: "https://images.unsplash.com/photo-1562967914-608f82629710?w=500" },
@@ -154,9 +158,10 @@ const menuData = {
     { name: "Chicken Strips (8 Pcs)", price: 319, category: "Fried Chicken & Fish", image: "https://images.unsplash.com/photo-1562967914-608f82629710?w=500" },
     { name: "Chicken Legs (4 Pcs)", price: 449, category: "Fried Chicken & Fish", image: "https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=500" },
 
-    // 🍔 FOOD - Rolls
+    // ROLLS - VEG
     { name: "Veg Roll", price: 89, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
     { name: "Paneer Roll", price: 119, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
+    // ROLLS - EGG & NON-VEG
     { name: "Single Egg Roll", price: 99, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
     { name: "Single Egg Cheese Roll", price: 119, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
     { name: "Chicken Roll", price: 119, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
@@ -166,16 +171,17 @@ const menuData = {
     { name: "Double Egg Cheese Roll", price: 169, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
     { name: "Double Egg Chicken Roll", price: 169, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
     { name: "Egg Chicken Cheese Roll", price: 199, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
-    { name: "Extra Egg", price: 10, category: "Rolls", description: "Add-on", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
+    { name: "Extra Egg (Add-on)", price: 10, category: "Rolls", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500" },
 
-    // 🍔 FOOD - Pasta
+    // PASTA - VEG
     { name: "Penne Veg Pasta", price: 149, category: "Pasta", image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=500" },
     { name: "Penne White Sauce Veg Pasta", price: 149, category: "Pasta", image: "https://images.unsplash.com/photo-164512411341-6c4fd023714a?w=500" },
     { name: "Cheese Pasta", price: 169, category: "Pasta", image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=500" },
+    // PASTA - NON-VEG
     { name: "Chicken Pasta", price: 179, category: "Pasta", image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=500" },
     { name: "Chicken Cheese Pasta", price: 199, category: "Pasta", image: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=500" },
 
-    // 🍔 FOOD - Pizzas
+    // PIZZAS - VEG
     { name: "Veg Pizza (6 Inch)", price: 169, category: "Pizzas", image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500" },
     { name: "Veg Pizza", price: 199, category: "Pizzas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" },
     { name: "Margherita Pizza", price: 199, category: "Pizzas", image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500" },
@@ -183,22 +189,24 @@ const menuData = {
     { name: "Garden Exotic Pizza", price: 219, category: "Pizzas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" },
     { name: "Paneer Pizza", price: 239, category: "Pizzas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" },
     { name: "Spicy Mexican Veg Pizza", price: 259, category: "Pizzas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" },
+    // PIZZAS - NON-VEG
     { name: "Non-Veg Pizza", price: 229, category: "Pizzas", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500" },
     { name: "Roasted Chicken Pizza", price: 269, category: "Pizzas", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500" },
     { name: "Crispy Chicken Pizza", price: 279, category: "Pizzas", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500" },
     { name: "Spicy Pizza", price: 299, category: "Pizzas", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500" },
     { name: "Spicy Mexican Chicken Pizza", price: 349, category: "Pizzas", image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=500" },
 
-    // 🍔 FOOD - Burgers
+    // BURGERS - VEG
     { name: "Aloo Tikki Burger", price: 79, category: "Burgers", image: "https://images.unsplash.com/photo-1571091655789-405eb7a3a3a8?w=500" },
     { name: "Veg Cheese Burger", price: 89, category: "Burgers", image: "https://images.unsplash.com/photo-1571091655789-405eb7a3a3a8?w=500" },
     { name: "Paneer Burger", price: 119, category: "Burgers", image: "https://images.unsplash.com/photo-1571091655789-405eb7a3a3a8?w=500" },
+    // BURGERS - EGG & NON-VEG
     { name: "Egg Burger", price: 99, category: "Burgers", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" },
     { name: "Chicken Burger", price: 129, category: "Burgers", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" },
     { name: "Crispy Chicken Burger", price: 149, category: "Burgers", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" },
     { name: "CCD Chicken Burger (Served with Fries)", price: 169, category: "Burgers", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500" },
 
-    // 🍨 DESSERTS & ICE CREAMS
+    // DESSERTS & ICE CREAMS
     { name: "Affogato", price: 99, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
     { name: "Chocolate Brownie", price: 119, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=500" },
     { name: "Chocolate Sizzling Brownie", price: 169, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=500" },
@@ -208,7 +216,11 @@ const menuData = {
     { name: "Chocolate Ice Cream", price: 79, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
     { name: "Pista Ice Cream", price: 89, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
     { name: "Black Currant Ice Cream", price: 99, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
-    { name: "Dry Fruits Ice Cream", price: 119, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" }
+    { name: "Dry Fruits Ice Cream", price: 119, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
+
+    // BIRYANIS (TEMP 2 ITEMS)
+    { name: "Chicken Dum Biryani", price: 0, category: "Biryanis", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" },
+    { name: "Chicken Fry Piece Biryani", price: 0, category: "Biryanis", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" },
   ],
   foodcourt: []
 };
