@@ -218,9 +218,9 @@ const menuData = {
     { name: "Black Currant Ice Cream", price: 99, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
     { name: "Dry Fruits Ice Cream", price: 119, category: "Desserts & Ice Creams", image: "https://images.unsplash.com/photo-1560008511-11c63416e52d?w=500" },
 
-    // BIRYANIS (TEMP 2 ITEMS IN CAFE)
-    { name: "Chicken Dum Biryani", price: 299, category: "Biryanis", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" },
+    // BIRYANIS
     { name: "Chicken Fry Piece Biryani", price: 259, category: "Biryanis", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" },
+    { name: "Chicken Dum Biryani", price: 299, category: "Biryanis", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" },
 
     // BIRYANIS (COMING SOON)
     { name: "Chicken Moghalai Biryani", price: 0, category: "Biryanis", image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500" },

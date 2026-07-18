@@ -33,31 +33,31 @@ const SUB_CATEGORIES = {
         { id: "all",               label: "All Cafe",           icon: "🎉", match: null },
         { id: "combo-offers",      label: "Combo Offers",        icon: "🎁", match: ["Combo Offers"] },
         { id: "samosas-momos",     label: "Samosas & Momos",     icon: "🥟", match: ["Samosas & Momos"] },
-        { id: "teas",              label: "Teas",                icon: "🍵", match: ["Teas"] },
-        { id: "hot-beverages",     label: "Hot Beverages",       icon: "☕", match: ["Hot Beverages"] },
-        { id: "hot-brews",         label: "Hot Brews",           icon: "☕", match: ["Hot Brews"] },
-        { id: "cold-brews",        label: "Cold Brews",          icon: "🧊", match: ["Cold Brews"] },
+        { id: "teas",              label: "Teas",           icon: "🍵", match: ["Teas"] },
+        { id: "hot-beverages",     label: "Hot Beverages",      icon: "☕", match: ["Hot Beverages"] },
+        { id: "hot-brews",         label: "Hot Brews",          icon: "☕", match: ["Hot Brews"] },
+        { id: "cold-brews",        label: "Cold Brews",         icon: "🧊", match: ["Cold Brews"] },
         { id: "blended-brews",     label: "Blended Brews",       icon: "🥤", match: ["Blended Brews"] },
         { id: "milk-shakes",       label: "Milk Shakes",         icon: "🍦", match: ["Milk Shakes"] },
         { id: "soft-drinks",       label: "Soft Drinks",         icon: "🥤", match: ["Soft Drinks"] },
-        { id: "mocktails",         label: "Mocktails",           icon: "🍹", match: ["Mocktails"] },
-        { id: "lassis",            label: "Lassis",              icon: "🥛", match: ["Lassis"] },
+        { id: "mocktails",         label: "Mocktails",          icon: "🍹", match: ["Mocktails"] },
+        { id: "lassis",            label: "Lassis",             icon: "🥛", match: ["Lassis"] },
         { id: "omelettes",         label: "Omelettes",           icon: "🍳", match: ["Omelettes"] },
-        { id: "maggi",             label: "Maggi",               icon: "🍜", match: ["Maggi"] },
+        { id: "maggi",              label: "Maggi",               icon: "🍜", match: ["Maggi"] },
         { id: "sandwiches",        label: "Sandwiches",          icon: "🥪", match: ["Sandwiches"] },
         { id: "waffles-pancakes",  label: "Waffles & Pancakes",  icon: "🧇", match: ["Waffles & Pancakes"] },
         { id: "fried-food-quick",  label: "Fried Food & Quick Bites", icon: "🍟", match: ["Fried Food & Quick Bites"] },
         { id: "fried-chicken-fish",label: "Fried Chicken & Fish", icon: "🍗", match: ["Fried Chicken & Fish"] },
-        { id: "rolls",             label: "Rolls",               icon: "🌯", match: ["Rolls"] },
-        { id: "pasta",             label: "Pasta",               icon: "🍝", match: ["Pasta"] },
-        { id: "pizzas",            label: "Pizzas",              icon: "🍕", match: ["Pizzas"] },
-        { id: "burgers",           label: "Burgers",             icon: "🍔", match: ["Burgers"] },
-        { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] },
-        { id: "biryanis-temp",     label: "Biryanis (Temp)",     icon: "🍚", match: ["Biryanis"] }
+        { id: "rolls",            label: "Rolls",               icon: "🌯", match: ["Rolls"] },
+        { id: "pasta",            label: "Pasta",               icon: "🍝", match: ["Pasta"] },
+        { id: "pizzas",           label: "Pizzas",              icon: "🍕", match: ["Pizzas"] },
+        { id: "burgers",          label: "Burgers",             icon: "🍔", match: ["Burgers"] },
+        { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] }
     ],
     biryanis: [
         { id: "all-biryani",   label: "All Biryanis", icon: "🎉", match: null },
-        { id: "chicken-biryani", label: "Chicken Biryanis", icon: "🍗", match: ["Biryanis"] }
+        { id: "chicken-biryani", label: "Chicken Biryanis", icon: "🍗", match: ["Biryanis"] },
+        { id: "veg-biryani",     label: "Veg Biryanis", icon: "🥬", match: ["Biryanis"] }
     ],
     chinese: [
         { id: "all-chinese", label: "All Chinese", icon: "🎉", match: null },
@@ -434,10 +434,14 @@ function isCategoryComingSoon(category) {
            (category === "Chinese" && CONFIG.chineseComingSoon);
 }
 
+function isOrderableItem(itemName) {
+    return itemName === "Chicken Fry Piece Biryani" || itemName === "Chicken Dum Biryani";
+}
+
 function buildCard(item, i) {
     const inCart = cart.find(c => c.name === item.name);
     const avail = item.available !== false;
-    const comingSoon = isCategoryComingSoon(item.category);
+    const comingSoon = isCategoryComingSoon(item.category) && !isOrderableItem(item.name);
     const btnLabel = comingSoon ? "Coming Soon" : !avail ? "Not Available" : inCart ? `In Cart (${inCart.qty})` : "Add";
     const btnClass = !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
     return `
@@ -499,7 +503,7 @@ function renderAlsoBuy() {
 
     if (searchTerm) { section.classList.add("is-hidden"); return; }
 
-    const popular = getPopularItems().filter(item => !isCategoryComingSoon(item.category));
+    const popular = getPopularItems().filter(item => !isCategoryComingSoon(item.category) || isOrderableItem(item.name));
     if (!popular.length) { section.classList.add("is-hidden"); return; }
 
     section.classList.remove("is-hidden");
@@ -542,7 +546,7 @@ function bindCardEvents(grid) {
                 showToast("⛔ Item currently unavailable", true); 
                 return; 
             }
-            if (isCategoryComingSoon(item.category)) { 
+            if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) { 
                 alert(`${item.name} is coming soon! We'll add it to the menu once available.`); 
                 return; 
             }
@@ -558,7 +562,7 @@ function bindCardEvents(grid) {
             }
             const item = getItems().find(i => i.name === btn.dataset.add);
             if (!item) return;
-            if (isCategoryComingSoon(item.category)) { 
+            if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) { 
                 alert(`${item.name} is coming soon! We'll add it to the menu once available.`); 
                 return; 
             }
