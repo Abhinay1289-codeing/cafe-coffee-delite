@@ -8,7 +8,7 @@ const CONFIG = {
     restaurantName: "Cafe Coffee Delite",
     tagline: "Sip, Savour, Smile",
     whatsappPhone: "9390952712",   // ← Change to your WhatsApp number
-    gstRate: 0.05,
+    gstRate: 0,
     popularItems: [
         "Snack Combo",
         "Cappuccino",
@@ -17,7 +17,8 @@ const CONFIG = {
         "Chocolate Brownie"
     ],
     biryanisComingSoon: true,
-    chineseComingSoon: true
+    chineseComingSoon: true,
+    soupFreeOffer: true
 };
 
 /* ===== MAIN & SUB CATEGORIES ===== */
@@ -192,6 +193,12 @@ function applyBrand() {
   const heroTagline = document.getElementById('heroTagline');
   if (welcomeTagline) welcomeTagline.textContent = CONFIG.tagline || 'Sip, Savour, Smile';
   if (heroTagline) heroTagline.textContent = CONFIG.tagline || 'Sip, Savour, Smile';
+
+  // Toggle soup free offer
+  const soupOffer = document.getElementById('soupFreeOffer');
+  if (soupOffer) {
+    soupOffer.style.display = CONFIG.soupFreeOffer ? 'flex' : 'none';
+  }
 
   // Update hero offers
   const heroOffersContainer = document.querySelector('.hero-offers');
