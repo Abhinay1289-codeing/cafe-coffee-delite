@@ -8,7 +8,8 @@ const CONFIG = {
     restaurantName: "Cafe Coffee Delite",
     tagline: "Sip, Savour, Smile",
     whatsappPhone: "9390952712",   // ← Change to your WhatsApp number
-    gstRate: 0,
+    gstRate: 0.05, // Default 5% rate but disabled
+    gstEnabled: false, // Default OFF
     popularItems: [
         "Snack Combo",
         "Cappuccino",
@@ -734,10 +735,21 @@ function openCheckout() {
     const sum = $("checkoutSummary");
     if (sum) {
         let sub = 0;
-        sum.innerHTML = cart.map(i => {
+        let itemsHtml = cart.map(i => {
             sub += i.price * i.qty;
             return `<p><span>${i.qty}× ${esc(i.name)}</span><span>₹${i.price * i.qty}</span></p>`;
-        }).join("") + `<p style="font-weight:800;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><span>Total</span><span>₹${sub}</span></p>`;
+        }).join("");
+        
+        let gstHtml = "";
+        let total = sub;
+        if (CONFIG.gstEnabled) {
+            const gst = Math.round(sub * CONFIG.gstRate);
+            total = sub + gst;
+            const gstPercent = Math.round(CONFIG.gstRate * 100);
+            gstHtml = `<p><span>GST (${gstPercent}%)</span><span>₹${gst}</span></p>`;
+        }
+        
+        sum.innerHTML = itemsHtml + gstHtml + `<p style="font-weight:800;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><span>Total</span><span>₹${total}</span></p>`;
     }
 
     $("screenCheckout")?.classList.add("open");
@@ -770,7 +782,13 @@ function placeOrder() {
         lines += `${i.qty} × ${i.name} — ₹${i.price * i.qty}\n`;
     });
     const gst = Math.round(sub * CONFIG.gstRate);
-    const total = sub + gst;
+    const total = CONFIG.gstEnabled ? sub + gst : sub;
+    
+    let gstLine = "";
+    if (CONFIG.gstEnabled) {
+        const gstPercent = Math.round(CONFIG.gstRate * 100);
+        gstLine = `GST (${gstPercent}%) : ₹${gst}\n`;
+    }
 
     const msg =
 `🍽️ *NEW ORDER — ${CONFIG.restaurantName}*
@@ -781,8 +799,7 @@ function placeOrder() {
 ━━━━━━━━━━━━━━━━
 ${lines}━━━━━━━━━━━━━━━━
 Subtotal : ₹${sub}
-GST (5%) : ₹${gst}
-*Total    : ₹${total}*
+${gstLine}*Total    : ₹${total}*
 
 📝 ${notes || "No special notes"}
 

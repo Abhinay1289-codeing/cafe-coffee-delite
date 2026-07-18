@@ -1154,11 +1154,12 @@ const settingsForm = document.getElementById("adminSettingsForm");
 function openSettingsForm() {
     document.getElementById("settingsPhone").value = CONFIG.whatsappPhone || "";
     document.getElementById("settingsTagline").value = CONFIG.tagline || "";
-    document.getElementById("settingsGst").value = (CONFIG.gstRate * 100) || 0;
+    document.getElementById("settingsGst").value = (CONFIG.gstRate * 100) || 5;
     document.getElementById("settingsPopular").value = (CONFIG.popularItems || []).join(", ");
     document.getElementById("settingsBiryanisComingSoon").checked = CONFIG.biryanisComingSoon !== false;
     document.getElementById("settingsChineseComingSoon").checked = CONFIG.chineseComingSoon !== false;
     document.getElementById("settingsSoupFreeOffer").checked = CONFIG.soupFreeOffer !== false;
+    document.getElementById("settingsGstEnabled").checked = CONFIG.gstEnabled === true;
 
     settingsModal.classList.add("open");
     settingsModal.setAttribute("aria-hidden", "false");
@@ -1171,6 +1172,7 @@ if (settingsForm) {
         CONFIG.whatsappPhone = document.getElementById("settingsPhone").value.trim();
         CONFIG.tagline = document.getElementById("settingsTagline").value.trim();
         CONFIG.gstRate = parseFloat(document.getElementById("settingsGst").value) / 100;
+        CONFIG.gstEnabled = document.getElementById("settingsGstEnabled").checked;
         CONFIG.popularItems = document.getElementById("settingsPopular").value.split(",").map(i => i.trim()).filter(Boolean);
         CONFIG.biryanisComingSoon = document.getElementById("settingsBiryanisComingSoon").checked;
         CONFIG.chineseComingSoon = document.getElementById("settingsChineseComingSoon").checked;
