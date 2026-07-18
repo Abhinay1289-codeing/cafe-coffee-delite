@@ -20,37 +20,53 @@ const CONFIG = {
     chineseComingSoon: true
 };
 
-/* ===== CATEGORIES ===== */
-const CATEGORIES = [
-    { id: "all",               label: "All",                 icon: "🎉", match: null },
-    { id: "combo-offers",      label: "Combo Offers",        icon: "🎁", match: ["Combo Offers"] },
-    { id: "samosas-momos",     label: "Samosas & Momos",     icon: "🥟", match: ["Samosas & Momos"] },
-    { id: "teas",              label: "Teas",                icon: "🍵", match: ["Teas"] },
-    { id: "hot-beverages",     label: "Hot Beverages",       icon: "☕", match: ["Hot Beverages"] },
-    { id: "hot-brews",         label: "Hot Brews",           icon: "☕", match: ["Hot Brews"] },
-    { id: "cold-brews",        label: "Cold Brews",          icon: "🧊", match: ["Cold Brews"] },
-    { id: "blended-brews",     label: "Blended Brews",       icon: "🥤", match: ["Blended Brews"] },
-    { id: "milk-shakes",       label: "Milk Shakes",         icon: "🍦", match: ["Milk Shakes"] },
-    { id: "soft-drinks",       label: "Soft Drinks",         icon: "🥤", match: ["Soft Drinks"] },
-    { id: "mocktails",         label: "Mocktails",           icon: "🍹", match: ["Mocktails"] },
-    { id: "lassis",            label: "Lassis",              icon: "🥛", match: ["Lassis"] },
-    { id: "omelettes",         label: "Omelettes",           icon: "🍳", match: ["Omelettes"] },
-    { id: "maggi",             label: "Maggi",               icon: "🍜", match: ["Maggi"] },
-    { id: "sandwiches",        label: "Sandwiches",          icon: "🥪", match: ["Sandwiches"] },
-    { id: "waffles-pancakes",  label: "Waffles & Pancakes",  icon: "🧇", match: ["Waffles & Pancakes"] },
-    { id: "fried-food-quick",  label: "Fried Food & Quick Bites", icon: "🍟", match: ["Fried Food & Quick Bites"] },
-    { id: "fried-chicken-fish",label: "Fried Chicken & Fish", icon: "🍗", match: ["Fried Chicken & Fish"] },
-    { id: "rolls",             label: "Rolls",               icon: "🌯", match: ["Rolls"] },
-    { id: "pasta",             label: "Pasta",               icon: "🍝", match: ["Pasta"] },
-    { id: "pizzas",            label: "Pizzas",              icon: "🍕", match: ["Pizzas"] },
-    { id: "burgers",           label: "Burgers",             icon: "🍔", match: ["Burgers"] },
-    { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] },
-    { id: "biryanis",          label: "Biryanis",            icon: "🍚", match: ["Biryanis"] },
-    { id: "chinese",           label: "Chinese",             icon: "🍜", match: ["Chinese"] }
+/* ===== MAIN & SUB CATEGORIES ===== */
+const MAIN_CATEGORIES = [
+    { id: "cafe", label: "Cafe", icon: "☕" },
+    { id: "biryanis", label: "Biryanis", icon: "🍚" },
+    { id: "chinese", label: "Chinese", icon: "🍜" }
 ];
 
+const SUB_CATEGORIES = {
+    cafe: [
+        { id: "all",               label: "All Cafe",           icon: "🎉", match: null },
+        { id: "combo-offers",      label: "Combo Offers",        icon: "🎁", match: ["Combo Offers"] },
+        { id: "samosas-momos",     label: "Samosas & Momos",     icon: "🥟", match: ["Samosas & Momos"] },
+        { id: "teas",              label: "Teas",                icon: "🍵", match: ["Teas"] },
+        { id: "hot-beverages",     label: "Hot Beverages",       icon: "☕", match: ["Hot Beverages"] },
+        { id: "hot-brews",         label: "Hot Brews",           icon: "☕", match: ["Hot Brews"] },
+        { id: "cold-brews",        label: "Cold Brews",          icon: "🧊", match: ["Cold Brews"] },
+        { id: "blended-brews",     label: "Blended Brews",       icon: "🥤", match: ["Blended Brews"] },
+        { id: "milk-shakes",       label: "Milk Shakes",         icon: "🍦", match: ["Milk Shakes"] },
+        { id: "soft-drinks",       label: "Soft Drinks",         icon: "🥤", match: ["Soft Drinks"] },
+        { id: "mocktails",         label: "Mocktails",           icon: "🍹", match: ["Mocktails"] },
+        { id: "lassis",            label: "Lassis",              icon: "🥛", match: ["Lassis"] },
+        { id: "omelettes",         label: "Omelettes",           icon: "🍳", match: ["Omelettes"] },
+        { id: "maggi",             label: "Maggi",               icon: "🍜", match: ["Maggi"] },
+        { id: "sandwiches",        label: "Sandwiches",          icon: "🥪", match: ["Sandwiches"] },
+        { id: "waffles-pancakes",  label: "Waffles & Pancakes",  icon: "🧇", match: ["Waffles & Pancakes"] },
+        { id: "fried-food-quick",  label: "Fried Food & Quick Bites", icon: "🍟", match: ["Fried Food & Quick Bites"] },
+        { id: "fried-chicken-fish",label: "Fried Chicken & Fish", icon: "🍗", match: ["Fried Chicken & Fish"] },
+        { id: "rolls",             label: "Rolls",               icon: "🌯", match: ["Rolls"] },
+        { id: "pasta",             label: "Pasta",               icon: "🍝", match: ["Pasta"] },
+        { id: "pizzas",            label: "Pizzas",              icon: "🍕", match: ["Pizzas"] },
+        { id: "burgers",           label: "Burgers",             icon: "🍔", match: ["Burgers"] },
+        { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] },
+        { id: "biryanis-temp",     label: "Biryanis (Temp)",     icon: "🍚", match: ["Biryanis"] }
+    ],
+    biryanis: [
+        { id: "all-biryani",   label: "All Biryanis", icon: "🎉", match: null },
+        { id: "chicken-biryani", label: "Chicken Biryanis", icon: "🍗", match: ["Biryanis"] }
+    ],
+    chinese: [
+        { id: "all-chinese", label: "All Chinese", icon: "🎉", match: null },
+        { id: "chinese-starters", label: "Starters", icon: "🥢", match: ["Chinese"] }
+    ]
+};
+
 /* ===== STATE ===== */
-let activeCategory = "all";
+let activeMainCategory = "cafe";
+let activeSubCategory = "all";
 let cart = [];
 let searchTerm = "";
 let modalItem = null;
@@ -155,7 +171,8 @@ async function loadDataFromSupabase() {
       categoryOverrides = catOverrides;
     }
 
-    renderCategories();
+    renderMainCategories();
+    renderSubCategories();
     renderMenu();
     applyBrand();
   } catch (e) {
@@ -205,10 +222,24 @@ function applyCustomThemeColor(hexColor) {
 
 function filterItems(items) {
     let list = items;
-    const cat = CATEGORIES.find(c => c.id === activeCategory);
-    if (cat && cat.id !== "all" && cat.match) {
-        list = list.filter(i => cat.match.includes(i.category));
+    // First filter by main category
+    if (activeMainCategory === "cafe") {
+        // Cafe includes everything except items that are only in biryanis/chinese main categories (but right now all items are in cafe)
+        // But exclude chinese items for now until we add them
+        list = list.filter(i => i.category !== "Chinese");
+    } else if (activeMainCategory === "biryanis") {
+        list = list.filter(i => i.category === "Biryanis");
+    } else if (activeMainCategory === "chinese") {
+        list = list.filter(i => i.category === "Chinese");
     }
+
+    // Then filter by sub-category
+    const subs = SUB_CATEGORIES[activeMainCategory];
+    const subCat = subs.find(c => c.id === activeSubCategory);
+    if (subCat && subCat.match) {
+        list = list.filter(i => subCat.match.includes(i.category));
+    }
+
     if (searchTerm) {
         const q = searchTerm.toLowerCase();
         list = list.filter(i =>
@@ -336,17 +367,20 @@ function updateTableUI() {
 }
 
 /* ===== CATEGORIES ===== */
-function renderCategories() {
+function renderMainCategories() {
     const nav = $("categoryNav");
     if (!nav) return;
-    nav.innerHTML = CATEGORIES.map(c => {
-      const label = categoryOverrides[c.label] || c.label;
-      return `<button type="button" class="cat-pill${c.id === activeCategory ? " active" : ""}" data-cat="${c.id}">${c.icon || ""} ${label}</button>`;
+    nav.innerHTML = MAIN_CATEGORIES.map(c => {
+      return `<button type="button" class="cat-pill${c.id === activeMainCategory ? " active" : ""}" data-main-cat="${c.id}">${c.icon || ""} ${c.label}</button>`;
     }).join("");
     nav.querySelectorAll(".cat-pill").forEach(p => {
         p.addEventListener("click", () => {
-            activeCategory = p.dataset.cat;
-            renderCategories();
+            activeMainCategory = p.dataset.mainCat;
+            // Reset sub-category to "all" when switching main category
+            const subs = SUB_CATEGORIES[activeMainCategory];
+            activeSubCategory = subs[0].id;
+            renderMainCategories();
+            renderSubCategories();
             renderMenu();
             p.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
             setTimeout(() => {
@@ -357,6 +391,24 @@ function renderCategories() {
                 const top = menuGrid.getBoundingClientRect().top + window.scrollY - offset;
                 window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
             }, 150);
+        });
+    });
+}
+
+function renderSubCategories() {
+    const subNav = document.getElementById("subCategoryNav");
+    if (!subNav) return;
+    const subs = SUB_CATEGORIES[activeMainCategory];
+    subNav.innerHTML = subs.map(c => {
+        const label = categoryOverrides[c.label] || c.label;
+        return `<button type="button" class="cat-pill${c.id === activeSubCategory ? " active" : ""}" data-sub-cat="${c.id}">${c.icon || ""} ${label}</button>`;
+    }).join("");
+    subNav.querySelectorAll(".cat-pill").forEach(p => {
+        p.addEventListener("click", () => {
+            activeSubCategory = p.dataset.subCat;
+            renderSubCategories();
+            renderMenu();
+            p.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
         });
     });
 }
@@ -380,13 +432,13 @@ function buildCard(item, i) {
     const avail = item.available !== false;
     const comingSoon = isCategoryComingSoon(item.category);
     const btnLabel = comingSoon ? "Coming Soon" : !avail ? "Not Available" : inCart ? `In Cart (${inCart.qty})` : "Add";
-    const btnClass = comingSoon || !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
+    const btnClass = !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
     return `
     <article class="food-card${!avail ? ' food-card--unavailable' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
         <div class="food-card-img">
             <img src="${item.image}" alt="${esc(item.name)}" loading="lazy">
             ${item.popular && avail && !comingSoon ? '<span class="food-card-badge">Popular</span>' : ''}
-            ${comingSoon ? '<span class="food-card-badge">Coming Soon</span>' : ''}
+            ${comingSoon ? '<span class="food-card-badge" style="background-color: #ff9800;">Coming Soon</span>' : ''}
             ${!avail ? '<span class="food-card-badge unavailable-badge">Unavailable</span>' : ''}
             <span class="veg-indicator ${item.isVeg ? 'veg' : 'nonveg'}"></span>
         </div>
@@ -397,8 +449,8 @@ function buildCard(item, i) {
                 <div class="food-card-meta"><span>⭐ ${item.rating}</span><span>· ${item.prepTime}</span></div>
             </div>
             <div class="food-card-foot">
-                ${!comingSoon ? `<span class="food-card-price">₹${item.price}</span>` : '<span class="food-card-price" style="opacity: 0.5;">Price TBA</span>'}
-                <button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${comingSoon ? 'disabled' : ''}>${btnLabel}</button>
+                ${!comingSoon ? `<span class="food-card-price">₹${item.price}</span>` : '<span class="food-card-price" style="opacity: 0.5; color: #999;">Price TBA</span>'}
+                <button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${!avail ? 'disabled' : ''}>${btnLabel}</button>
             </div>
         </div>
     </article>`;
@@ -479,8 +531,12 @@ function bindCardEvents(grid) {
             if (e.target.closest(".add-btn")) return;
             const item = getItems().find(i => i.name === card.dataset.name);
             if (!item) return;
-            if (item.available === false || isCategoryComingSoon(item.category)) { 
-                showToast("⛔ Item coming soon or currently unavailable", true); 
+            if (item.available === false) { 
+                showToast("⛔ Item currently unavailable", true); 
+                return; 
+            }
+            if (isCategoryComingSoon(item.category)) { 
+                alert(`${item.name} is coming soon! We'll add it to the menu once available.`); 
                 return; 
             }
             openFoodModal(item);
@@ -490,11 +546,15 @@ function bindCardEvents(grid) {
         btn.addEventListener("click", e => {
             e.stopPropagation();
             if (btn.classList.contains("unavailable-btn")) { 
-                showToast("⛔ Item coming soon or currently unavailable", true); 
+                showToast("⛔ Item currently unavailable", true); 
                 return; 
             }
             const item = getItems().find(i => i.name === btn.dataset.add);
             if (!item) return;
+            if (isCategoryComingSoon(item.category)) { 
+                alert(`${item.name} is coming soon! We'll add it to the menu once available.`); 
+                return; 
+            }
             if (cart.find(c => c.name === item.name)) openCart();
             else addToCart(item, 1, btn);
         });
@@ -860,7 +920,8 @@ function init() {
 
     initWelcome();
     initHeader();
-    renderCategories();
+    renderMainCategories();
+    renderSubCategories();
     renderMenu();
     initModals();
     initWaiter();
