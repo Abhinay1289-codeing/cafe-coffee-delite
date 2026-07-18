@@ -421,6 +421,14 @@ function renderSubCategories() {
     });
 }
 
+/* ===== CATEGORIES COMBINED (used by admin-app.js) ===== */
+function renderCategories() {
+    renderMainCategories();
+    renderSubCategories();
+}
+// Expose globally so admin-app.js can override it
+window.renderCategories = renderCategories;
+
 /* ===== MENU RENDER ===== */
 function showSkeleton(show) {
     $("menuSkeleton")?.classList.toggle("is-hidden", !show);
