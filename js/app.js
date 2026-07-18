@@ -641,7 +641,32 @@ function removeFromCart(name) {
 function updateCartUI() {
     let count = 0, subtotal = 0;
     cart.forEach(i => { count += i.qty; subtotal += i.price * i.qty; });
-    const total = subtotal;
+    
+    let total = subtotal;
+    let gst = 0;
+    
+    // Update cart summary elements (if they exist)
+    const cartSubtotalEl = $("cartSubtotal");
+    const cartGstLineEl = $("cartGstLine");
+    const cartGstEl = $("cartGst");
+    const cartTotalEl = $("cartTotal");
+    
+    if (cartSubtotalEl) cartSubtotalEl.textContent = subtotal;
+    
+    if (CONFIG.gstEnabled) {
+        gst = Math.round(subtotal * CONFIG.gstRate);
+        total = subtotal + gst;
+        const gstPercent = Math.round(CONFIG.gstRate * 100);
+        if (cartGstLineEl) {
+            cartGstLineEl.style.display = "flex";
+            cartGstLineEl.innerHTML = `<span>GST (${gstPercent}%)</span><span>₹<span id="cartGst">${gst}</span></span>`;
+        }
+        if (cartGstEl) cartGstEl.textContent = gst;
+    } else {
+        if (cartGstLineEl) cartGstLineEl.style.display = "none";
+    }
+    
+    if (cartTotalEl) cartTotalEl.textContent = total;
 
     ["headerCartCount", "floatCartCount"].forEach(id => {
         const el = $(id);
@@ -650,7 +675,6 @@ function updateCartUI() {
     if ($("floatCartTotal")) $("floatCartTotal").textContent = total;
     $("floatCart")?.classList.toggle("is-hidden", count === 0);
     $("headerCartBtn")?.classList.toggle("has-items", count > 0);
-    if ($("cartTotal")) $("cartTotal").textContent = total;
 
     const body = $("cartItems");
     if (!body) return;
