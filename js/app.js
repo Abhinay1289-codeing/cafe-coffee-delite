@@ -7,8 +7,7 @@
 const CONFIG = {
     restaurantName: "Cafe Coffee Delite",
     tagline: "Sip, Savour, Smile",
-    whatsappPhone: "9390952712",   // ← Personal number (fallback)
-    whatsappGroup: "https://chat.whatsapp.com/GTJQz0R2W2C9egkBA1toOM", // ← Orders go here
+    whatsappPhone: "9912366665",   // ← WhatsApp order number
     gstRate: 0.05, // Default 5% rate but disabled
     gstEnabled: false, // Default OFF
     popularItems: [
@@ -212,11 +211,20 @@ async function loadDataFromSupabase() {
   }
 }
 
+function addCacheBuster(url) {
+  if (!url) return url;
+  // Don't add cache buster to data URLs
+  if (url.startsWith('data:')) return url;
+  // Add or update timestamp query parameter
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}_t=${Date.now()}`;
+}
+
 function applyBrand() {
   // Update hero background
-  const heroBgImg = document.querySelector('.hero-clean-bg img');
+  const heroBgImg = document.querySelector(".hero-clean-bg img");
   if (heroBgImg && CONFIG.heroBg) {
-    heroBgImg.src = CONFIG.heroBg;
+    heroBgImg.src = addCacheBuster(CONFIG.heroBg);
   }
 
   // Update hero tagline
@@ -488,7 +496,7 @@ function buildCard(item, i) {
     return `
     <article class="food-card${!avail ? ' food-card--unavailable' : ''}${comingSoon ? ' food-card--coming-soon' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
         <div class="food-card-img">
-            <img src="${item.image}" alt="${esc(item.name)}" loading="lazy">
+            <img src="${addCacheBuster(item.image)}" alt="${esc(item.name)}" loading="lazy">
             ${item.popular && avail && !comingSoon ? '<span class="food-card-badge">Popular</span>' : ''}
             ${comingSoon ? '<span class="food-card-badge coming-soon-badge">Coming Soon</span>' : ''}
             ${!avail ? '<span class="food-card-badge unavailable-badge">Unavailable</span>' : ''}
@@ -552,7 +560,7 @@ function renderAlsoBuy() {
         const inCart = cart.find(c => c.name === item.name);
         return `
         <article class="also-buy-chip" data-name="${esc(item.name)}">
-            <img src="${item.image}" alt="${esc(item.name)}" loading="lazy">
+            <img src="${addCacheBuster(item.image)}" alt="${esc(item.name)}" loading="lazy">
             <div class="also-buy-chip-body">
                 <h3>${esc(item.name)}</h3>
                 <p>₹${item.price} · ⭐ ${item.rating}</p>
@@ -721,7 +729,7 @@ function updateCartUI() {
     }
     body.innerHTML = cart.map(item => `
         <div class="cart-line-item">
-            <img src="${item.image}" alt="">
+            <img src="${addCacheBuster(item.image)}" alt="">
             <div class="cart-line-info">
                 <h4>${esc(item.name)}</h4>
                 <p>₹${item.price * item.qty}</p>
@@ -761,7 +769,7 @@ function closeCart() {
 function openFoodModal(item) {
     modalItem = item;
     modalQty = cart.find(c => c.name === item.name)?.qty || 1;
-    $("modalImg").src = item.image;
+    $("modalImg").src = addCacheBuster(item.image);
     $("modalTitle").textContent = item.name;
     $("modalDesc").textContent = item.description;
     if ($("modalIngredients")) $("modalIngredients").textContent = `Ingredients: ${item.ingredients}`;
@@ -905,7 +913,7 @@ ${gstLine}*Total    : ₹${total}*
 
     // ✅ Send order — use Web Share API on mobile (no paste needed!)
     //    Falls back to clipboard copy + open group on desktop
-    const groupUrl = CONFIG.whatsappGroup || `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+    const groupUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
 
     if (navigator.share) {
         // Mobile: native share sheet opens → pick WhatsApp → select group → message already typed → just hit Send
@@ -975,7 +983,7 @@ function initWaiter() {
             const tableNum = getTableNumber() || "Unknown";
             const labels = { water: "Need Water 💧", bill: "Need Bill 🧾", help: "Need Assistance 🙋", call: "Call Waiter 🛎️" };
             const msg = `🛎️ *${labels[type] || "Request"}*\n🪑 Table #${tableNum}\n— ${CONFIG.restaurantName}`;
-            const groupUrl = CONFIG.whatsappGroup || `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+            const groupUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
             // Copy to clipboard then open group
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(msg).catch(() => {});

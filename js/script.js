@@ -660,7 +660,7 @@ ${orderLines}━━━━━━━━━━━━━━━━
 
 — Sent via table QR menu`;
 
-    const phone = "9390952712";
+    const phone = "9912366665";
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     
     // Success animation before redirect

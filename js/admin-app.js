@@ -93,8 +93,10 @@ function initVisualEditor() {
     };
 
     const originalBuildCard = window.buildCard;
-    window.buildCard = function(item, i) {
-        const defaultHtml = originalBuildCard(item, i);
+    // Override buildCard to add admin controls (and use addCacheBuster if needed, but originalBuildCard should now handle it)
+  window.buildCard = function(item, i) {
+    // Ensure item.image uses cache buster if needed (though originalBuildCard now does this)
+    const defaultHtml = originalBuildCard(item, i);
         const n = esc(item.name);
         const isComingSoon = isCategoryComingSoon(item.category);
         const isEnabled = enabledComingSoonItems.has(item.name);
@@ -129,10 +131,21 @@ function initVisualEditor() {
 
     // Subscribe to real-time changes in admin too
     if (window.sb) {
-        const refreshAllAdmin = () => loadDataFromSupabaseAdmin();
-        sbSubscribeMenuChanges(refreshAllAdmin);
-        sbSubscribeConfigChanges(refreshAllAdmin);
-        sbSubscribeCategoryOverridesChanges(refreshAllAdmin);
+      const refreshAllAdmin = () => {
+        // Don't refresh if we're editing an item (modal is open)
+        const itemModal = document.getElementById('adminItemModal');
+        const settingsModal = document.getElementById('adminSettingsModal');
+        const heroEditorDock = document.getElementById('heroEditorDock');
+        if ((itemModal && itemModal.classList.contains('open')) || 
+            (settingsModal && settingsModal.classList.contains('open')) ||
+            (heroEditorDock && heroEditorDock.classList.contains('open'))) {
+          return;
+        }
+        loadDataFromSupabaseAdmin();
+      };
+      sbSubscribeMenuChanges(refreshAllAdmin);
+      sbSubscribeConfigChanges(refreshAllAdmin);
+      sbSubscribeCategoryOverridesChanges(refreshAllAdmin);
     }
 
     // 3. Re-render Categories and Menu with new Admin cards
@@ -145,12 +158,12 @@ function initVisualEditor() {
     // 5. Bind Editable Hero Background clicks
     const heroBgEl = document.querySelector(".hero-clean-bg");
     if (heroBgEl) {
-        heroBgEl.addEventListener("click", () => {
+        heroBgEl.addEventListener("click", async () => {
             const currentBg = CONFIG.heroBg || "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200";
             const newBg = prompt("Enter new background image URL (Unsplash or direct link):", currentBg);
             if (newBg !== null) {
                 CONFIG.heroBg = newBg.trim() || currentBg;
-                saveConfig();
+                await saveConfig();
                 applyBrand();
                 showToast("Hero background image updated!");
             }
@@ -230,7 +243,7 @@ function initVisualEditor() {
 
     // 6. Bind Editable Hero Offers clicks
     document.querySelectorAll(".hero-offers .hero-offer").forEach((offerEl, idx) => {
-        offerEl.addEventListener("click", (e) => {
+        offerEl.addEventListener("click", async (e) => {
             e.preventDefault();
             e.stopPropagation();
 
@@ -245,14 +258,14 @@ function initVisualEditor() {
             if (desc === null) return;
 
             CONFIG.offers[idx] = { icon: icon.trim(), title: title.trim(), desc: desc.trim() };
-            saveConfig();
+            await saveConfig();
             applyBrand();
             showToast("Offer details updated!");
         });
     });
 
     document.querySelectorAll("[data-offer-delete]").forEach(btn => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", async (e) => {
             e.preventDefault();
             e.stopPropagation();
             const idx = Number(btn.dataset.offerDelete);
@@ -262,7 +275,7 @@ function initVisualEditor() {
             }
             if (!confirm("Delete this hero offer?")) return;
             CONFIG.offers.splice(idx, 1);
-            saveConfig();
+            await saveConfig();
             applyBrand();
             showToast("Hero offer deleted");
         });
@@ -714,10 +727,10 @@ function stopHeroInteraction() {
     heroEditorState.resizing = null;
 }
 
-function saveHeroEditorLayout() {
+async function saveHeroEditorLayout() {
     ensureHeroLayoutConfig();
     CONFIG.heroLayout = { blocks: deepClone(heroEditorState.blocks) };
-    saveConfig();
+    await saveConfig();
     applyBrand();
     showToast("Hero layout saved");
 }
@@ -796,11 +809,20 @@ async function loadDataFromSupabaseAdmin() {
   }
 }
 
+function addCacheBuster(url) {
+  if (!url) return url;
+  // Don't add cache buster to data URLs
+  if (url.startsWith('data:')) return url;
+  // Add or update timestamp query parameter
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}_t=${Date.now()}`;
+}
+
 function applyBrand() {
   // Update hero background
   const heroBgImg = document.querySelector('.hero-clean-bg img');
   if (heroBgImg && CONFIG.heroBg) {
-    heroBgImg.src = CONFIG.heroBg;
+    heroBgImg.src = addCacheBuster(CONFIG.heroBg);
   }
 
   // Update hero tagline
@@ -837,7 +859,7 @@ function applyCustomThemeColor(hexColor) {
 }
 
 // Override saveItems to use sbSaveAllMenuItems
-function saveItems(items, deletedName = null) {
+async function saveItems(items, deletedName = null) {
     // Strip any enriched-only computed fields before saving
     const clean = items.map((item, i) => ({
         name: item.name,
@@ -852,22 +874,31 @@ function saveItems(items, deletedName = null) {
     menuItemsCache = clean;
     // If an item was renamed, delete the old DB row first
     if (deletedName) {
-        sbDeleteMenuItem(deletedName).catch(e => console.error('Failed to delete old item row:', e));
+        await sbDeleteMenuItem(deletedName).catch(e => console.error('Failed to delete old item row:', e));
     }
-    // Persist to Supabase (fire-and-forget, non-blocking)
-    sbSaveAllMenuItems(clean).catch(e => {
+    // Persist to Supabase and wait for completion
+    const saveSuccess = await sbSaveAllMenuItems(clean).catch(e => {
         console.error('Failed to save items to Supabase:', e);
         showToast('⚠️ Save failed — check connection', true);
+        return false;
     });
+    if (saveSuccess) {
+        // After successful save, manually reload to ensure we have the latest data
+        await loadDataFromSupabaseAdmin();
+    }
 }
 
 // Override saveConfig to use sbSaveConfig
-function saveConfig() {
+async function saveConfig() {
     // Persist config to Supabase
-    sbSaveConfig(CONFIG).catch(e => {
+    const saveSuccess = await sbSaveConfig(CONFIG).catch(e => {
         console.error('Failed to save config to Supabase:', e);
         showToast('⚠️ Config save failed', true);
+        return false;
     });
+    if (saveSuccess) {
+        await loadDataFromSupabaseAdmin();
+    }
 }
 
 /* ===== CORE VISUAL EDITOR FUNCTIONS ===== */
@@ -898,7 +929,7 @@ function hookCategoryRenaming() {
     window.renderCategories();
 }
 
-function performCategoryRename(catId, newLabel) {
+async function performCategoryRename(catId, newLabel) {
     const category = CATEGORIES.find(c => c.id === catId);
     if (!category) return;
     const oldLabel = category.label;
@@ -916,14 +947,14 @@ function performCategoryRename(catId, newLabel) {
     localStorage.setItem("cafeCategoryOverrides", JSON.stringify(categoryOverrides));
 
     // Persist category override to Supabase
-    sbSaveCategoryOverride(catId, newLabel).catch(e => console.error('Category save failed:', e));
+    await sbSaveCategoryOverride(catId, newLabel).catch(e => console.error('Category save failed:', e));
 
     // Update all matching items categories in Supabase
     const allItems = getItems();
     allItems.forEach(i => {
         if (i.category === oldLabel) i.category = newLabel;
     });
-    saveItems(allItems);
+    await saveItems(allItems);
 
     renderCategories();
     renderMenu();
@@ -931,7 +962,7 @@ function performCategoryRename(catId, newLabel) {
 }
 
 // Reordering items dynamically (swap positions in the current array list)
-function shiftItemOrder(itemName, direction) {
+async function shiftItemOrder(itemName, direction) {
     const allItems = getItems();
     const index = allItems.findIndex(i => i.name === itemName);
     if (index === -1) return;
@@ -962,7 +993,7 @@ function shiftItemOrder(itemName, direction) {
         allItems[index] = allItems[neighborIndex];
         allItems[neighborIndex] = temp;
 
-        saveItems(allItems);
+        await saveItems(allItems);
         renderMenu();
         showToast("Item order updated");
     } else {
@@ -986,7 +1017,7 @@ function setImagePreview(src, message = "Preview will appear here") {
     if (!imagePreviewEl || !imagePreviewImg || !imagePreviewText) return;
     const hasImage = Boolean(src);
     imagePreviewEl.classList.toggle("has-image", hasImage);
-    imagePreviewImg.src = hasImage ? src : "";
+    imagePreviewImg.src = hasImage ? addCacheBuster(src) : "";
     imagePreviewText.textContent = hasImage ? "" : message;
 }
 
@@ -1128,7 +1159,7 @@ if (itemForm) {
             }
             // If the name changed, pass old name so the old DB row gets deleted
             const nameChanged = originalName !== name;
-            saveItems(allItems, nameChanged ? originalName : null);
+            await saveItems(allItems, nameChanged ? originalName : null);
             showToast("Item updated successfully!");
         } else { // CREATE
             // Check duplicate name
@@ -1144,7 +1175,7 @@ if (itemForm) {
                 description,
                 available
             });
-            saveItems(allItems);
+            await saveItems(allItems);
             showToast("Item added successfully!");
         }
 
@@ -1154,12 +1185,12 @@ if (itemForm) {
 }
 
 // Delete Item Button
-document.getElementById("adminDeleteItemBtn")?.addEventListener("click", () => {
+document.getElementById("adminDeleteItemBtn")?.addEventListener("click", async () => {
     const name = document.getElementById("editItemIndex").value;
     if (!name) return;
     if (confirm(`Are you sure you want to delete "${name}"?`)) {
         const allItems = getItems().filter(i => i.name !== name);
-        saveItems(allItems);
+        await saveItems(allItems);
         closeItemForm();
         renderMenu();
         showToast("Item deleted");
@@ -1198,7 +1229,7 @@ function openSettingsForm() {
 }
 
 if (settingsForm) {
-    settingsForm.addEventListener("submit", (e) => {
+    settingsForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         CONFIG.whatsappPhone = document.getElementById("settingsPhone").value.trim();
         CONFIG.tagline = document.getElementById("settingsTagline").value.trim();
@@ -1209,7 +1240,7 @@ if (settingsForm) {
         CONFIG.chineseComingSoon = document.getElementById("settingsChineseComingSoon").checked;
         CONFIG.soupFreeOffer = document.getElementById("settingsSoupFreeOffer").checked;
 
-        saveConfig();
+        await saveConfig();
         applyBrand();
         renderMainCategories();
         renderSubCategories();

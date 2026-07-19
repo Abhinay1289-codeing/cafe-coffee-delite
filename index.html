@@ -230,49 +230,7 @@
                 <label for="checkoutNotes">Notes</label>
                 <textarea id="checkoutNotes" class="field-input" placeholder="Any special requests..." rows="3"></textarea>
             </div>
-            <!-- WhatsApp group instruction banner -->
-            <div class="wa-group-instruction">
-                <span class="wa-group-instruction-icon">📋</span>
-                <div>
-                    <strong>How your order is sent</strong>
-                    <span>Your order is <b>auto-copied</b> → WhatsApp opens → select <b>CCD Group</b> → tap the message box → <b>Paste &amp; Send</b></span>
-                </div>
-            </div>
-            <button type="button" class="btn-primary" id="placeOrderBtn">📲 Place Order via WhatsApp Group</button>
-        </div>
-    </section>
-
-    <!-- Order Success -->
-    <section class="full-screen" id="screenSuccess" aria-hidden="true">
-        <div id="confettiLayer"></div>
-        <div class="screen-body" style="text-align:center; padding-top: 60px;">
-            <div style="font-size: 3.5rem; margin-bottom: 12px;">🎉</div>
-            <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 8px;">Order Placed!</h2>
-            <p style="color: var(--muted); margin-bottom: 28px;">Your order has been received.</p>
-
-            <!-- Paste instruction box -->
-            <div class="paste-instruction-box">
-                <div class="paste-step">
-                    <span class="paste-step-num">1</span>
-                    <span>WhatsApp opened &amp; order <strong>auto-copied</strong> to clipboard</span>
-                </div>
-                <div class="paste-step">
-                    <span class="paste-step-num">2</span>
-                    <span>Select the <strong>CCD WhatsApp Group</strong></span>
-                </div>
-                <div class="paste-step">
-                    <span class="paste-step-num">3</span>
-                    <span>Tap the message box → <strong>Paste</strong> (long press) → <strong>Send</strong> ✅</span>
-                </div>
-            </div>
-
-            <ul id="trackTimeline" style="list-style:none; text-align:left; margin: 24px auto; max-width:280px; display:flex; flex-direction:column; gap:12px;">
-                <li class="active" style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">📨 <span>Order sent to kitchen</span></li>
-                <li style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">👨‍🍳 <span>Being prepared</span></li>
-                <li style="display:flex;align-items:center;gap:10px;font-size:0.85rem;">🍽️ <span>On its way to your table</span></li>
-            </ul>
-
-            <button type="button" class="btn-primary" id="successContinue">Back to Menu</button>
+            <button type="button" class="btn-primary" id="placeOrderBtn">Place Order via WhatsApp</button>
         </div>
     </section>
 
