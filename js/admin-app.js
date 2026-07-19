@@ -19,6 +19,9 @@ function formatWhatsAppNumber(number) {
     return digits;
 }
 
+/* ===== GLOBAL STATE ===== */
+let hasAttemptedSupabaseLoad = false;
+
 /* ===== AUTHENTICATION (Supabase) ===== */
 const loginOverlay = document.getElementById("adminLoginOverlay");
 const loginForm = document.getElementById("adminLoginForm");
@@ -323,8 +326,6 @@ function initVisualEditor() {
     document.getElementById("adminResetMenuBtn")?.addEventListener("click", resetMenuData);
     document.getElementById("adminLogoutBtn")?.addEventListener("click", logoutAdmin);
 }
-
-let hasAttemptedSupabaseLoad = false;
 
 /* ===== HERO LAYOUT EDITOR ===== */
 
