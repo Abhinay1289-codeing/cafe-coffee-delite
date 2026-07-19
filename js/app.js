@@ -837,6 +837,20 @@ ${gstLine}*Total    : ₹${total}*
 
 — Cafe Coffee Delite Digital Menu`;
 
+    // ✅ Save order to Supabase so it appears in admin orders panel
+    if (window.sb) {
+        sbSaveOrder({
+            tableNumber: tableNum,
+            customerName: name,
+            customerPhone: phone || null,
+            items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+            subtotal: sub,
+            gst: CONFIG.gstEnabled ? gst : 0,
+            total: total,
+            notes: notes || null
+        }).catch(e => console.error('[SB] Failed to save order:', e));
+    }
+
     const url = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank");
 
