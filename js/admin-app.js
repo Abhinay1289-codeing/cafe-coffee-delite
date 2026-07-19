@@ -75,16 +75,45 @@ function initVisualEditor() {
     adminStyle.textContent = '.admin-page-body .add-btn { display: none !important; }';
     document.head.appendChild(adminStyle);
 
+    // Expose enable/disable helpers for admin inline onclick
+    window.adminEnableItem = (name) => {
+        enabledComingSoonItems.add(name);
+        saveEnabledComingSoon();
+        renderMenu();
+        showToast(`✅ "${name}" enabled for ordering`);
+    };
+    window.adminDisableItem = (name) => {
+        enabledComingSoonItems.delete(name);
+        saveEnabledComingSoon();
+        renderMenu();
+        showToast(`🔒 "${name}" set back to Coming Soon`);
+    };
+    window.adminEnableAllInCategory = (category) => {
+        enableAllComingSoonInCategory(category);
+    };
+
     const originalBuildCard = window.buildCard;
     window.buildCard = function(item, i) {
         const defaultHtml = originalBuildCard(item, i);
         const n = esc(item.name);
-        // Inline onclick handlers — each button handles its own stopPropagation
+        const isComingSoon = isCategoryComingSoon(item.category);
+        const isEnabled = enabledComingSoonItems.has(item.name);
+        const isHardcoded = item.name === "Chicken Fry Piece Biryani" || item.name === "Chicken Dum Biryani" ||
+                            item.name === "Pepper Chicken" || item.name === "8 to 8 Chicken";
+
+        // Enable/Disable toggle only for coming-soon category items (not hardcoded ones)
+        const toggleBtn = isComingSoon && !isHardcoded
+            ? isEnabled
+                ? `<button type="button" class="admin-enable-toggle admin-enable-toggle--on" onclick="event.stopPropagation();adminDisableItem('${n}')" title="Disable ordering">\ud83d\udd12 Enabled \u2014 tap to disable</button>`
+                : `<button type="button" class="admin-enable-toggle admin-enable-toggle--off" onclick="event.stopPropagation();adminEnableItem('${n}')" title="Enable ordering">\ud83d\udd13 Enable Order</button>`
+            : '';
+
         const adminControls = `
             <div class="admin-card-controls">
-                <button type="button" class="admin-reorder-btn" onclick="event.stopPropagation();adminMoveItem('${n}',-1)" title="Move Left/Up">◀</button>
-                <button type="button" class="admin-reorder-btn" onclick="event.stopPropagation();adminMoveItem('${n}',1)" title="Move Right/Down">▶</button>
-                <span class="admin-edit-badge" onclick="event.stopPropagation();adminEditItem('${n}')">✏️ Edit</span>
+                <button type="button" class="admin-reorder-btn" onclick="event.stopPropagation();adminMoveItem('${n}',-1)" title="Move Left/Up">\u25c4</button>
+                <button type="button" class="admin-reorder-btn" onclick="event.stopPropagation();adminMoveItem('${n}',1)" title="Move Right/Down">\u25ba</button>
+                <span class="admin-edit-badge" onclick="event.stopPropagation();adminEditItem('${n}')">\u270f\ufe0f Edit</span>
+                ${toggleBtn}
             </div>
         `;
         return defaultHtml.replace("</article>", adminControls + "</article>");

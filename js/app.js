@@ -484,7 +484,7 @@ function buildCard(item, i) {
     const avail = item.available !== false;
     const comingSoon = isCategoryComingSoon(item.category) && !isOrderableItem(item.name);
     const btnLabel = comingSoon ? "Coming Soon" : !avail ? "Not Available" : inCart ? `In Cart (${inCart.qty})` : "Add";
-    const btnClass = !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
+    const btnClass = comingSoon ? "add-btn unavailable-btn" : !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
     return `
     <article class="food-card${!avail ? ' food-card--unavailable' : ''}${comingSoon ? ' food-card--coming-soon' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
         <div class="food-card-img">
@@ -502,32 +502,10 @@ function buildCard(item, i) {
             </div>
             <div class="food-card-foot">
                 ${!comingSoon ? `<span class="food-card-price">₹${item.price}</span>` : '<span class="food-card-price coming-soon-price">Price TBA</span>'}
-                ${comingSoon
-                    ? `<button type="button" class="enable-order-btn" data-enable="${esc(item.name)}">🔓 Enable Order</button>`
-                    : `<button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${!avail ? 'disabled' : ''}>${btnLabel}</button>`
-                }
+                <button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${comingSoon || !avail ? 'disabled' : ''}>${btnLabel}</button>
             </div>
         </div>
     </article>`;
-}
-
-function buildEnableAllBanner(category) {
-    const allItems = getItems().filter(i => i.category === category);
-    const comingSoonItems = allItems.filter(i => isCategoryComingSoon(i.category) && !isOrderableItem(i.name));
-    if (comingSoonItems.length === 0) return '';
-    return `
-    <div class="coming-soon-banner" data-enable-all="${esc(category)}">
-        <div class="coming-soon-banner-info">
-            <span class="coming-soon-banner-icon">🚀</span>
-            <div>
-                <strong>${comingSoonItems.length} ${category} items coming soon</strong>
-                <span>Enable individual items or unlock all at once</span>
-            </div>
-        </div>
-        <button type="button" class="enable-all-btn" data-enable-all="${esc(category)}">
-            Enable All
-        </button>
-    </div>`;
 }
 
 function renderMenu() {
@@ -546,28 +524,13 @@ function renderMenu() {
         }
         empty?.classList.add("is-hidden");
 
-        // Check if this view has any coming-soon items and build banner
-        const hasComingSoon = items.some(i => isCategoryComingSoon(i.category) && !isOrderableItem(i.name));
-        const comingSoonCategory = hasComingSoon
-            ? items.find(i => isCategoryComingSoon(i.category) && !isOrderableItem(i.name))?.category
-            : null;
-
-        let html = hasComingSoon && comingSoonCategory ? buildEnableAllBanner(comingSoonCategory) : '';
+        let html = "";
         let idx = 0;
 
         items.forEach(item => { html += buildCard(item, idx++); });
 
         grid.innerHTML = html;
         bindCardEvents(grid);
-
-        // Bind Enable All button
-        grid.querySelectorAll('.enable-all-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                enableAllComingSoonInCategory(btn.dataset.enableAll);
-            });
-        });
-
         showSkeleton(false);
         syncAddButtons();
         renderAlsoBuy();
@@ -618,16 +581,15 @@ function bindCardEvents(grid) {
     grid.querySelectorAll(".food-card").forEach(card => {
         card.addEventListener("click", e => {
             if (e.target.closest(".add-btn")) return;
-            if (e.target.closest(".enable-order-btn")) return;
             const item = getItems().find(i => i.name === card.dataset.name);
             if (!item) return;
-            if (item.available === false) { 
-                showToast("⛔ Item currently unavailable", true); 
-                return; 
+            if (item.available === false) {
+                showToast("⛔ Item currently unavailable", true);
+                return;
             }
-            if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) { 
-                showToast("⏳ Coming soon — tap 🔓 Enable Order to unlock!", true); 
-                return; 
+            if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) {
+                showToast("⏳ This item is coming soon!", true);
+                return;
             }
             openFoodModal(item);
         });
@@ -635,26 +597,15 @@ function bindCardEvents(grid) {
     grid.querySelectorAll(".add-btn").forEach(btn => {
         btn.addEventListener("click", e => {
             e.stopPropagation();
-            if (btn.classList.contains("unavailable-btn")) { 
-                showToast("⛔ Item currently unavailable", true); 
-                return; 
-            }
+            if (btn.disabled) return;
             const item = getItems().find(i => i.name === btn.dataset.add);
             if (!item) return;
-            if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) { 
-                showToast("⏳ Coming soon — tap 🔓 Enable Order to unlock!", true); 
-                return; 
+            if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) {
+                showToast("⏳ This item is coming soon!", true);
+                return;
             }
             if (cart.find(c => c.name === item.name)) openCart();
             else addToCart(item, 1, btn);
-        });
-    });
-    // Bind Enable Order buttons on individual coming-soon cards
-    grid.querySelectorAll(".enable-order-btn").forEach(btn => {
-        btn.addEventListener("click", e => {
-            e.stopPropagation();
-            const itemName = btn.dataset.enable;
-            if (itemName) enableComingSoonItem(itemName);
         });
     });
 }
