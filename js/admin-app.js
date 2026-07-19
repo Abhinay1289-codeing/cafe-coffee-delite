@@ -1057,7 +1057,9 @@ function openItemAddForm() {
 function populateCategoryDropdown(selectedCategory = "") {
     const dropdown = document.getElementById("editItemCategory");
     if (!dropdown) return;
-    dropdown.innerHTML = CATEGORIES.filter(c => c.id !== "all" && c.id !== "veg").map(c => 
+    // window.CATEGORIES is defined in app.js — filter out "All" catch-all entries (match === null)
+    const cats = (window.CATEGORIES || []).filter(c => c.match !== null);
+    dropdown.innerHTML = cats.map(c =>
         `<option value="${esc(c.label)}"${c.label === selectedCategory ? " selected" : ""}>${esc(c.label)}</option>`
     ).join("");
 }

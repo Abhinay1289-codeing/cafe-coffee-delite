@@ -66,6 +66,11 @@ const SUB_CATEGORIES = {
     ]
 };
 
+/* ===== CATEGORIES flat list (used by admin-app.js) ===== */
+// Flat array of every sub-category across all main categories
+const CATEGORIES = Object.values(SUB_CATEGORIES).flat();
+window.CATEGORIES = CATEGORIES; // expose for admin-app.js
+
 /* ===== STATE ===== */
 let activeMainCategory = "cafe";
 let activeSubCategory = "all";
