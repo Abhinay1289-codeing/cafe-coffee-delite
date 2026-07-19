@@ -7,7 +7,8 @@
 const CONFIG = {
     restaurantName: "Cafe Coffee Delite",
     tagline: "Sip, Savour, Smile",
-    whatsappPhone: "9390952712",   // ← Change to your WhatsApp number
+    whatsappPhone: "9390952712",   // ← Personal number (fallback)
+    whatsappGroup: "https://chat.whatsapp.com/GTJQz0R2W2C9egkBA1toOM", // ← Orders go here
     gstRate: 0.05, // Default 5% rate but disabled
     gstEnabled: false, // Default OFF
     popularItems: [
@@ -80,6 +81,30 @@ let modalItem = null;
 let modalQty = 1;
 let menuItemsCache = [];
 let categoryOverrides = {};
+
+/* ===== COMING SOON ENABLED ITEMS (persisted in localStorage) ===== */
+let enabledComingSoonItems = new Set(
+    JSON.parse(localStorage.getItem('cafeEnabledComingSoon') || '[]')
+);
+
+function saveEnabledComingSoon() {
+    localStorage.setItem('cafeEnabledComingSoon', JSON.stringify([...enabledComingSoonItems]));
+}
+
+function enableComingSoonItem(itemName) {
+    enabledComingSoonItems.add(itemName);
+    saveEnabledComingSoon();
+    renderMenu();
+    showToast(`✅ ${itemName} is now available to order!`);
+}
+
+function enableAllComingSoonInCategory(category) {
+    const items = getItems().filter(i => i.category === category && isCategoryComingSoon(i.category));
+    items.forEach(i => enabledComingSoonItems.add(i.name));
+    saveEnabledComingSoon();
+    renderMenu();
+    showToast(`✅ All ${category} items enabled for ordering!`);
+}
 
 /* ===== TABLE (from URL QR) ===== */
 const urlParams = new URLSearchParams(window.location.search);
@@ -449,7 +474,9 @@ function isCategoryComingSoon(category) {
 }
 
 function isOrderableItem(itemName) {
-    return itemName === "Chicken Fry Piece Biryani" || itemName === "Chicken Dum Biryani";
+    return itemName === "Chicken Fry Piece Biryani" || itemName === "Chicken Dum Biryani" ||
+           itemName === "Pepper Chicken" || itemName === "8 to 8 Chicken" ||
+           enabledComingSoonItems.has(itemName);
 }
 
 function buildCard(item, i) {
@@ -459,11 +486,11 @@ function buildCard(item, i) {
     const btnLabel = comingSoon ? "Coming Soon" : !avail ? "Not Available" : inCart ? `In Cart (${inCart.qty})` : "Add";
     const btnClass = !avail ? "add-btn unavailable-btn" : inCart ? "add-btn in-cart" : "add-btn";
     return `
-    <article class="food-card${!avail ? ' food-card--unavailable' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
+    <article class="food-card${!avail ? ' food-card--unavailable' : ''}${comingSoon ? ' food-card--coming-soon' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
         <div class="food-card-img">
             <img src="${item.image}" alt="${esc(item.name)}" loading="lazy">
             ${item.popular && avail && !comingSoon ? '<span class="food-card-badge">Popular</span>' : ''}
-            ${comingSoon ? '<span class="food-card-badge" style="background-color: #ff9800;">Coming Soon</span>' : ''}
+            ${comingSoon ? '<span class="food-card-badge coming-soon-badge">Coming Soon</span>' : ''}
             ${!avail ? '<span class="food-card-badge unavailable-badge">Unavailable</span>' : ''}
             <span class="veg-indicator ${item.isVeg ? 'veg' : 'nonveg'}"></span>
         </div>
@@ -474,11 +501,33 @@ function buildCard(item, i) {
                 <div class="food-card-meta"><span>⭐ ${item.rating}</span><span>· ${item.prepTime}</span></div>
             </div>
             <div class="food-card-foot">
-                ${!comingSoon ? `<span class="food-card-price">₹${item.price}</span>` : '<span class="food-card-price" style="opacity: 0.5; color: #999;">Price TBA</span>'}
-                <button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${!avail ? 'disabled' : ''}>${btnLabel}</button>
+                ${!comingSoon ? `<span class="food-card-price">₹${item.price}</span>` : '<span class="food-card-price coming-soon-price">Price TBA</span>'}
+                ${comingSoon
+                    ? `<button type="button" class="enable-order-btn" data-enable="${esc(item.name)}">🔓 Enable Order</button>`
+                    : `<button type="button" class="${btnClass}" data-add="${esc(item.name)}" ${!avail ? 'disabled' : ''}>${btnLabel}</button>`
+                }
             </div>
         </div>
     </article>`;
+}
+
+function buildEnableAllBanner(category) {
+    const allItems = getItems().filter(i => i.category === category);
+    const comingSoonItems = allItems.filter(i => isCategoryComingSoon(i.category) && !isOrderableItem(i.name));
+    if (comingSoonItems.length === 0) return '';
+    return `
+    <div class="coming-soon-banner" data-enable-all="${esc(category)}">
+        <div class="coming-soon-banner-info">
+            <span class="coming-soon-banner-icon">🚀</span>
+            <div>
+                <strong>${comingSoonItems.length} ${category} items coming soon</strong>
+                <span>Enable individual items or unlock all at once</span>
+            </div>
+        </div>
+        <button type="button" class="enable-all-btn" data-enable-all="${esc(category)}">
+            Enable All
+        </button>
+    </div>`;
 }
 
 function renderMenu() {
@@ -497,13 +546,28 @@ function renderMenu() {
         }
         empty?.classList.add("is-hidden");
 
-        let html = "";
+        // Check if this view has any coming-soon items and build banner
+        const hasComingSoon = items.some(i => isCategoryComingSoon(i.category) && !isOrderableItem(i.name));
+        const comingSoonCategory = hasComingSoon
+            ? items.find(i => isCategoryComingSoon(i.category) && !isOrderableItem(i.name))?.category
+            : null;
+
+        let html = hasComingSoon && comingSoonCategory ? buildEnableAllBanner(comingSoonCategory) : '';
         let idx = 0;
 
         items.forEach(item => { html += buildCard(item, idx++); });
 
         grid.innerHTML = html;
         bindCardEvents(grid);
+
+        // Bind Enable All button
+        grid.querySelectorAll('.enable-all-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                enableAllComingSoonInCategory(btn.dataset.enableAll);
+            });
+        });
+
         showSkeleton(false);
         syncAddButtons();
         renderAlsoBuy();
@@ -554,6 +618,7 @@ function bindCardEvents(grid) {
     grid.querySelectorAll(".food-card").forEach(card => {
         card.addEventListener("click", e => {
             if (e.target.closest(".add-btn")) return;
+            if (e.target.closest(".enable-order-btn")) return;
             const item = getItems().find(i => i.name === card.dataset.name);
             if (!item) return;
             if (item.available === false) { 
@@ -561,7 +626,7 @@ function bindCardEvents(grid) {
                 return; 
             }
             if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) { 
-                alert(`${item.name} is coming soon! We'll add it to the menu once available.`); 
+                showToast("⏳ Coming soon — tap 🔓 Enable Order to unlock!", true); 
                 return; 
             }
             openFoodModal(item);
@@ -577,11 +642,19 @@ function bindCardEvents(grid) {
             const item = getItems().find(i => i.name === btn.dataset.add);
             if (!item) return;
             if (isCategoryComingSoon(item.category) && !isOrderableItem(item.name)) { 
-                alert(`${item.name} is coming soon! We'll add it to the menu once available.`); 
+                showToast("⏳ Coming soon — tap 🔓 Enable Order to unlock!", true); 
                 return; 
             }
             if (cart.find(c => c.name === item.name)) openCart();
             else addToCart(item, 1, btn);
+        });
+    });
+    // Bind Enable Order buttons on individual coming-soon cards
+    grid.querySelectorAll(".enable-order-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.stopPropagation();
+            const itemName = btn.dataset.enable;
+            if (itemName) enableComingSoonItem(itemName);
         });
     });
 }
@@ -801,6 +874,29 @@ function closeScreens() {
     document.body.style.overflow = "";
 }
 
+/* ===== HELPER: copy message & open WhatsApp group (desktop fallback) ===== */
+function _copyAndOpenGroup(msg, groupUrl) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg)
+            .then(() => showToast("📋 Order copied! Open the WhatsApp group & paste to send."))
+            .catch(() => showToast("📲 Opening WhatsApp group — paste your order & send."));
+    } else {
+        try {
+            const ta = document.createElement("textarea");
+            ta.value = msg;
+            ta.style.cssText = "position:fixed;opacity:0;pointer-events:none;";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            showToast("📋 Order copied! Paste it in the WhatsApp group & send.");
+        } catch {
+            showToast("📲 Opening WhatsApp group — type your order there.");
+        }
+    }
+    window.open(groupUrl, "_blank");
+}
+
 function placeOrder() {
     const tableRaw = $("checkoutTable")?.value.trim();
     if (!tableRaw) {
@@ -856,8 +952,24 @@ ${gstLine}*Total    : ₹${total}*
         }).catch(e => console.error('[SB] Failed to save order:', e));
     }
 
-    const url = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank");
+    // ✅ Send order — use Web Share API on mobile (no paste needed!)
+    //    Falls back to clipboard copy + open group on desktop
+    const groupUrl = CONFIG.whatsappGroup || `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+
+    if (navigator.share) {
+        // Mobile: native share sheet opens → pick WhatsApp → select group → message already typed → just hit Send
+        navigator.share({ text: msg })
+            .then(() => showToast("✅ Order sent to WhatsApp!"))
+            .catch(err => {
+                // User cancelled or share failed — fall back to group link + clipboard
+                if (err.name !== "AbortError") {
+                    _copyAndOpenGroup(msg, groupUrl);
+                }
+            });
+    } else {
+        // Desktop fallback: copy to clipboard + open group
+        _copyAndOpenGroup(msg, groupUrl);
+    }
 
     closeScreens();
     $("screenSuccess")?.classList.add("open");
@@ -912,11 +1024,16 @@ function initWaiter() {
             const tableNum = getTableNumber() || "Unknown";
             const labels = { water: "Need Water 💧", bill: "Need Bill 🧾", help: "Need Assistance 🙋", call: "Call Waiter 🛎️" };
             const msg = `🛎️ *${labels[type] || "Request"}*\n🪑 Table #${tableNum}\n— ${CONFIG.restaurantName}`;
-            window.open(`https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`, "_blank");
+            const groupUrl = CONFIG.whatsappGroup || `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+            // Copy to clipboard then open group
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(msg).catch(() => {});
+            }
+            window.open(groupUrl, "_blank");
             $("waiterModal")?.classList.remove("open");
             $("waiterModal")?.setAttribute("aria-hidden", "true");
             document.body.style.overflow = "";
-            showToast("Request sent to staff ✅");
+            showToast("Request copied & sent to staff ✅");
         });
     });
     // Close waiter modal on backdrop/close button

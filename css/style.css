@@ -2914,3 +2914,213 @@ input:checked + .switch-slider:before {
     vertical-align: middle;
 }
 
+/* ===== COMING SOON — CARD STYLES ===== */
+.food-card--coming-soon {
+    opacity: 0.88;
+}
+
+.food-card--coming-soon .food-card-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.food-card-badge.coming-soon-badge {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.45);
+}
+
+.coming-soon-price {
+    opacity: 0.5;
+    color: var(--muted) !important;
+    font-style: italic;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+}
+
+/* ===== ENABLE ORDER BUTTON ===== */
+.enable-order-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 13px;
+    border: 1.5px solid #ff9800;
+    border-radius: 50px;
+    background: rgba(255, 152, 0, 0.10);
+    color: #e65100;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.enable-order-btn:hover {
+    background: rgba(255, 152, 0, 0.22);
+    box-shadow: 0 3px 12px rgba(255, 152, 0, 0.35);
+}
+
+.enable-order-btn:active {
+    transform: scale(0.93);
+}
+
+[data-theme="dark"] .enable-order-btn {
+    border-color: #ffb74d;
+    color: #ffb74d;
+    background: rgba(255, 183, 77, 0.10);
+}
+
+[data-theme="dark"] .enable-order-btn:hover {
+    background: rgba(255, 183, 77, 0.20);
+}
+
+/* ===== COMING SOON BANNER (Enable All) ===== */
+.coming-soon-banner {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    margin-bottom: 4px;
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.12), rgba(255, 87, 34, 0.08));
+    border: 1.5px solid rgba(255, 152, 0, 0.35);
+    border-radius: var(--radius);
+    animation: fadeUp 0.4s ease backwards;
+}
+
+.coming-soon-banner-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.coming-soon-banner-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 152, 0, 0.15);
+    border-radius: 10px;
+}
+
+.coming-soon-banner-info strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.25;
+}
+
+.coming-soon-banner-info span {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+/* ===== ENABLE ALL BUTTON ===== */
+.enable-all-btn {
+    flex-shrink: 0;
+    padding: 9px 18px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgba(255, 152, 0, 0.4);
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+}
+
+.enable-all-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.55);
+}
+
+.enable-all-btn:active {
+    transform: scale(0.94);
+}
+
+/* ===== WHATSAPP GROUP INSTRUCTION (checkout) ===== */
+.wa-group-instruction {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(37, 211, 102, 0.10), rgba(37, 211, 102, 0.05));
+    border: 1.5px solid rgba(37, 211, 102, 0.35);
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--text);
+}
+.wa-group-instruction-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+.wa-group-instruction strong { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 3px; color: #1a7a3c; }
+[data-theme="dark"] .wa-group-instruction strong { color: #4ade80; }
+.wa-group-instruction span { color: var(--muted); }
+.wa-group-instruction b { color: var(--text); font-weight: 700; }
+
+/* ===== PASTE INSTRUCTION BOX (success screen) ===== */
+.paste-instruction-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 auto 24px;
+    max-width: 320px;
+    padding: 18px;
+    background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.04));
+    border: 1.5px solid rgba(37, 211, 102, 0.30);
+    border-radius: var(--radius);
+    text-align: left;
+}
+.paste-step { display: flex; align-items: flex-start; gap: 12px; font-size: 0.82rem; color: var(--text); line-height: 1.45; }
+.paste-step-num {
+    flex-shrink: 0; width: 24px; height: 24px;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: #fff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 800; margin-top: 1px;
+}
+.paste-step strong { font-weight: 700; color: #128c7e; }
+[data-theme="dark"] .paste-step strong { color: #4ade80; }
+
+/* ===== FULL SCREEN (success/checkout) ===== */
+.full-screen {
+    position: fixed; inset: 0; z-index: 5000;
+    background: var(--bg); overflow-y: auto;
+    transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex; flex-direction: column;
+}
+.full-screen.open { transform: translateY(0); }
+.screen-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    font-weight: 800; font-size: 1rem; position: sticky; top: 0;
+    background: var(--glass); backdrop-filter: blur(12px); z-index: 10;
+}
+.screen-back { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text); padding: 4px 8px; }
+.screen-body { padding: 20px 16px 40px; flex: 1; }
+#confettiLayer { position: fixed; inset: 0; pointer-events: none; z-index: 5500; }
+.confetti-piece {
+    position: absolute; top: -10px; width: 8px; height: 14px; border-radius: 2px;
+    animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
