@@ -2,6 +2,23 @@
  * Cafe Coffee Delite — Admin Panel Visual Editor Script
  */
 
+/* ===== HELPER: Format WhatsApp Number ===== */
+function formatWhatsAppNumber(number) {
+    if (!number) return "";
+    // Remove any non-digit characters
+    const digits = number.replace(/\D/g, "");
+    // If it starts with 91 and is 12 digits, use as-is
+    if (digits.startsWith("91") && digits.length === 12) {
+        return digits;
+    }
+    // If it's 10 digits, prepend 91 (India country code)
+    if (digits.length === 10) {
+        return `91${digits}`;
+    }
+    // Otherwise, return as-is
+    return digits;
+}
+
 /* ===== AUTHENTICATION (Supabase) ===== */
 const loginOverlay = document.getElementById("adminLoginOverlay");
 const loginForm = document.getElementById("adminLoginForm");

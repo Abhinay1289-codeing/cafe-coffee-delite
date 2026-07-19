@@ -4,6 +4,22 @@
  */
 
 /* ===== CONFIG ===== */
+function formatWhatsAppNumber(number) {
+    if (!number) return "";
+    // Remove any non-digit characters
+    const digits = number.replace(/\D/g, "");
+    // If it starts with 91 and is 12 digits, use as-is
+    if (digits.startsWith("91") && digits.length === 12) {
+        return digits;
+    }
+    // If it's 10 digits, prepend 91 (India country code)
+    if (digits.length === 10) {
+        return `91${digits}`;
+    }
+    // Otherwise, return as-is
+    return digits;
+}
+
 const CONFIG = {
     restaurantName: "Cafe Coffee Delite",
     tagline: "Sip, Savour, Smile",
@@ -918,7 +934,8 @@ ${gstLine}*Total    : ₹${total}*
     }
 
     // ✅ Send directly to WhatsApp without any clipboard copying
-    const whatsappUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+    const formattedNumber = formatWhatsAppNumber(CONFIG.whatsappPhone);
+    const whatsappUrl = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(msg)}`;
     window.open(whatsappUrl, "_blank");
 
     closeScreens();
@@ -974,8 +991,9 @@ function initWaiter() {
             const tableNum = getTableNumber() || "Unknown";
             const labels = { water: "Need Water 💧", bill: "Need Bill 🧾", help: "Need Assistance 🙋", call: "Call Waiter 🛎️" };
             const msg = `🛎️ *${labels[type] || "Request"}*\n🪑 Table #${tableNum}\n— ${CONFIG.restaurantName}`;
-            const whatsappUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
-            window.open(whatsappUrl, "_blank");
+            const formattedNumber = formatWhatsAppNumber(CONFIG.whatsappPhone);
+        const whatsappUrl = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(msg)}`;
+        window.open(whatsappUrl, "_blank");
             $("waiterModal")?.classList.remove("open");
             $("waiterModal")?.setAttribute("aria-hidden", "true");
             document.body.style.overflow = "";
