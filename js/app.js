@@ -80,6 +80,7 @@ let modalItem = null;
 let modalQty = 1;
 let menuItemsCache = [];
 let categoryOverrides = {};
+let hasAttemptedSupabaseLoad = false;
 
 /* ===== COMING SOON ENABLED ITEMS (persisted in localStorage) ===== */
 let enabledComingSoonItems = new Set(
@@ -177,10 +178,15 @@ function getItems() {
       category: categoryOverrides[item.category] || item.category
     })).map(enrichItem);
   }
-  return (menuData.restaurant || []).map(enrichItem);
+  if (!hasAttemptedSupabaseLoad) {
+    return (menuData.restaurant || []).map(enrichItem);
+  }
+  // If we've already tried to load from Supabase, return empty array instead of falling back
+  return [];
 }
 
 async function loadDataFromSupabase() {
+  hasAttemptedSupabaseLoad = true;
   if (!window.sb) return;
 
   try {

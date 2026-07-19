@@ -307,6 +307,8 @@ function initVisualEditor() {
     document.getElementById("adminLogoutBtn")?.addEventListener("click", logoutAdmin);
 }
 
+let hasAttemptedSupabaseLoad = false;
+
 /* ===== HERO LAYOUT EDITOR ===== */
 
 const heroEditorDock = document.getElementById("heroEditorDock");
@@ -776,10 +778,14 @@ function getItems() {
       category: categoryOverrides[item.category] || item.category
     }));
   }
-  return menuData.restaurant || [];
+  if (!hasAttemptedSupabaseLoad) {
+    return menuData.restaurant || [];
+  }
+  return [];
 }
 
 async function loadDataFromSupabaseAdmin() {
+  hasAttemptedSupabaseLoad = true;
   if (!window.sb) return;
 
   try {
