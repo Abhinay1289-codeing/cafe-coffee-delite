@@ -911,24 +911,9 @@ ${gstLine}*Total    : ₹${total}*
         }).catch(e => console.error('[SB] Failed to save order:', e));
     }
 
-    // ✅ Send order — use Web Share API on mobile (no paste needed!)
-    //    Falls back to clipboard copy + open group on desktop
-    const groupUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
-
-    if (navigator.share) {
-        // Mobile: native share sheet opens → pick WhatsApp → select group → message already typed → just hit Send
-        navigator.share({ text: msg })
-            .then(() => showToast("✅ Order sent to WhatsApp!"))
-            .catch(err => {
-                // User cancelled or share failed — fall back to group link + clipboard
-                if (err.name !== "AbortError") {
-                    _copyAndOpenGroup(msg, groupUrl);
-                }
-            });
-    } else {
-        // Desktop fallback: copy to clipboard + open group
-        _copyAndOpenGroup(msg, groupUrl);
-    }
+    // ✅ Send directly to WhatsApp without any clipboard copying
+    const whatsappUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+    window.open(whatsappUrl, "_blank");
 
     closeScreens();
     $("screenSuccess")?.classList.add("open");
@@ -983,16 +968,12 @@ function initWaiter() {
             const tableNum = getTableNumber() || "Unknown";
             const labels = { water: "Need Water 💧", bill: "Need Bill 🧾", help: "Need Assistance 🙋", call: "Call Waiter 🛎️" };
             const msg = `🛎️ *${labels[type] || "Request"}*\n🪑 Table #${tableNum}\n— ${CONFIG.restaurantName}`;
-            const groupUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
-            // Copy to clipboard then open group
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(msg).catch(() => {});
-            }
-            window.open(groupUrl, "_blank");
+            const whatsappUrl = `https://wa.me/${CONFIG.whatsappPhone}?text=${encodeURIComponent(msg)}`;
+            window.open(whatsappUrl, "_blank");
             $("waiterModal")?.classList.remove("open");
             $("waiterModal")?.setAttribute("aria-hidden", "true");
             document.body.style.overflow = "";
-            showToast("Request copied & sent to staff ✅");
+            showToast("Request sent to staff ✅");
         });
     });
     // Close waiter modal on backdrop/close button
