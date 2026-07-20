@@ -1,0 +1,25 @@
+{
+  "hosting": {
+    "site": "cafe-and-restaurant-13587",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "setup.sql",
+      "menu-data.js",
+      "env.template.js",
+      "inject-env.js",
+      "*.template.html",
+      "README.md",
+      "package.json",
+      "package-lock.json"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
