@@ -1248,11 +1248,11 @@
         }
         // IN-APP AUTO-UPDATE SYSTEM
         const CURRENT_APP_VERSION = 2; // Version Code
-        let latestApkUrl = 'https://cafeapp-d118d.web.app/Cafe_Orders_Debug.apk';
+        let latestApkUrl = 'https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk';
 
         async function checkAppUpdates() {
             try {
-                const res = await fetch('version.json?t=' + Date.now());
+                const res = await fetch('https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/version.json?t=' + Date.now());
                 if (!res.ok) return;
                 const data = await res.json();
                 
