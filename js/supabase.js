@@ -133,11 +133,24 @@ async function sbSaveCategoryOverride(catId, label) {
 
 /* ===== ORDERS ===== */
 
+let _lastSavedOrderTime = 0;
+let _lastSavedOrderHash = '';
+
 async function sbSaveOrder(orderData) {
     if (!_supaClient) {
         console.error('[SB] Supabase client not initialized');
         return null;
     }
+
+    const currentHash = `${orderData.tableNumber}_${orderData.total}_${JSON.stringify(orderData.items)}`;
+    const now = Date.now();
+    if (currentHash === _lastSavedOrderHash && (now - _lastSavedOrderTime) < 3000) {
+        console.warn('[SB] Duplicate order submission prevented by client lock');
+        return true;
+    }
+    _lastSavedOrderHash = currentHash;
+    _lastSavedOrderTime = now;
+
     const { data, error } = await _supaClient.from('orders').insert([{
         table_number: String(orderData.tableNumber || '').trim(),
         customer_name: orderData.customerName || 'Guest',

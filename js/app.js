@@ -1051,31 +1051,28 @@ function _copyAndOpenGroup(msg, groupUrl) {
     window.open(groupUrl, "_blank");
 }
 
+let _isPlacingOrder = false;
+
 async function placeOrder() {
+    if (_isPlacingOrder) return;
+    _isPlacingOrder = true;
+
+    const placeBtn = $("placeOrderBtn");
+    if (placeBtn) {
+        placeBtn.disabled = true;
+        placeBtn.textContent = "⏳ Sending Order to Kitchen...";
+    }
+
     const tableRaw = $("checkoutTable")?.value.trim();
     if (!tableRaw) {
         showToast("⚠️ Please enter your table number", true);
         $("checkoutTable")?.focus();
+        _isPlacingOrder = false;
+        if (placeBtn) {
+            placeBtn.disabled = false;
+            placeBtn.textContent = "🚀 Confirm & Send Order to Kitchen";
+        }
         return;
-    }
-    const tableNum = tableRaw.replace(/^#/, "");
-    const name = $("checkoutName")?.value.trim() || "Guest";
-    const phone = $("checkoutPhone")?.value.trim();
-    const notes = $("checkoutNotes")?.value.trim();
-
-    let sub = 0;
-    const itemsList = cart.map(i => {
-        sub += i.price * i.qty;
-        return { name: i.name, qty: i.qty, price: i.price };
-    });
-    const gst = Math.round(sub * CONFIG.gstRate);
-    const total = CONFIG.gstEnabled ? sub + gst : sub;
-
-    const placeBtn = $("placeOrderBtn");
-    if (placeBtn) {
-        if (placeBtn.disabled) return;
-        placeBtn.disabled = true;
-        placeBtn.textContent = "⏳ Sending Order to Kitchen...";
     }
 
     // Save order directly to Supabase Cloud Database (triggers real-time update on admin dashboard)
@@ -1120,6 +1117,7 @@ async function placeOrder() {
     showToast("🎉 Order sent directly to kitchen!");
     launchConfetti();
     startOrderTracking();
+    setTimeout(() => { _isPlacingOrder = false; }, 2000);
 }
 
 function launchConfetti() {
