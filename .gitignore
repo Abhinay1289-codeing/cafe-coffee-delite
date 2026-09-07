@@ -1,9 +1,18 @@
-# Environment Variables
+# Environment Variables & Service Accounts
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+firebase-service-account.json
+
+# Android & Build Outputs
+android/app/build/
+android/build/
+android/.gradle/
+android/.idea/
+android/captures/
+.firebase/
 
 # Don't commit HTML files with injected env vars (we have templates that use placeholders)
 index.html

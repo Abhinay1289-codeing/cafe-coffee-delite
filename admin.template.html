@@ -391,9 +391,16 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/menu-data.js"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/admin-app.js"></script>
+    <script src="js/menu-data.js?v=4"></script>
+    <script src="js/supabase.js?v=4"></script>
+    <script src="js/app.js?v=4"></script>
+    <script src="js/admin-app.js?v=4"></script>
+
+<!-- Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(err => console.error('SW registration failed:', err));
+}
+</script>
 </body>
 </html>

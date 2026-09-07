@@ -1,21 +1,93 @@
 {
   "hosting": {
-    "site": "cafe-and-restaurant-13587",
+    "site": "cafeapp-d118d",
     "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
+      "android/**",
       "setup.sql",
-      "menu-data.js",
       "env.template.js",
       "inject-env.js",
       "*.template.html",
       "README.md",
       "package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "setup-new-account.sql",
+      "fix-*.sql",
+      "insert-*.sql",
+      "update-*.sql",
+      "assets/BIRYANIS/**",
+      "assets/BLENDED-BREWS/**",
+      "assets/BURGERS*/**",
+      "assets/CHINESE/**",
+      "assets/COLD-BREWS/**",
+      "assets/DESSERTS*/**",
+      "assets/FRIED-FOOD*/**",
+      "assets/Fried Rice*/**",
+      "assets/HOT-*/**",
+      "assets/LASSIS/**",
+      "assets/MAGGI*/**",
+      "assets/MILK-SHAKES/**",
+      "assets/MOCKTAILS/**",
+      "assets/Mutton Starters/**",
+      "assets/Non-Veg Starters/**",
+      "assets/OMELETTES/**",
+      "assets/PASTA*/**",
+      "assets/PIZZAS*/**",
+      "assets/ROLLS*/**",
+      "assets/SANDWICHES*/**",
+      "assets/SOFT-DRINKS/**",
+      "assets/Soups/**",
+      "assets/TEAS/**",
+      "assets/Veg Starters/**",
+      "assets/WAFFLES*/**",
+      "*.pdf"
     ],
+    "headers": [
+      {
+        "source": "assets/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=604800"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(html|json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ],
+    "cleanUrls": true,
     "rewrites": [
+      {
+        "source": "/admin-orders",
+        "destination": "/admin-orders.html"
+      },
+      {
+        "source": "/admin",
+        "destination": "/admin.html"
+      },
+      {
+        "source": "/table",
+        "destination": "/table.html"
+      },
       {
         "source": "**",
         "destination": "/index.html"

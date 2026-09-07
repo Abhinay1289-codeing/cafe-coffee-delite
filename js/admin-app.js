@@ -121,7 +121,9 @@ function initVisualEditor() {
         const isComingSoon = isCategoryComingSoon(item.category);
         const isEnabled = enabledComingSoonItems.has(item.name);
         const isHardcoded = item.name === "Chicken Fry Piece Biryani" || item.name === "Chicken Dum Biryani" ||
-                            item.name === "Pepper Chicken" || item.name === "8 to 8 Chicken";
+                            item.name === "Banana Leaf Biryani" ||
+                            item.name === "Pepper Chicken" || item.name === "8 to 8 Chicken" ||
+                            item.name === "Chilli Chicken" || item.name === "Schezwan Chicken";
 
         // Enable/Disable toggle only for coming-soon category items (not hardcoded ones)
         const toggleBtn = isComingSoon && !isHardcoded
@@ -834,12 +836,7 @@ async function loadDataFromSupabaseAdmin() {
 }
 
 function addCacheBuster(url) {
-  if (!url) return url;
-  // Don't add cache buster to data URLs
-  if (url.startsWith('data:')) return url;
-  // Add or update timestamp query parameter
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}_t=${Date.now()}`;
+  return url;
 }
 
 function applyBrand() {
@@ -1246,6 +1243,7 @@ function openSettingsForm() {
     document.getElementById("settingsChineseComingSoon").checked = CONFIG.chineseComingSoon !== false;
     document.getElementById("settingsSoupFreeOffer").checked = CONFIG.soupFreeOffer !== false;
     document.getElementById("settingsGstEnabled").checked = CONFIG.gstEnabled === true;
+    document.getElementById("settingsWaiterEnabled").checked = CONFIG.waiterEnabled === true;
 
     settingsModal.classList.add("open");
     settingsModal.setAttribute("aria-hidden", "false");
@@ -1263,6 +1261,7 @@ if (settingsForm) {
         CONFIG.biryanisComingSoon = document.getElementById("settingsBiryanisComingSoon").checked;
         CONFIG.chineseComingSoon = document.getElementById("settingsChineseComingSoon").checked;
         CONFIG.soupFreeOffer = document.getElementById("settingsSoupFreeOffer").checked;
+        CONFIG.waiterEnabled = document.getElementById("settingsWaiterEnabled").checked;
 
         await saveConfig();
         applyBrand();

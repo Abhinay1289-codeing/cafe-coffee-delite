@@ -27,20 +27,22 @@ const CONFIG = {
     gstRate: 0.05, // Default 5% rate but disabled
     gstEnabled: false, // Default OFF
     popularItems: [
-        "Snack Combo",
-        "Cappuccino",
-        "Cold Coffee",
-        "Chicken Burger",
-        "Chocolate Brownie"
+        "Chicken Fry Piece Biryani",
+        "Chicken Dum Biryani",
+        "Banana Leaf Biryani",
+        "Spicy Mexican Chicken Pizza",
+        "Veg Momos (Steamed/Fried) (5 Pcs)",
+        "Corn Samosa (4 Pcs)"
     ],
-    biryanisComingSoon: true,
-    chineseComingSoon: true,
-    soupFreeOffer: true
+    biryanisComingSoon: false,
+    chineseComingSoon: false,
+    waiterEnabled: false
 };
 
 /* ===== MAIN & SUB CATEGORIES ===== */
 const MAIN_CATEGORIES = [
     { id: "cafe", label: "Cafe", icon: "☕" },
+    { id: "starters", label: "Starters", icon: "🍢" },
     { id: "biryanis", label: "Biryanis", icon: "🍚" },
     { id: "chinese", label: "Chinese", icon: "🍜" }
 ];
@@ -71,14 +73,23 @@ const SUB_CATEGORIES = {
         { id: "burgers",          label: "Burgers",             icon: "🍔", match: ["Burgers"] },
         { id: "desserts-ice-creams",label: "Desserts & Ice Creams", icon: "🍨", match: ["Desserts & Ice Creams"] }
     ],
+    starters: [
+        { id: "all-starters",    label: "All Starters",      icon: "🎉", match: null },
+        { id: "veg-starters",    label: "Veg Starters",      icon: "🥬", match: ["Veg Starters"] },
+        { id: "nonveg-starters", label: "Non-Veg Starters",  icon: "🍗", match: ["Starters"] }
+    ],
     biryanis: [
-        { id: "all-biryani",   label: "All Biryanis", icon: "🎉", match: null },
-        { id: "chicken-biryani", label: "Chicken Biryanis", icon: "🍗", match: ["Biryanis"] },
-        { id: "veg-biryani",     label: "Veg Biryanis", icon: "🥬", match: ["Biryanis"] }
+        { id: "all-biryani",     label: "All Biryanis",     icon: "🎉", match: null },
+        { id: "nonveg-biryani",  label: "Non-Veg Biryanis", icon: "🍗", match: ["Biryanis"] },
+        { id: "veg-biryani",     label: "Veg Biryanis",     icon: "🥬", match: ["Veg Biryanis"] }
     ],
     chinese: [
-        { id: "all-chinese", label: "All Chinese", icon: "🎉", match: null },
-        { id: "chinese-starters", label: "Starters", icon: "🥢", match: ["Chinese"] }
+        { id: "all-chinese", label: "All Chinese & Mains", icon: "🎉", match: null },
+        { id: "starters", label: "Non-Veg Starters", icon: "🍗", match: ["Starters", "Chinese"] },
+        { id: "veg-starters", label: "Veg Starters", icon: "🥬", match: ["Veg Starters"] },
+        { id: "soups", label: "Soups", icon: "🍲", match: ["Soups"] },
+        { id: "fried-rice", label: "Fried Rice", icon: "🍚", match: ["Fried Rice", "Veg Fried Rice"] },
+        { id: "rice", label: "Rice", icon: "🍛", match: ["Rice"] }
     ]
 };
 
@@ -97,6 +108,97 @@ let modalQty = 1;
 let menuItemsCache = [];
 let categoryOverrides = {};
 let hasAttemptedSupabaseLoad = false;
+
+/* ===== VARIANT PICKER ===== */
+let pendingVariantItem = null;
+let pendingVariantBtnEl = null;
+
+/**
+ * Detects items with choices like "(Steamed/Fried)" or "(Sweet / Salt)".
+ * Returns { options: string[], label: string } or null.
+ */
+function parseVariants(name) {
+    // Match any parenthesised group that contains a "/"
+    const match = name.match(/\(([^)]+\/[^)]+)\)/);
+    if (!match) return null;
+    const parts = match[1].split('/').map(s => s.trim()).filter(Boolean);
+    return parts.length >= 2 ? { options: parts, label: match[0] } : null;
+}
+
+function openVariantPicker(item, btnEl) {
+    const variants = parseVariants(item.name);
+    if (!variants) {
+        // No variant — add directly
+        addToCart(item, 1, btnEl);
+        return;
+    }
+    pendingVariantItem = item;
+    pendingVariantBtnEl = btnEl;
+
+    // Build clean title without the variant group
+    const cleanName = item.name.replace(variants.label, '').trim().replace(/\s{2,}/g, ' ');
+    const titleEl = $("variantModalTitle");
+    if (titleEl) titleEl.textContent = cleanName || item.name;
+
+    const optsEl = $("variantOptions");
+    if (optsEl) {
+        // Emoji map for common options
+        const iconMap = {
+            steamed: '♨️', fried: '🍳', sweet: '🍬', salt: '🧂', salted: '🧂',
+            spicy: '🌶️', mild: '😊', veg: '🥬', nonveg: '🍗'
+        };
+        optsEl.innerHTML = variants.options.map(opt => {
+            const icon = iconMap[opt.toLowerCase()] || '✅';
+            return `<button type="button" class="variant-option-btn" data-variant="${esc(opt)}">${icon} ${esc(opt)}</button>`;
+        }).join('');
+        optsEl.querySelectorAll('.variant-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const chosen = btn.dataset.variant;
+                addToCartWithVariant(pendingVariantItem, chosen, 1, pendingVariantBtnEl);
+                closeVariantPicker();
+            });
+        });
+    }
+
+    const modal = $("variantModal");
+    modal?.classList.add('open');
+    modal?.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVariantPicker() {
+    const modal = $("variantModal");
+    modal?.classList.remove('open');
+    modal?.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    pendingVariantItem = null;
+    pendingVariantBtnEl = null;
+}
+
+function addToCartWithVariant(item, variant, qty = 1, btnEl = null) {
+    const variants = parseVariants(item.name);
+    // Build the display name substituting the variant group
+    const displayName = variants
+        ? item.name.replace(variants.label, `(${variant})`).replace(/\s{2,}/g, ' ').trim()
+        : item.name;
+
+    const ex = cart.find(c => c.name === displayName);
+    if (ex) ex.qty += qty;
+    else cart.push({ ...item, name: displayName, qty, notes: '' });
+
+    updateCartUI();
+    if (btnEl) flyToCart(item.image, btnEl);
+    const fc = $("floatCart");
+    fc?.classList.remove("pulse-once");
+    void fc?.offsetWidth;
+    fc?.classList.add("pulse-once");
+    const hc = $("headerCartBtn");
+    hc?.classList.remove("bump");
+    void hc?.offsetWidth;
+    hc?.classList.add("bump");
+    setTimeout(() => hc?.classList.remove("bump"), 500);
+    showToast(`✅ Added ${displayName}`);
+}
 
 /* ===== COMING SOON ENABLED ITEMS (persisted in localStorage) ===== */
 let enabledComingSoonItems = new Set(
@@ -155,9 +257,34 @@ function showToast(msg, isError = false) {
     setTimeout(() => t.remove(), 2800);
 }
 
+// Items whose names don't contain obvious non-veg keywords but are still non-veg
+const NON_VEG_OVERRIDES = new Set([
+    "banana leaf biryani",
+    "mutton biryani",
+    "mutton fry piece biryani",
+    "mixed biryani",
+    "mixed mughlai biryani",
+    "pot biryani",
+    "kheema biryani",
+    "highway delite spl biryani",
+    "8 to 8 chicken",
+    "highway delite spl (chicken)",
+    "mutton 65",
+    "mutton manchurian",
+    "chilli mutton",
+    "mutton roast",
+    "pepper mutton",
+    "sezwan mutton",
+    "mutton fried rice",
+    "spl mutton fried rice",
+    "spl highway delite fried rice",
+    "sambar rice with chicken fry"
+]);
+
 function isVeg(item) {
     const n = item.name.toLowerCase();
-    return !(n.includes("chicken") || n.includes("fish") || n.includes("egg") || n.includes("pepperoni"));
+    if (NON_VEG_OVERRIDES.has(n)) return false;
+    return !(n.includes("chicken") || n.includes("mutton") || n.includes("fish") || n.includes("egg") || n.includes("pepperoni") || n.includes("kheema") || n.includes("keema") || n.includes("prawn") || n.includes("shrimp"));
 }
 
 const INGREDIENT_MAP = {
@@ -188,17 +315,9 @@ function enrichItem(item) {
 }
 
 function getItems() {
-  if (menuItemsCache.length > 0) {
-    return menuItemsCache.map(item => ({
-      ...item,
-      category: categoryOverrides[item.category] || item.category
-    })).map(enrichItem);
-  }
-  if (!hasAttemptedSupabaseLoad) {
-    return (menuData.restaurant || []).map(enrichItem);
-  }
-  // If we've already tried to load from Supabase, return empty array instead of falling back
-  return [];
+  // SUPABASE DISABLED: Always use local menu-data.js as primary source.
+  // When Supabase is re-enabled, the cache block above will take over automatically.
+  return (menuData.restaurant || []).map(enrichItem);
 }
 
 async function loadDataFromSupabase() {
@@ -213,7 +332,21 @@ async function loadDataFromSupabase() {
     ]);
 
     if (menuItems && menuItems.length > 0) {
-      menuItemsCache = menuItems.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+      // Image priority:
+      //  1. If admin updated the image in Supabase (data URL or non-Unsplash URL) → use Supabase
+      //  2. Otherwise (still the default Unsplash URL or empty) → use local assets from menu-data.js
+      const localImageMap = {};
+      (menuData.restaurant || []).forEach(item => { localImageMap[item.name] = item.image; });
+      menuItemsCache = menuItems
+        .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+        .map(item => {
+          const dbImg = item.image || '';
+          const localImg = localImageMap[item.name] || '';
+          // Use base64 data URLs from DB if admin manually uploaded, otherwise use localImg asset
+          const isUploadedDataUrl = dbImg.startsWith('data:');
+          const finalImg = isUploadedDataUrl ? dbImg : (localImg || dbImg);
+          return { ...item, image: finalImg };
+        });
     }
 
     if (configData) {
@@ -234,12 +367,7 @@ async function loadDataFromSupabase() {
 }
 
 function addCacheBuster(url) {
-  if (!url) return url;
-  // Don't add cache buster to data URLs
-  if (url.startsWith('data:')) return url;
-  // Add or update timestamp query parameter
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}_t=${Date.now()}`;
+  return url;
 }
 
 function applyBrand() {
@@ -255,24 +383,10 @@ function applyBrand() {
   if (welcomeTagline) welcomeTagline.textContent = CONFIG.tagline || 'Sip, Savour, Smile';
   if (heroTagline) heroTagline.textContent = CONFIG.tagline || 'Sip, Savour, Smile';
 
-  // Toggle soup free offer
-  const soupOffer = document.getElementById('soupFreeOffer');
-  if (soupOffer) {
-    soupOffer.style.display = CONFIG.soupFreeOffer ? 'flex' : 'none';
-  }
-
-  // Update hero offers
-  const heroOffersContainer = document.querySelector('.hero-offers');
-  if (heroOffersContainer && Array.isArray(CONFIG.offers) && CONFIG.offers.length > 0) {
-    heroOffersContainer.innerHTML = CONFIG.offers.map(offer => `
-      <article class="hero-offer" role="listitem">
-        <span class="hero-offer-icon" aria-hidden="true">${esc(offer.icon || '🎉')}</span>
-        <div class="hero-offer-text">
-          <strong>${esc(offer.title || '')}</strong>
-          <span>${esc(offer.desc || '')}</span>
-        </div>
-      </article>
-    `).join('');
+  // Show/hide waiter help button
+  const waiterFab = document.getElementById('waiterFab');
+  if (waiterFab) {
+    waiterFab.style.display = CONFIG.waiterEnabled ? 'flex' : 'none';
   }
 
   // Apply custom theme color if set
@@ -288,17 +402,31 @@ function applyCustomThemeColor(hexColor) {
   if (metaTheme) metaTheme.content = hexColor;
 }
 
+const CHINESE_PRIORITY = ["8 to 8 Chicken", "Pepper Chicken", "Chilli Chicken", "Schezwan Chicken", "Chicken Lollipops (6 Pcs) (Dry/Wet)", "Chicken 65", "Chicken Roast"];
+
+function sortChinesePriority(list) {
+    const priority = new Map(CHINESE_PRIORITY.map((name, i) => [name, i]));
+    return [...list].sort((a, b) => {
+        const pa = priority.has(a.name) ? priority.get(a.name) : 999;
+        const pb = priority.has(b.name) ? priority.get(b.name) : 999;
+        if (pa !== pb) return pa - pb;
+        return (a.sort_order || 0) - (b.sort_order || 0);
+    });
+}
+
 function filterItems(items) {
     let list = items;
     // First filter by main category
     if (activeMainCategory === "cafe") {
-        // Cafe includes everything except items that are only in biryanis/chinese main categories (but right now all items are in cafe)
-        // But exclude chinese items for now until we add them
-        list = list.filter(i => i.category !== "Chinese");
+        const chineseCats = ["Chinese", "Starters", "Veg Starters", "Soups", "Fried Rice", "Veg Fried Rice", "Rice"];
+        list = list.filter(i => !chineseCats.includes(i.category));
+    } else if (activeMainCategory === "starters") {
+        list = list.filter(i => i.category === "Starters" || i.category === "Veg Starters");
     } else if (activeMainCategory === "biryanis") {
-        list = list.filter(i => i.category === "Biryanis");
+        list = list.filter(i => i.category === "Biryanis" || i.category === "Veg Biryanis");
     } else if (activeMainCategory === "chinese") {
-        list = list.filter(i => i.category === "Chinese");
+        const chineseCats = ["Chinese", "Starters", "Veg Starters", "Soups", "Fried Rice", "Veg Fried Rice", "Rice"];
+        list = list.filter(i => chineseCats.includes(i.category));
     }
 
     // Then filter by sub-category
@@ -314,14 +442,26 @@ function filterItems(items) {
             i.name.toLowerCase().includes(q) || i.category.toLowerCase().includes(q)
         );
     }
+    if (activeMainCategory === "chinese") {
+        list = sortChinesePriority(list);
+    }
     return list;
 }
 
 function getPopularItems() {
-    const items = getItems();
+    // Always search the full local menu + Supabase cache merged
+    // so popular items are found regardless of which source is active
+    const localItems = (menuData.restaurant || []).map(enrichItem);
+    const dbItems = menuItemsCache.length > 0 ? menuItemsCache.map(enrichItem) : [];
+
+    // Merge: prefer Supabase item if name matches, else use local
+    const allByName = new Map();
+    localItems.forEach(i => allByName.set(i.name, i));
+    dbItems.forEach(i => allByName.set(i.name, i)); // db wins on conflict
+
     const picked = [];
     CONFIG.popularItems.forEach(name => {
-        const item = items.find(i => i.name === name);
+        const item = allByName.get(name);
         if (item && !picked.some(p => p.name === item.name)) picked.push(item);
     });
     return picked;
@@ -505,7 +645,15 @@ function isCategoryComingSoon(category) {
 
 function isOrderableItem(itemName) {
     return itemName === "Chicken Fry Piece Biryani" || itemName === "Chicken Dum Biryani" ||
+           itemName === "Banana Leaf Biryani" ||
+           itemName === "Chicken Moghalai Biryani" || itemName === "Chicken Lollipop Biryani" ||
+           itemName === "Boneless Chicken Biryani" ||
+           itemName === "Mutton Fry Piece Biryani" ||
+           itemName === "Mushroom Biryani" || itemName === "Paneer Biryani" ||
            itemName === "Pepper Chicken" || itemName === "8 to 8 Chicken" ||
+           itemName === "Chicken Lollipops (6 Pcs) (Dry/Wet)" ||
+           itemName === "Chilli Chicken" || itemName === "Schezwan Chicken" ||
+           itemName === "Chicken 65" || itemName === "Chicken Roast" ||
            enabledComingSoonItems.has(itemName);
 }
 
@@ -518,7 +666,7 @@ function buildCard(item, i) {
     return `
     <article class="food-card${!avail ? ' food-card--unavailable' : ''}${comingSoon ? ' food-card--coming-soon' : ''}" data-name="${esc(item.name)}" style="--i:${i}">
         <div class="food-card-img">
-            <img src="${addCacheBuster(item.image)}" alt="${esc(item.name)}" loading="lazy">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="${addCacheBuster(item.image)}" alt="${esc(item.name)}" loading="lazy" decoding="async" class="lazy-img">
             ${item.popular && avail && !comingSoon ? '<span class="food-card-badge">Popular</span>' : ''}
             ${comingSoon ? '<span class="food-card-badge coming-soon-badge">Coming Soon</span>' : ''}
             ${!avail ? '<span class="food-card-badge unavailable-badge">Unavailable</span>' : ''}
@@ -582,7 +730,7 @@ function renderAlsoBuy() {
         const inCart = cart.find(c => c.name === item.name);
         return `
         <article class="also-buy-chip" data-name="${esc(item.name)}">
-            <img src="${addCacheBuster(item.image)}" alt="${esc(item.name)}" loading="lazy">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" data-src="${addCacheBuster(item.image)}" alt="${esc(item.name)}" loading="lazy" decoding="async" class="lazy-img">
             <div class="also-buy-chip-body">
                 <h3>${esc(item.name)}</h3>
                 <p>₹${item.price} · ⭐ ${item.rating}</p>
@@ -602,12 +750,31 @@ function renderAlsoBuy() {
         btn.addEventListener("click", e => {
             e.stopPropagation();
             const item = getItems().find(i => i.name === btn.dataset.add);
-            if (item) addToCart(item, 1, btn);
+            if (item) openVariantPicker(item, btn);
         });
     });
 }
 
 function bindCardEvents(grid) {
+    if ('IntersectionObserver' in window) {
+        const imgObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, { rootMargin: '150px 0px' });
+        
+        document.querySelectorAll('.lazy-img').forEach(img => {
+            if (img.dataset.src) imgObserver.observe(img);
+        });
+    }
+
     grid.querySelectorAll(".food-card").forEach(card => {
         card.addEventListener("click", e => {
             if (e.target.closest(".add-btn")) return;
@@ -634,8 +801,14 @@ function bindCardEvents(grid) {
                 showToast("⏳ This item is coming soon!", true);
                 return;
             }
-            if (cart.find(c => c.name === item.name)) openCart();
-            else addToCart(item, 1, btn);
+            // Check if item already in cart (any variant)
+            const inCartExact = cart.find(c => c.name === item.name);
+            const hasVariants = parseVariants(item.name);
+            if (!hasVariants && inCartExact) {
+                openCart();
+            } else {
+                openVariantPicker(item, btn);
+            }
         });
     });
 }
@@ -878,7 +1051,7 @@ function _copyAndOpenGroup(msg, groupUrl) {
     window.open(groupUrl, "_blank");
 }
 
-function placeOrder() {
+async function placeOrder() {
     const tableRaw = $("checkoutTable")?.value.trim();
     if (!tableRaw) {
         showToast("⚠️ Please enter your table number", true);
@@ -890,58 +1063,61 @@ function placeOrder() {
     const phone = $("checkoutPhone")?.value.trim();
     const notes = $("checkoutNotes")?.value.trim();
 
-    let sub = 0, lines = "";
-    cart.forEach(i => {
+    let sub = 0;
+    const itemsList = cart.map(i => {
         sub += i.price * i.qty;
-        lines += `${i.qty} × ${i.name} — ₹${i.price * i.qty}\n`;
+        return { name: i.name, qty: i.qty, price: i.price };
     });
     const gst = Math.round(sub * CONFIG.gstRate);
     const total = CONFIG.gstEnabled ? sub + gst : sub;
-    
-    let gstLine = "";
-    if (CONFIG.gstEnabled) {
-        const gstPercent = Math.round(CONFIG.gstRate * 100);
-        gstLine = `GST (${gstPercent}%) : ₹${gst}\n`;
+
+    const placeBtn = $("placeOrderBtn");
+    if (placeBtn) {
+        if (placeBtn.disabled) return;
+        placeBtn.disabled = true;
+        placeBtn.textContent = "⏳ Sending Order to Kitchen...";
     }
 
-    const msg =
-`🍽️ *NEW ORDER — ${CONFIG.restaurantName}*
-
-🪑 *Table #${tableNum}*
-👤 ${name}${phone ? `\n📞 ${phone}` : ""}
-
-━━━━━━━━━━━━━━━━
-${lines}━━━━━━━━━━━━━━━━
-Subtotal : ₹${sub}
-${gstLine}*Total    : ₹${total}*
-
-📝 ${notes || "No special notes"}
-
-— Cafe Coffee Delite Digital Menu`;
-
-    // ✅ Save order to Supabase so it appears in admin orders panel
-    if (window.sb) {
-        sbSaveOrder({
-            tableNumber: tableNum,
-            customerName: name,
-            customerPhone: phone || null,
-            items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
-            subtotal: sub,
-            gst: CONFIG.gstEnabled ? gst : 0,
-            total: total,
-            notes: notes || null
-        }).catch(e => console.error('[SB] Failed to save order:', e));
+    // Save order directly to Supabase Cloud Database (triggers real-time update on admin dashboard)
+    try {
+        if (window.sb) {
+            await sbSaveOrder({
+                tableNumber: tableNum,
+                customerName: name,
+                customerPhone: phone || null,
+                items: itemsList,
+                subtotal: sub,
+                gst: CONFIG.gstEnabled ? gst : 0,
+                total: total,
+                notes: notes || null
+            });
+        }
+    } catch (e) {
+        console.error('[SB] Failed to save order:', e);
     }
 
-    // ✅ Send directly to WhatsApp without any clipboard copying
-    const formattedNumber = formatWhatsAppNumber(CONFIG.whatsappPhone);
-    const whatsappUrl = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(msg)}`;
-    window.open(whatsappUrl, "_blank");
+    // Populate order details on success screen
+    if ($("successTableBadge")) $("successTableBadge").textContent = `Table #${tableNum}`;
+    if ($("successOrderItems")) {
+        const itemsHtml = itemsList.map(i => `<div>${i.qty}× ${esc(i.name)} — ₹${i.price * i.qty}</div>`).join('');
+        $("successOrderItems").innerHTML = itemsHtml + `<div style="font-weight:800; color:var(--text); margin-top:6px; padding-top:6px; border-top:1px dashed var(--border);">Total: ₹${total}</div>`;
+    }
 
+    if (placeBtn) {
+        placeBtn.disabled = false;
+        placeBtn.textContent = "🚀 Confirm & Send Order to Kitchen";
+    }
+
+    // Clear cart after placing order
+    cart = [];
+    updateCartUI();
+
+    // Show customer success screen
     closeScreens();
     $("screenSuccess")?.classList.add("open");
     $("screenSuccess")?.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    showToast("🎉 Order sent directly to kitchen!");
     launchConfetti();
     startOrderTracking();
 }
@@ -1026,6 +1202,10 @@ function initModals() {
     $("proceedCheckout")?.addEventListener("click", openCheckout);
     $("placeOrderBtn")?.addEventListener("click", placeOrder);
 
+    // Variant picker close
+    $("variantModalClose")?.addEventListener("click", closeVariantPicker);
+    $("variantModalBackdrop")?.addEventListener("click", closeVariantPicker);
+
     $("successContinue")?.addEventListener("click", () => {
         closeScreens();
         cart = [];
@@ -1087,25 +1267,22 @@ function init() {
     initWaiter();
     updateCartUI();
 
-    // Load from Supabase
+    // SUPABASE DISABLED: Data is loaded directly from menu-data.js above.
+    // To re-enable Supabase sync, uncomment the block below and re-enable scripts in index.html.
+    /*
     loadDataFromSupabase().then(async () => {
-      // Seed local menu data to Supabase if there are no items
       if (window.sb && menuItemsCache.length === 0) {
         await sbSeedMenuIfEmpty(menuData.restaurant);
         await loadDataFromSupabase();
       }
     });
-
-    // Subscribe to real-time changes for all relevant tables
     if (window.sb) {
       const refreshAll = () => loadDataFromSupabase();
-      // Subscribe to menu items
       sbSubscribeMenuChanges(refreshAll);
-      // Subscribe to config changes (hero, etc.)
       sbSubscribeConfigChanges(refreshAll);
-      // Subscribe to category overrides changes
       sbSubscribeCategoryOverridesChanges(refreshAll);
     }
+    */
 
     // Apply tagline
     if ($("welcomeTagline")) $("welcomeTagline").textContent = CONFIG.tagline;

@@ -1,9 +1,10 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 require('dotenv').config();
 
-const PORT = 3000;
+let PORT = process.env.PORT || 3000;
 
 const mimeTypes = {
   '.html': 'text/html',
@@ -11,7 +12,9 @@ const mimeTypes = {
   '.css': 'text/css',
   '.json': 'application/json',
   '.png': 'image/png',
-  '.jpg': 'image/jpg',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon'
@@ -22,8 +25,8 @@ function injectEnvVars(html) {
   const envScript = `
     <script>
       window.ENV = {
-        SUPABASE_URL: '${process.env.SUPABASE_URL}',
-        SUPABASE_KEY: '${process.env.SUPABASE_KEY}'
+        SUPABASE_URL: '${process.env.SUPABASE_URL || ''}',
+        SUPABASE_KEY: '${process.env.SUPABASE_KEY || ''}'
       };
     </script>
   `;
@@ -42,23 +45,37 @@ const server = http.createServer((req, res) => {
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
   };
 
-  let filePath = '.' + req.url;
-  if (filePath === './') {
-    filePath = './index.html';
+  // Strip query parameters and decode URI
+  const parsedUrl = url.parse(req.url);
+  let requestPath = decodeURIComponent(parsedUrl.pathname);
+  if (requestPath === '/') {
+    requestPath = '/index.html';
   }
 
+  let filePath = path.join(__dirname, requestPath);
   const extname = String(path.extname(filePath)).toLowerCase();
   const contentType = mimeTypes[extname] || 'application/octet-stream';
 
   fs.readFile(filePath, (error, content) => {
     if (error) {
-      if(error.code === 'ENOENT') {
-        fs.readFile('./index.html', (error, content) => {
-          let html = content.toString('utf-8');
-          html = injectEnvVars(html);
-          res.writeHead(200, { 'Content-Type': 'text/html', ...secureHeaders });
-          res.end(html, 'utf-8');
-        });
+      if (error.code === 'ENOENT') {
+        // Only SPA fallback to index.html if request is an HTML page or has no extension
+        if (!extname || extname === '.html') {
+          fs.readFile(path.join(__dirname, 'index.html'), (err, htmlContent) => {
+            if (err) {
+              res.writeHead(404, secureHeaders);
+              res.end('Not found');
+            } else {
+              let html = htmlContent.toString('utf-8');
+              html = injectEnvVars(html);
+              res.writeHead(200, { 'Content-Type': 'text/html', ...secureHeaders });
+              res.end(html, 'utf-8');
+            }
+          });
+        } else {
+          res.writeHead(404, secureHeaders);
+          res.end('404 Not Found');
+        }
       } else {
         res.writeHead(500, secureHeaders);
         res.end('Server error');
@@ -70,13 +87,26 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, { 'Content-Type': 'text/html', ...secureHeaders });
         res.end(html, 'utf-8');
       } else {
-        res.writeHead(200, { 'Content-Type': contentType, ...secureHeaders });
+        const cacheHeader = (extname === '.js' || extname === '.css')
+          ? { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+          : {};
+        res.writeHead(200, { 'Content-Type': contentType, ...secureHeaders, ...cacheHeader });
         res.end(content, 'utf-8');
       }
     }
   });
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} in use, trying http://localhost:${PORT + 1}...`);
+    PORT = PORT + 1;
+    server.listen(PORT);
+  } else {
+    console.error('Server error:', err);
+  }
+});
+
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+  console.log(`🚀 Server running at http://localhost:${PORT}/`);
 });

@@ -9,8 +9,8 @@
     <!-- Load environment variables for both local and Netlify -->
     <script>
       window.ENV = {
-        SUPABASE_URL: 'https://zqyohzagenqwhsqlbzzo.supabase.co',
-        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxeW9oemFnZW5xd2hzcWxienpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MDQ0ODUsImV4cCI6MjA5ODM4MDQ4NX0.CzY-ZftKX5DMlXzZNGaWpWgKyi3AewNmrI2F_zmCOFU'
+        SUPABASE_URL: 'https://luhwhzsyjsiwdmwrohwc.supabase.co',
+        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1aHdoenN5anNpd2Rtd3JvaHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTE5NTUsImV4cCI6MjEwMzM4Nzk1NX0.ZtNOL4PAvdY8udDYki3vTjuCw4jb8UdeZ4_abOMaWT0'
       };
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,13 +83,6 @@
                         <div class="hero-offer-text">
                             <strong>10 Times Visit</strong>
                             <span>Get 10% off</span>
-                        </div>
-                    </article>
-                    <article class="hero-offer" id="soupFreeOffer" role="listitem">
-                        <span class="hero-offer-icon" aria-hidden="true">🍜</span>
-                        <div class="hero-offer-text">
-                            <strong>Today: Soup Free</strong>
-                            <span>With any main course</span>
                         </div>
                     </article>
                 </div>
@@ -230,7 +223,43 @@
                 <label for="checkoutNotes">Notes</label>
                 <textarea id="checkoutNotes" class="field-input" placeholder="Any special requests..." rows="3"></textarea>
             </div>
-            <button type="button" class="btn-primary" id="placeOrderBtn">Place Order via WhatsApp</button>
+            <button type="button" class="btn-primary" id="placeOrderBtn">🚀 Confirm & Send Order to Kitchen</button>
+        </div>
+    </section>
+
+    <!-- Order Success Screen -->
+    <section class="full-screen" id="screenSuccess" aria-hidden="true">
+        <div id="confettiLayer" style="position:fixed; inset:0; pointer-events:none; z-index:9999;"></div>
+        <div class="screen-body" style="text-align: center; padding: 40px 20px; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
+            <div style="font-size: 3.8rem; margin-bottom: 12px;">🎉</div>
+            <h2 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 6px; color: var(--text);">Order Sent to Kitchen!</h2>
+            <p style="color: var(--muted); font-size: 0.88rem; margin-bottom: 24px;">Your order has been directly sent to kitchen staff dashboard.</p>
+            
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; width: 100%; margin-bottom: 24px; text-align: left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+                    <span style="font-weight: 800; font-size: 1.1rem;" id="successTableBadge">Table #1</span>
+                    <span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 20px;">Sent to Kitchen</span>
+                </div>
+                <div id="successOrderItems" style="font-size: 0.88rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px;"></div>
+            </div>
+
+            <!-- Order Progress Timeline -->
+            <ul id="trackTimeline" style="list-style:none; display:flex; justify-content:space-around; width:100%; margin-bottom: 30px; position:relative; padding: 0 10px;">
+                <li class="active" style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.75rem; font-weight:700;">
+                    <span>📝</span>
+                    <span>Received</span>
+                </li>
+                <li style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.75rem; font-weight:700;">
+                    <span>🍳</span>
+                    <span>Preparing</span>
+                </li>
+                <li style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.75rem; font-weight:700;">
+                    <span>🍽️</span>
+                    <span>Ready</span>
+                </li>
+            </ul>
+
+            <button type="button" class="btn-primary" id="successContinue" style="width: 100%;">Back to Menu</button>
         </div>
     </section>
 
@@ -242,5 +271,12 @@
     <script src="js/menu-data.js"></script>
     <!-- Helpers -->
     <script src="js/app.js"></script>
+
+<!-- Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(err => console.error('SW registration failed:', err));
+}
+</script>
 </body>
 </html>

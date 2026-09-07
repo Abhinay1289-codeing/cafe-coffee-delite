@@ -108,5 +108,12 @@
         const base = window.location.href.replace(/table\.html.*$/, "index.html").split("?")[0];
         document.getElementById("qrExample").textContent = base + "?table=1";
     </script>
+
+<!-- Service Worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(err => console.error('SW registration failed:', err));
+}
+</script>
 </body>
 </html>

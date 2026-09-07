@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Update Images in Supabase | CCD Staff Tool</title>
+<style>
+  body { font-family: monospace; background: #111; color: #eee; padding: 24px; }
+  h1 { color: #f90; }
+  button { background: #e53; color: #fff; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 8px; cursor: pointer; margin-top: 16px; }
+  button:hover { background: #c33; }
+  #log { margin-top: 24px; background: #1a1a1a; border-radius: 8px; padding: 16px; max-height: 70vh; overflow-y: auto; font-size: 0.82rem; line-height: 1.8; }
+  .ok { color: #4f4; }
+  .skip { color: #fa0; }
+  .err { color: #f44; }
+  .done { color: #0cf; font-weight: bold; font-size: 1.1rem; }
+</style>
+</head>
+<body>
+<h1>🖼️ CCD — Update Menu Images in Supabase</h1>
+<p>This tool pushes your local image paths into the Supabase <code>menu_items</code> table.<br>
+Items without a matching local image are <span style="color:#fa0">skipped</span> (Unsplash stays).</p>
+<button onclick="runUpdate()">▶ Run Image Update</button>
+<div id="log">Press the button to start...</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.ENV = window.ENV || {
+    SUPABASE_URL: 'https://luhwhzsyjsiwdmwrohwc.supabase.co',
+    SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1aHdoenN5anNpd2Rtd3JvaHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTE5NTUsImV4cCI6MjEwMzM4Nzk1NX0.ZtNOL4PAvdY8udDYki3vTjuCw4jb8UdeZ4_abOMaWT0'
+  };
+
+  // MAP: exact item name → local image path
+      const IMAGE_MAP = {
+    "veg Burger": "assets/images/veg-burger.webp",
+    "Aloo Tikki Burger": "assets/images/aloo-tikki-burger.webp",
+    "Veg Cheese Burger": "assets/images/veg-cheese-burger.webp",
+    "Paneer Burger": "assets/images/paneer-burger.webp",
+    "Egg Burger": "assets/images/egg-burger.webp",
+    "Chicken Burger": "assets/images/chicken-burger.webp",
+    "Chicken Cheese Burger": "assets/images/chicken-cheese-burger.webp",
+    "Crispy Chicken Burger": "assets/images/crispy-chicken-burger.webp",
+    "CCD Chicken Burger (Served with Fries)": "assets/images/ccd-chicken-burger.webp",
+    "Snack Combo": "assets/images/snack-combo.webp",
+    "Pizza Combo": "assets/images/pizza-combo.webp",
+    "Chicken Combo": "assets/images/chicken-combo.webp",
+    "Corn Samosa (4 Pcs)": "assets/images/corn-samosa.webp",
+    "Chicken Samosa (4 Pcs)": "assets/images/chicken-samosa.webp",
+    "Chicken Samosa": "assets/images/chicken-samosa.webp",
+    "Veg Momos (Steamed/Fried) (5 Pcs)": "assets/images/veg-momos.webp",
+    "Chicken Momos (Steamed/Fried) (5 Pcs)": "assets/images/chicken-momos.webp",
+    "Tea": "assets/images/tea.webp",
+    "Black Tea": "assets/images/black-tea.webp",
+    "Green Tea": "assets/images/green-tea.webp",
+    "Mint Tea": "assets/images/mint-tea.webp",
+    "Lemon Tea": "assets/images/lemon-tea.webp",
+    "Bellam Tea (Jaggery Tea)": "assets/images/bellam-tea.webp",
+    "Badam Tea": "assets/images/badam-tea.webp",
+    "Ginger Tea": "assets/images/ginger-tea.webp",
+    "Elaichi Tea": "assets/images/elaichi-tea.webp",
+    "Sonti Tea (Dry Ginger Tea)": "assets/images/sonti-tea.webp",
+    "Masala Tea": "assets/images/masala-tea.webp",
+    "Milk": "assets/images/milk.webp",
+    "Black Coffee": "assets/images/black-coffee.webp",
+    "Coffee": "assets/images/coffee.webp",
+    "Pepper Milk": "assets/images/pepper-milk.webp",
+    "Turmeric Milk": "assets/images/turmeric-milk.webp",
+    "Badam Milk": "assets/images/badam-milk.webp",
+    "Horlicks": "assets/images/horlicks.webp",
+    "Boost": "assets/images/boost.webp",
+    "Sonti Coffee": "assets/images/sonti-coffee.webp",
+    "CCD Special Filter Coffee": "assets/images/ccd-special-filter-coffee.webp",
+    "Hot Chocolate": "assets/images/hot-chocolate.webp",
+    "Espresso": "assets/images/espresso.webp",
+    "Americano": "assets/images/americano.webp",
+    "Cappuccino": "assets/images/cappuccino.webp",
+    "Café Latte": "assets/images/cafe-latte.webp",
+    "Café Mocha": "assets/images/cafe-mocha.webp",
+    "Hazelnut Cappuccino": "assets/images/hazelnut-cappuccino.webp",
+    "Vanilla Cappuccino": "assets/images/vanilla-cappuccino.webp",
+    "Caramel Cappuccino": "assets/images/caramel-cappuccino.webp",
+    "Iced Americano": "assets/images/iced-americano.webp",
+    "Coffee Mojito": "assets/images/coffee-mojito.webp",
+    "Cold Mocha": "assets/images/cold-mocha.webp",
+    "Cold Coffee": "assets/images/cold-coffee.webp",
+    "Irish Cold Coffee": "assets/images/irish-cold-coffee.webp",
+    "Hazelnut Cold Coffee": "assets/images/hazelnut-cold-coffee.webp",
+    "Choco Frappe": "assets/images/choco-frappe.webp",
+    "Oreo Frappe": "assets/images/oreo-frappe.webp",
+    "Brownie Frappe": "assets/images/brownie-frappe.webp",
+    "Nutella Cold Coffee": "assets/images/nutella-cold-coffee.webp",
+    "Peanut Butter Cold Coffee": "assets/images/peanut-butter-cold-coffee.webp",
+    "Chocolate Milkshake": "assets/images/chocolate-milkshake.webp",
+    "Vanilla Milkshake": "assets/images/vanilla-milkshake.webp",
+    "Oreo Milkshake": "assets/images/oreo-milkshake.webp",
+    "KitKat Milkshake": "assets/images/kitkat-milkshake.webp",
+    "Ferrero Rocher Milkshake": "assets/images/ferrero-rocher-milkshake.webp",
+    "Dry Fruits Milkshake": "assets/images/dry-fruits-milkshake.webp",
+    "Coke": "assets/images/coke.webp",
+    "thumpsup": "assets/images/thumpsup.webp",
+    "Sprite": "assets/images/sprite.webp",
+    "Masala Soda": "assets/images/masala-soda.webp",
+    "Fresh Lime Soda (Sweet / Salt)": "assets/images/fresh-lime-soda.webp",
+    "Lime and Mint": "assets/images/lime-and-mint.webp",
+    "Iced Tea": "assets/images/iced-tea.webp",
+    "Virgin Mojito": "assets/images/virgin-mojito.webp",
+    "Kiwi Mojito": "assets/images/kiwi-mojito.webp",
+    "Black Currant Mojito": "assets/images/black-currant-mojito.webp",
+    "Orange Mojito": "assets/images/orange-mojito.webp",
+    "Blue Ocean": "assets/images/blue-ocean.webp",
+    "Sweet Lassi": "assets/images/sweet-lassi.webp",
+    "Butter Milk": "assets/images/butter-milk.webp",
+    "Banana Lassi": "assets/images/banana-lassi.webp",
+    "Omelette": "assets/images/omelette.webp",
+    "Cheese Omelette": "assets/images/cheese-omelette.webp",
+    "Bread Omelette": "assets/images/bread-omelette.webp",
+    "Cheese Bread Omelette": "assets/images/cheese-bread-omelette.webp",
+    "Veg Maggi": "assets/images/veg-maggi.webp",
+    "Cheese Maggi": "assets/images/cheese-maggi.webp",
+    "Paneer Maggi": "assets/images/paneer-maggi.webp",
+    "Egg Maggi": "assets/images/egg-maggi.webp",
+    "Double Egg Maggi": "assets/images/double-egg-maggi.webp",
+    "Chicken Maggi": "assets/images/chicken-maggi.webp",
+    "Double Egg Cheese Maggi": "assets/images/double-egg-cheese-maggi.webp",
+    "Chicken Cheese Maggi": "assets/images/chicken-cheese-maggi.webp",
+    "Double Egg Chicken Maggi": "assets/images/double-egg-chicken-maggi.webp",
+    "Double Egg Chicken Cheese Maggi": "assets/images/double-egg-chicken-cheese-maggi.webp",
+    "Veg Sandwich": "assets/images/veg-sandwich.webp",
+    "Cheese Sandwich": "assets/images/cheese-sandwich.webp",
+    "Paneer Sandwich": "assets/images/paneer-sandwich.webp",
+    "Egg Sandwich": "assets/images/egg-sandwich.webp",
+    "Cheese Egg Sandwich": "assets/images/cheese-egg-sandwich.webp",
+    "Chicken Sandwich": "assets/images/chicken-sandwich.webp",
+    "CCD Club Sandwich (Served with Fries)": "assets/images/ccd-club-sandwich.webp",
+    "Extra Cheese (Add-on)": "assets/images/extra-cheese.webp",
+    "Classic Waffle": "assets/images/classic-waffle.webp",
+    "Classic Pancake": "assets/images/classic-pancake.webp",
+    "Chocolate Waffle": "assets/images/chocolate-waffle.webp",
+    "Chocolate Pancake": "assets/images/chocolate-pancake.webp",
+    "Nachos with Salsa": "assets/images/nachos-with-salsa.webp",
+    "Onion Rings (6 Pcs)": "assets/images/onion-rings.webp",
+    "Veg Spring Roll (6 Pcs)": "assets/images/veg-spring-roll.webp",
+    "Crispy Corn": "assets/images/crispy-corn.webp",
+    "French Fries": "assets/images/french-fries.webp",
+    "Cheese Nachos": "assets/images/cheese-nachos.webp",
+    "Veg Nuggets (6 Pcs)": "assets/images/veg-nuggets.webp",
+    "Cheese Shots (6 Pcs)": "assets/images/cheese-shots.webp",
+    "Chilli Garlic Potato Shots (10 Pcs)": "assets/images/chilli-garlic-potato-shots.webp",
+    "Peri Peri Fries": "assets/images/peri-peri-fries.webp",
+    "Cheese Chilli Toast (8 Pcs)": "assets/images/cheese-chilli-toast.webp",
+    "Cheese Loaded Fries": "assets/images/cheese-loaded-fries.webp",
+    "Veg Nuggets (16 Pcs)": "assets/images/veg-nuggets.webp",
+    "Fried Chicken Cheese Nachos": "assets/images/fried-chicken-cheese-nachos.webp",
+    "Chicken Cheese Chilli Toast": "assets/images/chicken-cheese-chilli-toast.webp",
+    "Chicken Cheese Loaded Fries": "assets/images/chicken-cheese-loaded-fries.webp",
+    "Chicken Nuggets (8 Pcs)": "assets/images/chicken-nuggets.webp",
+    "Chicken Wings (4 Pcs)": "assets/images/chicken-wings.webp",
+    "Chicken Popcorn (12 Pcs)": "assets/images/chicken-popcorn.webp",
+    "Chicken Strips (4 Pcs)": "assets/images/chicken-strips.webp",
+    "Fish Fingers (6 Pcs)": "assets/images/fish-fingers.webp",
+    "Chicken Popcorn (20 Pcs)": "assets/images/chicken-popcorn.webp",
+    "Chicken Wings (8 Pcs)": "assets/images/chicken-wings.webp",
+    "Chicken Strips (8 Pcs)": "assets/images/chicken-strips.webp",
+    "Veg Roll": "assets/images/veg-roll.webp",
+    "Paneer Roll": "assets/images/paneer-roll.webp",
+    "Single Egg Roll": "assets/images/single-egg-roll.webp",
+    "Single Egg Cheese Roll": "assets/images/single-egg-cheese-roll.webp",
+    "Chicken Roll": "assets/images/chicken-roll.webp",
+    "Double Egg Roll": "assets/images/double-egg-roll.webp",
+    "Chicken Cheese Roll": "assets/images/chicken-cheese-roll.webp",
+    "Double Egg Cheese Roll": "assets/images/double-egg-cheese-roll.webp",
+    "Double Egg Chicken Roll": "assets/images/double-egg-chicken-roll.webp",
+    "Egg Chicken Cheese Roll": "assets/images/egg-chicken-cheese-roll.webp",
+    "Extra Egg (Add-on)": "assets/images/extra-egg.webp",
+    "Penne White Sauce Veg Pasta": "assets/images/penne-white-sauce-veg-pasta.webp",
+    " Veg cheese Pasta": "assets/images/veg-cheese-pasta.webp",
+    "Chicken Pasta": "assets/images/chicken-pasta.webp",
+    "Chicken Cheese Pasta": "assets/images/chicken-cheese-pasta.webp",
+    "Veg Pizza (6 Inch)": "assets/images/veg-pizza.webp",
+    "Veg Pizza": "assets/images/veg-pizza.webp",
+    "Margherita Pizza": "assets/images/margherita-pizza.webp",
+    "Corn Cheese Pizza": "assets/images/corn-cheese-pizza.webp",
+    "Garden Exotic Pizza": "assets/images/garden-exotic-pizza.webp",
+    "Paneer Pizza": "assets/images/paneer-pizza.webp",
+    "Spicy Mexican Veg Pizza": "assets/images/spicy-mexican-veg-pizza.webp",
+    "Non-Veg Pizza": "assets/images/non-veg-pizza.webp",
+    "Roasted Chicken Pizza": "assets/images/roasted-chicken-pizza.webp",
+    "Crispy Chicken Pizza": "assets/images/crispy-chicken-pizza.webp",
+    "Spicy Pizza": "assets/images/spicy-pizza.webp",
+    "Spicy Mexican Chicken Pizza": "assets/images/spicy-mexican-chicken-pizza.webp",
+    "Affogato": "assets/images/affogato.webp",
+    "Chocolate Brownie": "assets/images/chocolate-brownie.webp",
+    "Chocolate Sizzling Brownie": "assets/images/chocolate-sizzling-brownie.webp",
+    "Vanilla Ice Cream": "assets/images/vanilla-ice-cream.webp",
+    "Strawberry Ice Cream": "assets/images/strawberry-ice-cream.webp",
+    "Butterscotch Ice Cream": "assets/images/butterscotch-ice-cream.webp",
+    "Chocolate Ice Cream": "assets/images/chocolate-ice-cream.webp",
+    "Pista Ice Cream": "assets/images/pista-ice-cream.webp",
+    "Black Currant Ice Cream": "assets/images/black-currant-ice-cream.webp",
+    "Dry Fruits Ice Cream": "assets/images/dry-fruits-ice-cream.webp",
+    "Coconut Pudding": "assets/images/coconut-pudding.webp",
+    "Oreo Cheese Cake Jar": "assets/images/oreo-cheese-cake-jar.webp",
+    "Chocolate Cheese Cake Jar": "assets/images/chocolate-cheese-cake-jar.webp",
+    "Biscoff Cheese Cake Jar": "assets/images/biscoff-cheese-cake-jar.webp",
+    "Chicken Fry Piece Biryani": "assets/images/chicken-fry-piece-biryani.webp",
+    "Chicken Dum Biryani": "assets/images/chicken-dum-biryani.webp",
+    "Banana Leaf Biryani": "assets/images/banana-leaf-biryani.webp",
+    "Chicken Moghalai Biryani": "assets/images/chicken-moghalai-biryani.webp",
+    "Chicken Lollipop Biryani": "assets/images/chicken-lollipop-biryani.webp",
+    "Boneless Chicken Biryani": "assets/images/boneless-chicken-biryani.webp",
+    "Mutton Fry Piece Biryani": "assets/images/mutton-fry-piece-biryani.webp",
+    "Mutton Biryani": "assets/images/mutton-biryani.webp",
+    "Mushroom Biryani": "assets/images/mushroom-biryani.webp",
+    "Paneer Biryani": "assets/images/paneer-biryani.webp",
+    "Chicken Lollipops (6 Pcs) (Dry/Wet)": "assets/images/chicken-lollipops.webp",
+    "Chicken Roast": "assets/images/chicken-roast.webp",
+    "Schezwan Chicken": "assets/images/schezwan-chicken.webp",
+    "Chicken Noodles": "assets/images/chicken-noodles.webp",
+    "Veg Noodles": "assets/images/veg-noodles.webp",
+    "Chicken 65": "assets/images/chicken-65.webp",
+    "Chicken Manchurian": "assets/images/chicken-manchurian.webp",
+    "Chilli Chicken": "assets/images/chilli-chicken.webp",
+    "Chicken Lollipop (6 Pcs)": "assets/images/chicken-lollipop.webp",
+    "Dragon Chicken": "assets/images/dragon-chicken.webp",
+    "Chicken Majestic": "assets/images/chicken-majestic.webp",
+    "Chicken 555": "assets/images/chicken-555.webp",
+    "Garlic Chicken": "assets/images/garlic-chicken.webp",
+    "8 to 8 Chicken": "assets/images/8-to-8-chicken.webp",
+    "Pepper Chicken": "assets/images/pepper-chicken.webp",
+    "Sezwan Chicken": "assets/images/sezwan-chicken.webp",
+    "Highway Delite Spl (Chicken)": "assets/images/highway-delite-spl.webp",
+    "Mutton 65": "assets/images/mutton-65.webp",
+    "Mutton Manchurian": "assets/images/mutton-manchurian.webp",
+    "Chilli Mutton": "assets/images/chilli-mutton.webp",
+    "Mutton Roast": "assets/images/mutton-roast.webp",
+    "Pepper Mutton": "assets/images/pepper-mutton.webp",
+    "Sezwan Mutton": "assets/images/sezwan-mutton.webp",
+    "Gobi Manchurian": "assets/images/gobi-manchurian.webp",
+    "Gobi Chilli": "assets/images/gobi-chilli.webp",
+    "Gobi 65": "assets/images/gobi-65.webp",
+    "Veg Manchurian": "assets/images/veg-manchurian.webp",
+    "Veg 65": "assets/images/veg-65.webp",
+    "Veg Chilli": "assets/images/veg-chilli.webp",
+    "Veg Sezwan": "assets/images/veg-sezwan.webp",
+    "Chilli Mushroom": "assets/images/chilli-mushroom.webp",
+    "Mushroom 65": "assets/images/mushroom-65.webp",
+    "Mushroom Manchurian": "assets/images/mushroom-manchurian.webp",
+    "Pepper Mushroom": "assets/images/pepper-mushroom.webp",
+    "Sezwan Mushroom": "assets/images/sezwan-mushroom.webp",
+    "Babycorn Majestic": "assets/images/babycorn-majestic.webp",
+    "Babycorn 555": "assets/images/babycorn-555.webp",
+    "Babycorn Garlic": "assets/images/babycorn-garlic.webp",
+    "Paneer 65": "assets/images/paneer-65.webp",
+    "Chilli Paneer": "assets/images/chilli-paneer.webp",
+    "Paneer Manchurian": "assets/images/paneer-manchurian.webp",
+    "Paneer Roast": "assets/images/paneer-roast.webp",
+    "Paneer Majestic": "assets/images/paneer-majestic.webp",
+    "Highway Delite (Veg)": "assets/images/highway-delite.webp",
+    "Veg Manchow Soup": "assets/images/veg-manchow-soup.webp",
+    "Chicken Manchow Soup": "assets/images/chicken-manchow-soup.webp",
+    "Hot N Sour Soup": "assets/images/hot-n-sour-soup.webp",
+    "Chicken Hot N Sour Soup": "assets/images/chicken-hot-n-sour-soup.webp",
+    "Sweet Corn Soup": "assets/images/sweet-corn-soup.webp",
+    "Mixed Biryani": "assets/images/mixed-biryani.webp",
+    "Mixed Mughlai Biryani": "assets/images/mixed-mughlai-biryani.webp",
+    "Pot Biryani": "assets/images/pot-biryani.webp",
+    "Kheema Biryani": "assets/images/kheema-biryani.webp",
+    "Highway Delite Spl Biryani": "assets/images/highway-delite-spl-biryani.webp",
+    "Baby Corn Biryani": "assets/images/baby-corn-biryani.webp",
+    "Veg Mixed Biryani": "assets/images/veg-mixed-biryani.webp",
+    "Chicken Fried Rice": "assets/images/chicken-fried-rice.webp",
+    "Spl Chicken Fried Rice": "assets/images/spl-chicken-fried-rice.webp",
+    "Egg Fried Rice": "assets/images/egg-fried-rice.webp",
+    "Double Egg Fried Rice": "assets/images/double-egg-fried-rice.webp",
+    "Chicken Sezwan Fried Rice": "assets/images/chicken-sezwan-fried-rice.webp",
+    "Mutton Fried Rice": "assets/images/mutton-fried-rice.webp",
+    "Spl Mutton Fried Rice": "assets/images/spl-mutton-fried-rice.webp",
+    "Spl Highway Delite Fried Rice": "assets/images/spl-highway-delite-fried-rice.webp",
+    "Veg Fried Rice": "assets/images/veg-fried-rice.webp",
+    "Spl Veg Fried Rice": "assets/images/spl-veg-fried-rice.webp",
+    "Babycorn Fried Rice": "assets/images/babycorn-fried-rice.webp",
+    "Spl Babycorn Fried Rice": "assets/images/spl-babycorn-fried-rice.webp",
+    "Mushroom Fried Rice": "assets/images/mushroom-fried-rice.webp",
+    "Veg Mix Fried Rice": "assets/images/veg-mix-fried-rice.webp",
+    "Veg Manchurian Fried Rice": "assets/images/veg-manchurian-fried-rice.webp",
+    "Curd Rice": "assets/images/curd-rice.webp",
+    "Sambar Rice": "assets/images/sambar-rice.webp",
+    "Sambar Rice with Omlette": "assets/images/sambar-rice-with-omlette.webp",
+    "Sambar Rice with Chicken Fry": "assets/images/sambar-rice-with-chicken-fry.webp"
+};
+
+  function log(msg, cls = '') {
+    const div = document.getElementById('log');
+    div.innerHTML += `<div class="${cls}">${msg}</div>`;
+    div.scrollTop = div.scrollHeight;
+  }
+
+  async function runUpdate() {
+    const btn = document.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = '⏳ Running...';
+    document.getElementById('log').innerHTML = '';
+
+    const sb = supabase.createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_KEY);
+
+    log('🔌 Connecting to Supabase...');
+
+    // Fetch all items from DB
+    const { data: dbItems, error: fetchErr } = await sb.from('menu_items').select('name, image');
+    if (fetchErr) {
+      log('❌ Failed to fetch items: ' + fetchErr.message, 'err');
+      btn.disabled = false; btn.textContent = '▶ Run Image Update';
+      return;
+    }
+
+    log(`📋 Found ${dbItems.length} items in Supabase database.`);
+
+    let updated = 0, skipped = 0, errors = 0;
+
+    for (const dbItem of dbItems) {
+      const localImg = IMAGE_MAP[dbItem.name];
+      if (!localImg) {
+        log(`⏭ SKIP — no local image for: <b>${dbItem.name}</b>`, 'skip');
+        skipped++;
+        continue;
+      }
+
+      const { error: updateErr } = await sb
+        .from('menu_items')
+        .update({ image: localImg })
+        .eq('name', dbItem.name);
+
+      if (updateErr) {
+        log(`❌ ERROR updating "${dbItem.name}": ${updateErr.message}`, 'err');
+        errors++;
+      } else {
+        log(`✅ Updated: <b>${dbItem.name}</b> → ${localImg}`, 'ok');
+        updated++;
+      }
+    }
+
+    log(`<br>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, 'done');
+    log(`✅ Updated: ${updated} &nbsp;|&nbsp; ⏭ Skipped: ${skipped} &nbsp;|&nbsp; ❌ Errors: ${errors}`, 'done');
+    log(`🎉 Done! Refresh your menu at <a href="index.html" style="color:#0cf">index.html</a> to see the images.`, 'done');
+
+    btn.disabled = false;
+    btn.textContent = '✅ Done — Run Again';
+  }
+</script>
+</body>
+</html>

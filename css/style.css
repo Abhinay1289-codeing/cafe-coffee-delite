@@ -118,7 +118,10 @@
     box-shadow: 0 1px 4px rgba(28, 22, 12, 0.05);
 }
 
-html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+}
 
 body {
     font-family: var(--font);
@@ -126,6 +129,20 @@ body {
     color: var(--text);
     overflow-x: hidden;
     line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* ===== GPU & TOUCH SMOOTHNESS OPTIMIZATIONS ===== */
+button, .food-card, .cat-pill, .also-buy-chip, .float-cart-btn, .icon-btn, .table-card {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+}
+
+.modal-sheet, .modal-panel, .cart-drawer, .float-cart, .toast, .welcome-splash {
+    will-change: transform, opacity;
+    transform: translateZ(0);
 }
 
 img { display: block; max-width: 100%; }
@@ -791,6 +808,87 @@ body.has-table .category-nav {
     margin-top: 1px;
 }
 
+/* Sunday Special */
+.hero-offers-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hero-promo-card {
+    position: relative;
+    margin: 7px 14px 19px;
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: clamp(200px, 34vh, 280px);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #fff;
+}
+
+.hero-promo-title {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    color: #fff;
+    background: rgba(211, 47, 47, 0.9);
+    border-radius: 50px;
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.hero-promo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.hero-promo-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.sunday-special-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+.sunday-special-title {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 4.5vw, 1.3rem);
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #ff9800 0%, #ffeb3b 50%, #ff9800 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+    filter: drop-shadow(0 1px 6px rgba(255, 152, 0, 0.55));
+    animation: sundayPulse 3s ease-in-out infinite;
+}
+
+@keyframes sundayPulse {
+    0%, 100% { filter: drop-shadow(0 1px 6px rgba(255, 152, 0, 0.55)); }
+    50% { filter: drop-shadow(0 2px 12px rgba(255, 235, 59, 0.85)); }
+}
+
+.hero-offer--special {
+    border-color: rgba(255, 200, 0, 0.35);
+    background: rgba(255, 165, 0, 0.14);
+}
+
+
 @media (max-width: 360px) {
     .hero-offers {
         grid-template-columns: 1fr;
@@ -801,6 +899,16 @@ body.has-table .category-nav {
     .hero-clean-content { padding: 20px 22px 16px; }
     .hero-offer-text strong { font-size: 0.78rem; }
     .hero-offer-text span { font-size: 0.68rem; }
+    .hero-promo-card { margin: 7px 20px 19px; }
+}
+
+@media (min-width: 1024px) {
+    .hero-promo-card,
+    .hero-clean {
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 /* ===== PEOPLE ALSO ORDER ===== */
@@ -1294,6 +1402,86 @@ body:not(:has(.float-cart:not(.is-hidden))) .waiter-help-btn {
     cursor: pointer;
     font-size: 1rem;
 }
+
+/* ===== VARIANT PICKER MODAL ===== */
+.variant-modal-panel {
+    padding: 0 0 24px;
+}
+
+.variant-modal-body {
+    padding: 32px 20px 8px;
+    text-align: center;
+}
+
+.variant-modal-hint {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.variant-modal-body h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+.variant-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 4px;
+}
+
+.variant-option-btn {
+    width: 100%;
+    padding: 18px 20px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.variant-option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-gold);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.variant-option-btn:hover,
+.variant-option-btn:focus {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--primary-glow);
+}
+
+.variant-option-btn:active {
+    transform: scale(0.97);
+    border-color: var(--primary);
+    background: var(--primary-dim);
+}
+
+
 
 .food-modal-img-wrap {
     aspect-ratio: 16/10;

@@ -1,0 +1,17 @@
+{
+  "appId": "com.cafecoffeedelite.orders",
+  "appName": "Cafe Orders",
+  "webDir": "app",
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#0a0b10"
+  },
+  "server": {
+    "allowNavigation": [
+      "*.supabase.co",
+      "fonts.googleapis.com",
+      "fonts.gstatic.com",
+      "cdn.jsdelivr.net"
+    ]
+  }
+}

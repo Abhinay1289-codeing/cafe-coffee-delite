@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clear Supabase Images | CCD Staff Tool</title>
+<style>
+  body { font-family: monospace; background: #111; color: #eee; padding: 24px; }
+  h1 { color: #f90; }
+  button { background: #e53; color: #fff; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 8px; cursor: pointer; margin-top: 16px; }
+  #log { margin-top: 24px; background: #1a1a1a; border-radius: 8px; padding: 16px; max-height: 70vh; overflow-y: auto; font-size: 0.82rem; line-height: 1.8; }
+  .ok { color: #4f4; } .err { color: #f44; } .done { color: #0cf; font-weight: bold; font-size: 1.1rem; }
+</style>
+</head>
+<body>
+<h1>🗑️ Clear All Images from Supabase</h1>
+<p>This sets the <code>image</code> field to <code>''</code> for every item in Supabase.<br>
+Local <code>assets/</code> images will then be used automatically from <code>menu-data.js</code>.</p>
+<button onclick="runClear()">▶ Clear All Supabase Images</button>
+<div id="log">Press the button to start...</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window.ENV = window.ENV || {
+    SUPABASE_URL: 'https://luhwhzsyjsiwdmwrohwc.supabase.co',
+    SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1aHdoenN5anNpd2Rtd3JvaHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTE5NTUsImV4cCI6MjEwMzM4Nzk1NX0.ZtNOL4PAvdY8udDYki3vTjuCw4jb8UdeZ4_abOMaWT0'
+  };
+  function log(msg, cls='') { const d=document.getElementById('log'); d.innerHTML+=`<div class="${cls}">${msg}</div>`; d.scrollTop=d.scrollHeight; }
+
+  async function runClear() {
+    const btn = document.querySelector('button');
+    btn.disabled = true; btn.textContent = '⏳ Clearing...';
+    document.getElementById('log').innerHTML = '';
+    const sb = supabase.createClient(window.ENV.SUPABASE_URL, window.ENV.SUPABASE_KEY);
+    log('🔌 Connecting to Supabase...');
+    const { data: items, error: fetchErr } = await sb.from('menu_items').select('id, name');
+    if (fetchErr) { log('❌ Failed to fetch: ' + fetchErr.message, 'err'); btn.disabled=false; btn.textContent='▶ Try Again'; return; }
+    log(`📋 Found ${items.length} items. Clearing image fields...`);
+    const { error: updateErr } = await sb.from('menu_items').update({ image: '' }).neq('id', '00000000-0000-0000-0000-000000000000');
+    if (updateErr) { log('❌ Error: ' + updateErr.message, 'err'); }
+    else { log(`✅ Cleared images for all ${items.length} items!`, 'ok'); }
+    log(`<br>🎉 Done! Now deploy and refresh your site to see local images.`, 'done');
+    btn.disabled=false; btn.textContent='✅ Done';
+  }
+</script>
+</body>
+</html>

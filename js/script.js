@@ -310,6 +310,7 @@ function renderMenu(searchTerm = "") {
                     src="${item.image}"
                     class="menu-image"
                     alt="${item.name}"
+                    loading="lazy"
                 >
                 <div class="menu-content">
                     <div class="menu-title">
