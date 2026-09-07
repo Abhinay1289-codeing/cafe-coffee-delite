@@ -526,6 +526,18 @@
 
     <div class="dash-body">
 
+        <!-- APP UPDATE PROMPT BANNER -->
+        <div id="updateBanner" style="display:none; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; padding: 10px 14px; border-radius: 12px; margin-bottom: 14px; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 4px 14px rgba(37,99,235,0.4);">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">🚀</span>
+                <div>
+                    <div style="font-weight:800; font-size:0.88rem;">New App Update Available (<span id="updateVersionTag">v1.1.0</span>)!</div>
+                    <div style="font-size:0.75rem; opacity:0.9;" id="updateChangelog">Itemized receipt, multi-device ringing auto-stop & UI fixes.</div>
+                </div>
+            </div>
+            <button onclick="triggerAppUpdate()" style="background:#fff; color:#1d4ed8; border:none; padding:8px 14px; border-radius:8px; font-family:inherit; font-size:0.8rem; font-weight:900; cursor:pointer; white-space:nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">📥 Update Now</button>
+        </div>
+
         <!-- STATS ROW -->
         <div class="stats-row">
             <div class="stat-card" style="border-top:3px solid #eab308">
@@ -1234,11 +1246,41 @@
                 } catch (e) { console.error('Push error:', e); }
             }
         }
-        setupPushNotifications();
+        // IN-APP AUTO-UPDATE SYSTEM
+        const CURRENT_APP_VERSION = 2; // Version Code
+        let latestApkUrl = 'https://cafeapp-d118d.web.app/Cafe_Orders_Debug.apk';
+
+        async function checkAppUpdates() {
+            try {
+                const res = await fetch('version.json?t=' + Date.now());
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                if (data && data.versionCode && data.versionCode > CURRENT_APP_VERSION) {
+                    latestApkUrl = data.apkUrl || latestApkUrl;
+                    document.getElementById('updateVersionTag').textContent = data.versionName || ('v' + data.versionCode);
+                    if (data.changelog) document.getElementById('updateChangelog').textContent = data.changelog;
+                    const banner = document.getElementById('updateBanner');
+                    if (banner) banner.style.display = 'flex';
+                }
+            } catch (e) {
+                console.log('Update check error:', e);
+            }
+        }
+
+        function triggerAppUpdate() {
+            showToast('⬇️ Redirecting to update installer...');
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+                window.Capacitor.Plugins.Browser.open({ url: latestApkUrl });
+            } else {
+                window.open(latestApkUrl, '_blank');
+            }
+        }
 
         // Initial setup
         checkAuth();
         loadOrders();
+        checkAppUpdates();
     </script>
 
 <!-- Service Worker -->

@@ -1,0 +1,7 @@
+{
+  "versionCode": 2,
+  "versionName": "1.1.0",
+  "apkUrl": "https://cafeapp-d118d.web.app/Cafe_Orders_Debug.apk",
+  "forceUpdate": false,
+  "changelog": "Itemized lockscreen order receipt, multi-device ringing auto-stop, and orders dashboard UI improvements."
+}
