@@ -43,7 +43,8 @@
       "assets/TEAS/**",
       "assets/Veg Starters/**",
       "assets/WAFFLES*/**",
-      "*.pdf"
+      "*.pdf",
+      "*.apk"
     ],
     "headers": [
       {
@@ -79,6 +80,10 @@
       {
         "source": "/admin-orders",
         "destination": "/admin-orders.html"
+      },
+      {
+        "source": "/online",
+        "destination": "/online.html"
       },
       {
         "source": "/admin",
