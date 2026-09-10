@@ -17,6 +17,13 @@ public class MyFirebaseMessagingService extends MessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d("PushService", "Message received!");
         
+        android.content.SharedPreferences prefs = getSharedPreferences("CapacitorStorage", Context.MODE_PRIVATE);
+        String isOnlineStr = prefs.getString("isDeviceOnline", "true");
+        if ("false".equals(isOnlineStr)) {
+            Log.d("PushService", "Device is offline. Ignoring push notification.");
+            return;
+        }
+        
         // Check if it has our specific data payload
         if (remoteMessage.getData().size() > 0 && "new_order".equals(remoteMessage.getData().get("type"))) {
             Log.d("PushService", "It's a new order! Triggering full-screen alarm.");

@@ -516,6 +516,8 @@
         </div>
         <div class="dash-actions">
             <span class="live-dot" title="Real-time live connection active"></span>
+            <button class="icon-btn" onclick="toggleDeviceState()" id="btnDeviceToggle" title="Toggle Device Online/Offline">📱 On</button>
+            <button class="icon-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
             <button class="icon-btn" onclick="openHistoryModal()" title="History">📜</button>
             <button class="icon-btn" onclick="clearAllData()" style="color:#ef4444" title="Clear Data">🗑️</button>
             <button class="icon-btn btn-test-sound" onclick="testSound()" title="Test Sound">🔔</button>
@@ -558,9 +560,15 @@
             </div>
         </div>
 
+        <!-- TYPE TABS -->
+        <div style="display:flex; gap:10px; margin-bottom: 14px;">
+            <button class="filter-btn active" id="tabDining" onclick="switchOrderType('dining')" style="flex:1; padding: 10px; font-size: 0.9rem; border-radius: 12px;">🍽️ Dining Orders</button>
+            <button class="filter-btn" id="tabOnline" onclick="switchOrderType('online')" style="flex:1; padding: 10px; font-size: 0.9rem; border-radius: 12px;">🛵 Online Deliveries</button>
+        </div>
+
         <!-- FILTER BAR -->
-        <div class="filter-bar">
-            <h2>🪑 Table Grid Layout</h2>
+        <div class="filter-bar" id="diningFilterBar">
+            <h2 id="gridTitle">🪑 Table Grid Layout</h2>
             <div class="filter-tabs">
                 <button class="filter-btn active" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="active">Occupied</button>
@@ -625,11 +633,112 @@
         </div>
     </div>
 
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal" onclick="closeSettingsModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-top">
+                <div class="modal-title">⚙️ App Settings</div>
+                <button class="modal-close" onclick="closeSettingsModal()">✕</button>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="form-group">
+                    <label style="color:#ccc; font-size:0.8rem; font-weight:800; text-transform:uppercase;">Printer IP Address (WiFi)</label>
+                    <input type="text" id="printerIpInput" class="form-control" placeholder="e.g. 192.168.1.100" />
+                    <p style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Used for POSiFLOW Thermal Printer TCP connection on port 9100.</p>
+                </div>
+
+                <div class="form-group">
+                    <label style="color:#ccc; font-size:0.8rem; font-weight:800; text-transform:uppercase;">Store UPI ID</label>
+                    <input type="text" id="upiIdInput" class="form-control" placeholder="yourname@bank" />
+                    <p style="font-size:0.7rem; color:var(--muted); margin-top:4px;">Used to generate QR codes for customers on the Pay on Delivery page.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <button onclick="saveSettings()" class="btn-step btn-serve" style="width:100%; border-radius:12px; padding:14px; background:var(--primary); color:#fff; border:none;">💾 Save Settings</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container" id="toastBox"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/printer.js"></script>
     <script>
+        // DEVICE TOGGLE LOGIC
+        let isDeviceOnline = localStorage.getItem('deviceOnline') !== 'false';
+        
+        function toggleDeviceState() {
+            isDeviceOnline = !isDeviceOnline;
+            localStorage.setItem('deviceOnline', isDeviceOnline);
+            updateDeviceToggleUI();
+        }
+
+        function updateDeviceToggleUI() {
+            const btn = document.getElementById('btnDeviceToggle');
+            if(btn) {
+                if(isDeviceOnline) {
+                    btn.innerHTML = '📱 On';
+                    btn.style.color = '';
+                } else {
+                    btn.innerHTML = '📴 Off';
+                    btn.style.color = '#ef4444';
+                }
+            }
+        }
+
+        // SETTINGS MODAL
+        function openSettingsModal() {
+            document.getElementById('printerIpInput').value = localStorage.getItem('printerIp') || '';
+            document.getElementById('upiIdInput').value = localStorage.getItem('storeUpiId') || '';
+            document.getElementById('settingsModal').classList.add('open');
+        }
+
+        function closeSettingsModal(e) {
+            if (e && e.target !== document.getElementById('settingsModal') && !e.target.classList.contains('modal-close')) return;
+            document.getElementById('settingsModal').classList.remove('open');
+        }
+
+        async function saveSettings() {
+            const ip = document.getElementById('printerIpInput').value.trim();
+            const upi = document.getElementById('upiIdInput').value.trim();
+            
+            localStorage.setItem('printerIp', ip);
+            localStorage.setItem('storeUpiId', upi);
+            
+            if(window.printer) window.printer.ipAddress = ip;
+            
+            // Save UPI to Supabase config so customer app can read it
+            if(upi && window.sbUpsertConfig) {
+                try {
+                    await window.sbUpsertConfig({ upi_id: upi });
+                } catch(e) { console.error('Failed to save to config db', e); }
+            }
+            
+            closeSettingsModal();
+            showToast('💾 Settings saved!');
+        }
+
+        // TYPE TABS
+        let currentOrderType = 'dining';
+        function switchOrderType(type) {
+            currentOrderType = type;
+            document.getElementById('tabDining').classList.toggle('active', type === 'dining');
+            document.getElementById('tabOnline').classList.toggle('active', type === 'online');
+            
+            if (type === 'dining') {
+                document.getElementById('gridTitle').textContent = '🪑 Table Grid Layout';
+                document.getElementById('diningFilterBar').style.display = 'flex';
+            } else {
+                document.getElementById('gridTitle').textContent = '🛵 Active Deliveries';
+                document.getElementById('diningFilterBar').style.display = 'none';
+            }
+            
+            renderTableGrid(); // Re-render the grid
+        }
+
         // AUTHENTICATION LOGIC
         function checkAuth() {
             const isAuth = localStorage.getItem('cafeOrderAdminAuth') === 'true' || sessionStorage.getItem('cafeOrderAdminAuth') === 'true';
@@ -760,6 +869,43 @@
         let activeTableOrdersMap = {};
         let selectedTableNum = null;
         let lastNonBilledCount = 0;
+        let isDeviceOnline = true;
+
+        async function initDeviceState() {
+            if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+                const { value } = await window.Capacitor.Plugins.Preferences.get({ key: 'isDeviceOnline' });
+                if (value === 'false') {
+                    isDeviceOnline = false;
+                    const btn = document.getElementById('btnDeviceToggle');
+                    if (btn) {
+                        btn.textContent = '📴 Off';
+                        btn.style.color = 'var(--muted)';
+                    }
+                }
+            }
+        }
+        // Call it immediately
+        initDeviceState();
+
+        async function toggleDeviceState() {
+            isDeviceOnline = !isDeviceOnline;
+            const btn = document.getElementById('btnDeviceToggle');
+            if (isDeviceOnline) {
+                btn.textContent = '📱 On';
+                btn.style.color = 'var(--text)';
+                showToast('✅ Device is ONLINE. You will receive ringing alarms.');
+            } else {
+                btn.textContent = '📴 Off';
+                btn.style.color = 'var(--muted)';
+                showToast('🔕 Device is OFFLINE. Alarms are silenced.');
+            }
+            if (window.Capacitor && window.Capacitor.Plugins.Preferences) {
+                await window.Capacitor.Plugins.Preferences.set({
+                    key: 'isDeviceOnline',
+                    value: isDeviceOnline ? 'true' : 'false'
+                });
+            }
+        }
 
         function showToast(msg) {
             const box = document.getElementById('toastBox');
@@ -843,35 +989,46 @@
             // Default 12 Table Grid (Matching Reference Image Layout)
             const DEFAULT_TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
             
-            activeTableOrdersMap = {};
-            const billedOrdersToday = allOrders.filter(o => o.status === 'billed' && isToday(o.created_at));
+            // Filter for current order type
+            const typeFilteredOrders = allOrders.filter(o => (o.order_type || 'dining') === currentOrderType);
+            
+            const billedOrdersToday = typeFilteredOrders.filter(o => o.status === 'billed' && isToday(o.created_at));
 
-            allOrders.forEach(o => {
+            typeFilteredOrders.forEach(o => {
                 if (o.status === 'billed' || o.status === 'cancelled') return;
-                const tNum = String(o.table_number || 'Unknown').trim();
+                
+                // For online orders, we group by order ID instead of table number to display them independently
+                const tNum = currentOrderType === 'online' ? o.id : String(o.table_number || 'Unknown').trim();
+                
                 if (!activeTableOrdersMap[tNum]) activeTableOrdersMap[tNum] = [];
                 activeTableOrdersMap[tNum].push(o);
             });
 
-            const allTableKeys = new Set(DEFAULT_TABLES.map(String));
+            const allTableKeys = new Set(currentOrderType === 'dining' ? DEFAULT_TABLES.map(String) : []);
             Object.keys(activeTableOrdersMap).forEach(k => allTableKeys.add(k));
 
             const sortedTables = Array.from(allTableKeys).sort((a, b) => {
+                if(currentOrderType === 'online') {
+                    // Sort by newest for online
+                    return new Date(activeTableOrdersMap[b][0].created_at) - new Date(activeTableOrdersMap[a][0].created_at);
+                }
                 const na = parseInt(a), nb = parseInt(b);
                 if (!isNaN(na) && !isNaN(nb)) return na - nb;
                 return a.localeCompare(b);
             });
 
             let displayTables = sortedTables;
-            if (activeFilter === 'active') {
-                displayTables = sortedTables.filter(t => (activeTableOrdersMap[t] || []).length > 0);
-            } else if (activeFilter === 'vacant') {
-                displayTables = sortedTables.filter(t => (!activeTableOrdersMap[t] || activeTableOrdersMap[t].length === 0));
+            if (currentOrderType === 'dining') {
+                if (activeFilter === 'active') {
+                    displayTables = sortedTables.filter(t => (activeTableOrdersMap[t] || []).length > 0);
+                } else if (activeFilter === 'vacant') {
+                    displayTables = sortedTables.filter(t => (!activeTableOrdersMap[t] || activeTableOrdersMap[t].length === 0));
+                }
             }
 
             // Update Stats
             const occupiedCount = Object.keys(activeTableOrdersMap).length;
-            const pendingCount = allOrders.filter(o => o.status === 'pending').length;
+            const pendingCount = typeFilteredOrders.filter(o => o.status === 'pending').length;
             const billedCount = billedOrdersToday.length;
             const todayRevenue = billedOrdersToday.reduce((sum, o) => sum + (o.total || 0), 0);
 
@@ -881,7 +1038,7 @@
             document.getElementById('statRevenue').textContent = '₹' + todayRevenue;
 
             if (displayTables.length === 0) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted)">No tables in ${activeFilter} filter</div>`;
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted)">No ${currentOrderType === 'online' ? 'online deliveries' : 'tables in ' + activeFilter + ' filter'}</div>`;
                 return;
             }
 
@@ -924,9 +1081,13 @@
 
                     card.onclick = () => openTableModal(tNum);
 
+                    let cardDisplayTitle = tNum;
+                    if(currentOrderType === 'online' && ordersForTable[0]) {
+                        cardDisplayTitle = (ordersForTable[0].customer_name || 'Online').substring(0, 10);
+                    }
                     card.innerHTML = `
                         ${notifyBadgeHtml}
-                        <div class="table-num">${tNum}</div>
+                        <div class="table-num" style="${currentOrderType === 'online' ? 'font-size: 1.2rem; line-height: 1.2; word-break: break-word;' : ''}">${esc(cardDisplayTitle)}</div>
                         <div class="item-count-badge">${itemCount} items</div>
                         <div class="card-total">₹${totalAmt}</div>
                     `;
@@ -954,7 +1115,11 @@
             const orders = activeTableOrdersMap[selectedTableNum] || [];
             if (!orders.length) return;
 
-            document.getElementById('modalTableTitle').textContent = `Table #${selectedTableNum} Orders`;
+            if (currentOrderType === 'online') {
+                document.getElementById('modalTableTitle').textContent = `Order: ${orders[0]?.customer_name || 'Guest'}`;
+            } else {
+                document.getElementById('modalTableTitle').textContent = `Table #${selectedTableNum} Orders`;
+            }
 
             let subtotalAmt = 0;
             let gstAmt = 0;
@@ -1014,6 +1179,32 @@
                 custInfoHtml = `<div style="font-size:0.8rem; color:#9ca3af; margin-bottom:8px;">👤 Customer: <span style="color:#fff; font-weight:700;">${Array.from(customerSet).join(', ')}</span></div>`;
             }
 
+            // Online delivery details
+            let onlineInfoHtml = '';
+            if (currentOrderType === 'online' && orders[0]) {
+                const o = orders[0];
+                const addr = o.address ? `📍 <strong>Address:</strong> ${esc(o.address)}` : '';
+                const land = o.landmark ? `<br>🎯 <strong>Landmark:</strong> ${esc(o.landmark)}` : '';
+                
+                let trackHtml = '';
+                if (o.latitude && o.longitude) {
+                    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${o.latitude},${o.longitude}`;
+                    trackHtml = `<br>🗺️ <a href="${mapsLink}" target="_blank" style="color:var(--primary); text-decoration:underline;">View on Google Maps</a>`;
+                }
+
+                const paymentStatus = o.utr_number ? `<br>💳 <strong>Paid via UPI (UTR: ${esc(o.utr_number)})</strong>` : '<br>💵 <strong>Cash on Delivery (Unpaid)</strong>';
+                
+                let proofHtml = '';
+                if(o.payment_proof_url) {
+                    // Usually base64 or URL
+                    proofHtml = `<div style="margin-top: 8px;"><a href="${esc(o.payment_proof_url)}" target="_blank" style="color:var(--primary); text-decoration:underline;">View Payment Proof</a></div>`;
+                }
+
+                onlineInfoHtml = `<div style="background:rgba(37,99,235,0.12); color:#93c5fd; border:1px solid rgba(37,99,235,0.3); padding:10px; border-radius:10px; font-size:0.85rem; margin-bottom:12px; line-height: 1.5;">
+                    ${addr}${land}${trackHtml}${paymentStatus}${proofHtml}
+                </div>`;
+            }
+
             // Notes html
             let notesHtml = '';
             if (notesArr.length > 0) {
@@ -1068,21 +1259,21 @@
                 </div>
             `;
 
-            document.getElementById('modalItemsList').innerHTML = (custInfoHtml + notesHtml + itemsHeaderHtml + (itemsRowsHtml || '<div style="padding:10px; color:#8c92a4; text-align:center;">No items listed</div>') + billSummaryHtml);
+            document.getElementById('modalItemsList').innerHTML = (custInfoHtml + onlineInfoHtml + notesHtml + itemsHeaderHtml + (itemsRowsHtml || '<div style="padding:10px; color:#8c92a4; text-align:center;">No items listed</div>') + billSummaryHtml);
             document.getElementById('modalTotalAmount').textContent = `₹${Math.round(grandTotalAmt)}`;
 
             let stepBtnHtml = '';
             if (domStatus === 'pending') {
                 stepBtnHtml = `<button class="btn-step btn-prepare" onclick="advanceSelectedStatus('preparing')">🍳 Start Preparing</button>`;
             } else if (domStatus === 'preparing') {
-                stepBtnHtml = `<button class="btn-step btn-ready" onclick="advanceSelectedStatus('ready')">✅ Mark Ready</button>`;
+                stepBtnHtml = `<button class="btn-step btn-ready" onclick="advanceSelectedStatus('ready')">${currentOrderType === 'online' ? '🛵 Out for Delivery' : '✅ Mark Ready'}</button>`;
             } else if (domStatus === 'ready') {
-                stepBtnHtml = `<button class="btn-step btn-serve" onclick="advanceSelectedStatus('served')">🍽️ Mark Served</button>`;
+                stepBtnHtml = `<button class="btn-step btn-serve" onclick="advanceSelectedStatus('served')">${currentOrderType === 'online' ? '📍 Reached Location' : '🍽️ Mark Served'}</button>`;
             }
 
             document.getElementById('modalActions').innerHTML = `
                 ${stepBtnHtml}
-                <button class="btn-bill-clear" onclick="clearSelectedTable()">💳 Bill & Clear Table (₹${Math.round(grandTotalAmt)})</button>
+                <button class="btn-bill-clear" onclick="clearSelectedTable()">💳 ${currentOrderType === 'online' ? 'Mark Delivered & Bill' : 'Bill & Clear Table'} (₹${Math.round(grandTotalAmt)})</button>
                 <button class="btn-bill-clear" style="background: linear-gradient(135deg, #dc2626, #b91c1c); margin-top: 6px; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);" onclick="cancelSelectedTable()">🚫 Cancel Order</button>
             `;
 
@@ -1114,29 +1305,67 @@
 
         async function clearSelectedTable() {
             if (!selectedTableNum) return;
-            const ok = await sbClearTableOrders(selectedTableNum);
+            
+            // Trigger Printer before clearing (which moves state to billed)
+            try {
+                const orders = activeTableOrdersMap[selectedTableNum] || [];
+                if(orders.length > 0 && window.printer) {
+                    // We combine the orders into a single bill representation to send to printer
+                    const compositeOrder = { ...orders[0] };
+                    compositeOrder.items = [];
+                    compositeOrder.subtotal = 0;
+                    compositeOrder.gst = 0;
+                    compositeOrder.total = 0;
+                    
+                    orders.forEach(o => {
+                        (o.items || []).forEach(it => compositeOrder.items.push(it));
+                        compositeOrder.subtotal += Number(o.subtotal || 0);
+                        compositeOrder.gst += Number(o.gst || 0);
+                        compositeOrder.total += Number(o.total || 0);
+                    });
+                    
+                    window.printer.printOrder(compositeOrder);
+                }
+            } catch(e) { console.error('Printing error:', e); }
+            
+            let ok = false;
+            if (currentOrderType === 'online') {
+                // Online orders are cleared individually by order id
+                ok = await sbUpdateOrderStatus(selectedTableNum, 'billed');
+            } else {
+                ok = await sbClearTableOrders(selectedTableNum);
+            }
+            
             if (ok) {
                 seenNotificationTables.delete(selectedTableNum);
-                showToast(`✅ Table #${selectedTableNum} billed & cleared!`);
+                showToast(currentOrderType === 'online' ? `✅ Order ${selectedTableNum.substring(0,8)} billed!` : `✅ Table #${selectedTableNum} billed & cleared!`);
                 playChime();
                 closeTableModal();
                 await loadOrders();
             } else {
-                showToast('❌ Failed to clear table');
+                showToast('❌ Failed to clear table/order');
             }
         }
 
         async function cancelSelectedTable() {
             if (!selectedTableNum) return;
-            if (!confirm(`Are you sure you want to cancel all active orders for Table #${selectedTableNum}?`)) return;
-            const ok = await sbCancelTableOrders(selectedTableNum);
+            const label = currentOrderType === 'online' ? `Order ${selectedTableNum.substring(0,8)}` : `Table #${selectedTableNum}`;
+            if (!confirm(`Are you sure you want to cancel ${label}?`)) return;
+            
+            let ok = false;
+            if (currentOrderType === 'online') {
+                ok = await sbUpdateOrderStatus(selectedTableNum, 'cancelled');
+            } else {
+                ok = await sbCancelTableOrders(selectedTableNum);
+            }
+            
             if (ok) {
                 seenNotificationTables.delete(selectedTableNum);
-                showToast(`🚫 Table #${selectedTableNum} orders cancelled!`);
+                showToast(`🚫 ${label} cancelled!`);
                 closeTableModal();
                 await loadOrders();
             } else {
-                showToast('❌ Failed to cancel orders');
+                showToast('❌ Failed to cancel');
             }
         }
 
@@ -1168,7 +1397,9 @@
 
                 const currentNonBilledCount = allOrders.filter(o => o.status !== 'billed').length;
                 if (lastNonBilledCount > 0 && currentNonBilledCount > lastNonBilledCount) {
-                    playChime();
+                    if (typeof isDeviceOnline !== 'undefined' && isDeviceOnline) {
+                        playChime();
+                    }
                 }
                 lastNonBilledCount = currentNonBilledCount;
 
@@ -1240,14 +1471,16 @@
                         if (window.sbSaveFCMToken) window.sbSaveFCMToken(token.value);
                     });
                     PushNotifications.addListener('pushNotificationReceived', (notification) => {
-                        playChime();
-                        loadOrders();
+                        if (typeof isDeviceOnline !== 'undefined' && isDeviceOnline) {
+                            playChime();
+                            loadOrders();
+                        }
                     });
                 } catch (e) { console.error('Push error:', e); }
             }
         }
         // IN-APP AUTO-UPDATE SYSTEM
-        const CURRENT_APP_VERSION = 2; // Version Code
+        const CURRENT_APP_VERSION = 4; // Version Code
         let latestApkUrl = 'https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk';
 
         async function checkAppUpdates() {

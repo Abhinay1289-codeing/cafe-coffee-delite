@@ -65,10 +65,15 @@ CREATE POLICY "Admins can modify category overrides"
 -- ORDERS
 -- ================================================
 
--- ✅ Customers (anonymous) can INSERT orders
+-- ✅ Customers (anonymous/auth) can INSERT orders
 CREATE POLICY "Anyone can insert orders"
   ON orders FOR INSERT
   WITH CHECK (true);
+
+-- ✅ Customers can read their own online orders
+CREATE POLICY "Customers can read own orders"
+  ON orders FOR SELECT
+  USING (user_id = auth.uid());
 
 -- ✅ Authenticated admins can READ orders
 CREATE POLICY "Admins can read orders"

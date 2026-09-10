@@ -38,6 +38,14 @@ create table if not exists public.orders (
   total integer default 0,
   notes text,
   status text default 'pending',
+  order_type text default 'dining',
+  user_id uuid,
+  latitude double precision,
+  longitude double precision,
+  address text,
+  landmark text,
+  utr_number text,
+  payment_proof_url text,
   created_at timestamptz default now()
 );
 
@@ -105,7 +113,22 @@ CREATE POLICY "Admins can manage orders"
   WITH CHECK (auth.role() = 'authenticated');
 
 -- ================================================
--- 4. Production Recommendations
+-- 4. Storage Bucket Setup
+-- ================================================
+insert into storage.buckets (id, name, public) 
+values ('payment_proofs', 'payment_proofs', true)
+on conflict (id) do nothing;
+
+CREATE POLICY "Anyone can upload payment proofs"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'payment_proofs');
+
+CREATE POLICY "Public can view payment proofs"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'payment_proofs');
+
+-- ================================================
+-- 5. Production Recommendations
 -- ================================================
 --
 -- - Set up Supabase Auth to create admin users
