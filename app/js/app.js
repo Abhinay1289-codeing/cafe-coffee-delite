@@ -1065,61 +1065,92 @@ async function placeOrder() {
         placeBtn.textContent = "⏳ Sending Order to Kitchen...";
     }
 
-    const tableRaw = $("checkoutTable")?.value.trim();
-    if (!tableRaw) {
-        showToast("⚠️ Please enter your table number", true);
-        $("checkoutTable")?.focus();
-        _isPlacingOrder = false;
+    try {
+        if (!cart.length) {
+            showToast("⚠️ Your cart is empty", true);
+            return;
+        }
+
+        const tableNum = ($("checkoutTable")?.value || "").trim() || getTableNumber() || "Takeaway";
+        if (!tableNum || tableNum === "Takeaway") {
+            const sessionTable = getTableNumber();
+            if (!sessionTable && !($("checkoutTable")?.value || "").trim()) {
+                showToast("⚠️ Please enter your table number", true);
+                $("checkoutTable")?.focus();
+                return;
+            }
+        }
+
+        const finalTableNum = ($("checkoutTable")?.value || "").trim() || getTableNumber() || "1";
+        const name = ($("checkoutName")?.value || "").trim() || "Guest";
+        const phone = ($("checkoutPhone")?.value || "").trim() || "";
+        const notes = ($("checkoutNotes")?.value || "").trim() || "";
+
+        let sub = 0;
+        const itemsList = cart.map(i => {
+            const lineSub = (Number(i.price) || 0) * (Number(i.qty) || 1);
+            sub += lineSub;
+            return {
+                name: i.name,
+                qty: Number(i.qty) || 1,
+                price: Number(i.price) || 0,
+                notes: i.notes || ""
+            };
+        });
+
+        let gst = 0;
+        if (CONFIG.gstEnabled) {
+            gst = Math.round(sub * CONFIG.gstRate);
+        }
+        const total = sub + gst;
+
+        // Save order directly to Supabase Cloud Database (triggers real-time update on admin dashboard)
+        if (window.sb && typeof window.sbSaveOrder === 'function') {
+            try {
+                await window.sbSaveOrder({
+                    tableNumber: finalTableNum,
+                    customerName: name,
+                    customerPhone: phone || null,
+                    items: itemsList,
+                    subtotal: sub,
+                    gst: gst,
+                    total: total,
+                    notes: notes || null
+                });
+            } catch (e) {
+                console.error('[SB] Failed to save order:', e);
+            }
+        }
+
+        // Populate order details on success screen
+        if ($("successTableBadge")) $("successTableBadge").textContent = `Table #${finalTableNum}`;
+        if ($("successOrderItems")) {
+            const itemsHtml = itemsList.map(i => `<div>${i.qty}× ${esc(i.name)} — ₹${i.price * i.qty}</div>`).join('');
+            $("successOrderItems").innerHTML = itemsHtml + `<div style="font-weight:800; color:var(--text); margin-top:6px; padding-top:6px; border-top:1px dashed var(--border);">Total: ₹${total}</div>`;
+        }
+
+        // Clear cart after placing order
+        cart = [];
+        updateCartUI();
+
+        // Show customer success screen
+        closeScreens();
+        $("screenSuccess")?.classList.add("open");
+        $("screenSuccess")?.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        showToast("🎉 Order sent directly to kitchen!");
+        launchConfetti();
+        startOrderTracking();
+    } catch (err) {
+        console.error("Error placing order:", err);
+        showToast("⚠️ An error occurred. Please try again.", true);
+    } finally {
         if (placeBtn) {
             placeBtn.disabled = false;
             placeBtn.textContent = "🚀 Confirm & Send Order to Kitchen";
         }
-        return;
+        setTimeout(() => { _isPlacingOrder = false; }, 1500);
     }
-
-    // Save order directly to Supabase Cloud Database (triggers real-time update on admin dashboard)
-    try {
-        if (window.sb) {
-            await sbSaveOrder({
-                tableNumber: tableNum,
-                customerName: name,
-                customerPhone: phone || null,
-                items: itemsList,
-                subtotal: sub,
-                gst: CONFIG.gstEnabled ? gst : 0,
-                total: total,
-                notes: notes || null
-            });
-        }
-    } catch (e) {
-        console.error('[SB] Failed to save order:', e);
-    }
-
-    // Populate order details on success screen
-    if ($("successTableBadge")) $("successTableBadge").textContent = `Table #${tableNum}`;
-    if ($("successOrderItems")) {
-        const itemsHtml = itemsList.map(i => `<div>${i.qty}× ${esc(i.name)} — ₹${i.price * i.qty}</div>`).join('');
-        $("successOrderItems").innerHTML = itemsHtml + `<div style="font-weight:800; color:var(--text); margin-top:6px; padding-top:6px; border-top:1px dashed var(--border);">Total: ₹${total}</div>`;
-    }
-
-    if (placeBtn) {
-        placeBtn.disabled = false;
-        placeBtn.textContent = "🚀 Confirm & Send Order to Kitchen";
-    }
-
-    // Clear cart after placing order
-    cart = [];
-    updateCartUI();
-
-    // Show customer success screen
-    closeScreens();
-    $("screenSuccess")?.classList.add("open");
-    $("screenSuccess")?.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
-    showToast("🎉 Order sent directly to kitchen!");
-    launchConfetti();
-    startOrderTracking();
-    setTimeout(() => { _isPlacingOrder = false; }, 2000);
 }
 
 function launchConfetti() {

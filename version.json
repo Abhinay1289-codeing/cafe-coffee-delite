@@ -1,7 +1,7 @@
 {
-  "versionCode": 6,
-  "versionName": "1.4.0",
+  "versionCode": 7,
+  "versionName": "1.4.1",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Added ESC/POS Thermal Receipt Printer setup, IP connection test, manual & auto bill receipt printing."
+  "changelog": "Fixed dining table order submission bug where Place Order button got stuck loading on some devices."
 }
