@@ -1,7 +1,7 @@
 {
-  "versionCode": 7,
-  "versionName": "1.4.1",
+  "versionCode": 8,
+  "versionName": "1.4.2",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Fixed dining table order submission bug where Place Order button got stuck loading on some devices."
+  "changelog": "Fixed table QR URL matching for clean Firebase Hosting URLs (/table?table=3)."
 }

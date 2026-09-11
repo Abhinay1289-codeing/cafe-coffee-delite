@@ -230,7 +230,6 @@ const urlTable = urlParams.get("table");
 if (urlTable) sessionStorage.setItem("cafeTable", urlTable.trim().replace(/^#/, ""));
 
 function getTableNumber() {
-    if (!window.location.pathname.endsWith('table.html')) return "";
     return (sessionStorage.getItem("cafeTable") || urlTable || "").trim().replace(/^#/, "");
 }
 
