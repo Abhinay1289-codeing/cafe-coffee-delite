@@ -32,14 +32,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let registeringEmail = '';
 
-    if (loginOverlay && window.sb) {
-        // Check session
-        const { data: { session } } = await window.sb.auth.getSession();
-        if (session) {
-            loginOverlay.style.display = 'none';
-        } else {
+    if (loginOverlay) {
+        const checkSession = async () => {
+            if (window.sb && window.sb.auth) {
+                try {
+                    const { data: { session } } = await window.sb.auth.getSession();
+                    if (session) {
+                        loginOverlay.style.display = 'none';
+                        return true;
+                    }
+                } catch (e) {}
+            }
             loginOverlay.style.display = 'flex';
-        }
+            return false;
+        };
+
+        await checkSession();
+        setTimeout(checkSession, 500);
 
         // View Toggling
         if (showRegisterBtn) {
