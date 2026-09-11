@@ -66,6 +66,34 @@ class ReceiptPrinter {
 
     // --- FORMATTING HELPERS ---
 
+    buildTestReceipt() {
+        this.buffer = [];
+        this.init();
+        
+        this.alignCenter();
+        this.setTextSize(1, 1);
+        this.setBold(true);
+        this.textLine("CAFE COFFEE DELITE");
+        this.setTextSize(0, 0);
+        this.setBold(false);
+        this.textLine("--- THERMAL PRINTER TEST ---");
+        this.separator();
+        
+        this.alignLeft();
+        this.textLine(`Status: SUCCESS`);
+        this.textLine(`IP Address: ${this.ipAddress || 'Not set'}`);
+        this.textLine(`Port: ${this.port}`);
+        this.textLine(`Date/Time: ${new Date().toLocaleString()}`);
+        this.separator();
+        
+        this.alignCenter();
+        this.textLine("ESC/POS Printer Connection OK!");
+        this.feed(3);
+        this.cut();
+        
+        return this.buffer;
+    }
+
     buildBillReceipt(order) {
         this.buffer = [];
         this.init();
@@ -77,47 +105,55 @@ class ReceiptPrinter {
         this.textLine("CAFE COFFEE DELITE");
         this.setTextSize(0, 0);
         this.setBold(false);
-        this.textLine("123 Coffee Street, Cafe City");
-        this.textLine("Phone: +1 234 567 8900");
+        this.textLine("Live Orders & Table Billing");
         this.separator();
         
         // Order Info
         this.alignLeft();
-        this.textLine(`Order ID: ${order.id.slice(0, 8).toUpperCase()}`);
-        this.textLine(`Date: ${new Date(order.created_at).toLocaleString()}`);
-        if (order.order_type === 'online') {
-            this.textLine(`Type: ONLINE DELIVERY`);
+        const isOnline = String(order.order_type).toLowerCase() === 'online' || String(order.table_number).toLowerCase() === 'online';
+        if (isOnline) {
+            this.setBold(true);
+            this.textLine("Type: ONLINE DELIVERY ORDER");
+            this.setBold(false);
             this.textLine(`Customer: ${order.customer_name || 'Guest'}`);
-            this.textLine(`Phone: ${order.customer_phone || ''}`);
+            if (order.customer_phone) this.textLine(`Phone: ${order.customer_phone}`);
+            if (order.address) this.textLine(`Address: ${order.address}`);
         } else {
-            this.textLine(`Type: DINE-IN`);
-            this.textLine(`Table: ${order.table_number || ''}`);
+            this.setBold(true);
+            this.textLine(`TABLE #${order.table_number || 'Takeaway'}`);
+            this.setBold(false);
+            if (order.customer_name) this.textLine(`Customer: ${order.customer_name}`);
         }
+        this.textLine(`Date: ${new Date(order.created_at || Date.now()).toLocaleString('en-IN')}`);
         this.separator();
         
-        // Items
+        // Items Header
         this.setBold(true);
-        this.textLine("ITEM                           QTY    PRICE");
+        this.textLine("ITEM                           QTY    AMT");
         this.setBold(false);
         this.separator();
         
         const items = order.items || [];
         items.forEach(item => {
-            const nameStr = (item.name || '').substring(0, 26).padEnd(28, ' ');
-            const qtyStr = (item.quantity || 1).toString().padEnd(4, ' ');
-            const priceStr = (item.price * (item.quantity || 1)).toString().padStart(8, ' ');
-            this.textLine(`${nameStr} ${qtyStr} ${priceStr}`);
+            const name = (item.name || item.item_name || 'Item').substring(0, 24).padEnd(26, ' ');
+            const qty = (item.qty || item.quantity || 1).toString().padEnd(4, ' ');
+            const amt = Math.round((item.price || 0) * (item.qty || item.quantity || 1)).toString().padStart(6, ' ');
+            this.textLine(`${name} ${qty} Rs.${amt}`);
         });
         
         this.separator();
         
         // Totals
         this.alignRight();
-        this.textLine(`Subtotal: Rs. ${order.subtotal || 0}`);
-        this.textLine(`GST (5%): Rs. ${order.gst || 0}`);
+        const subtotal = Math.round(Number(order.subtotal || order.total || 0));
+        const gst = Math.round(Number(order.gst || 0));
+        const total = Math.round(Number(order.total || (subtotal + gst)));
+
+        this.textLine(`Subtotal: Rs. ${subtotal}`);
+        if (gst > 0) this.textLine(`GST Tax: Rs. ${gst}`);
         this.setTextSize(0, 1);
         this.setBold(true);
-        this.textLine(`TOTAL: Rs. ${order.total || 0}`);
+        this.textLine(`GRAND TOTAL: Rs. ${total}`);
         this.setTextSize(0, 0);
         this.setBold(false);
         
@@ -137,44 +173,53 @@ class ReceiptPrinter {
         return bytesArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    async printOrder(order) {
-        this.ipAddress = localStorage.getItem('printerIp') || '';
+    async sendToPrinter(bytesArray, targetIp = null, targetPort = null) {
+        const ip = targetIp || localStorage.getItem('printerIp') || this.ipAddress;
+        const port = Number(targetPort || localStorage.getItem('printerPort') || this.port);
         
-        if (!this.ipAddress) {
+        if (!ip) {
             console.warn('Printer IP not configured.');
-            return false;
+            return { success: false, message: 'Printer IP address not configured. Please set IP in Printer Settings.' };
         }
 
-        if (!this.TcpSocket) {
-            console.warn('TCP Socket plugin not available. (Are you running in browser?)');
-            return false;
+        const TcpSocket = window.Capacitor?.Plugins?.TcpSocket;
+        if (!TcpSocket) {
+            console.warn('TCP Socket plugin not available. (Running in browser?)');
+            return { success: false, message: 'TCP Socket plugin available on Android device only.' };
         }
 
         try {
-            const bytes = this.buildBillReceipt(order);
-            const hexData = this.bytesToHex(bytes);
-
-            console.log(`Connecting to printer at ${this.ipAddress}:${this.port}...`);
-            const conn = await this.TcpSocket.connect({
-                ipAddress: this.ipAddress,
-                port: this.port
+            const hexData = this.bytesToHex(bytesArray);
+            console.log(`Connecting to printer at ${ip}:${port}...`);
+            
+            const conn = await TcpSocket.connect({
+                ipAddress: ip,
+                port: port
             });
 
             console.log(`Connected (Client ID: ${conn.client}). Sending data...`);
-            await this.TcpSocket.send({
+            await TcpSocket.send({
                 client: conn.client,
                 data: hexData,
-                encoding: 'hex' // Based on the capacitor-tcp-socket docs
+                encoding: 'hex'
             });
 
-            console.log('Data sent. Disconnecting...');
-            await this.TcpSocket.disconnect({ client: conn.client });
-            
-            return true;
+            await TcpSocket.disconnect({ client: conn.client });
+            return { success: true, message: 'Receipt printed successfully!' };
         } catch (error) {
-            console.error('Printer error:', error);
-            return false;
+            console.error('Printer connection error:', error);
+            return { success: false, message: 'Printer Connection Failed: ' + (error.message || error) };
         }
+    }
+
+    async testPrint(targetIp = null, targetPort = null) {
+        const bytes = this.buildTestReceipt();
+        return await this.sendToPrinter(bytes, targetIp, targetPort);
+    }
+
+    async printOrder(order) {
+        const bytes = this.buildBillReceipt(order);
+        return await this.sendToPrinter(bytes);
     }
 }
 

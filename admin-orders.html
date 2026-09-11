@@ -573,6 +573,7 @@
         </div>
         <div class="dash-actions">
             <span class="live-dot" title="Real-time live connection active"></span>
+            <button class="icon-btn" onclick="openPrinterModal()" title="Printer Settings"><span style="font-size:1.05rem;">🖨️</span><span class="btn-label">Printer</span></button>
             <button class="icon-btn" onclick="openHistoryModal()" title="History"><span style="font-size:1.05rem;">📜</span><span class="btn-label">History</span></button>
             <button class="icon-btn" onclick="loadOrders()" title="Refresh"><span style="font-size:1.05rem;">↻</span><span class="btn-label">Refresh</span></button>
             <button class="icon-btn btn-test-sound" onclick="testSound()" title="Test Sound"><span style="font-size:1.05rem;">🔔</span><span class="btn-label">Bell</span></button>
@@ -700,10 +701,43 @@
         </div>
     </div>
 
+    <!-- PRINTER SETTINGS MODAL -->
+    <div class="modal-overlay" id="printerModal" onclick="closePrinterModal(event)">
+        <div class="modal-card" style="max-width: 440px;" onclick="event.stopPropagation()">
+            <div class="modal-top">
+                <div class="modal-title" style="display:flex; align-items:center; gap:8px;">
+                    <span>🖨️ Thermal Printer Setup</span>
+                </div>
+                <button class="modal-close" onclick="closePrinterModal()">✕</button>
+            </div>
+
+            <div class="auth-form" style="margin-bottom:16px;">
+                <div class="form-group">
+                    <label for="printerIpInput">Printer IP Address (Wi-Fi / LAN)</label>
+                    <input type="text" id="printerIpInput" class="form-control" placeholder="e.g. 192.168.1.100" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="printerPortInput">Printer Port</label>
+                    <input type="number" id="printerPortInput" class="form-control" value="9100" placeholder="9100">
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:12px; margin-top:4px;">
+                    <input type="checkbox" id="autoPrintToggle" style="width:18px; height:18px; cursor:pointer;">
+                    <label for="autoPrintToggle" style="font-size:0.85rem; font-weight:700; color:#fff; cursor:pointer;">Auto-Print Bill Receipt on Clear Table</label>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="btn-step btn-ready" style="padding:12px; font-weight:900;" onclick="handleSavePrinterSettings()">💾 Save Printer Settings</button>
+                <button class="btn-step btn-serve" style="padding:12px; font-weight:900;" onclick="handleTestPrint()">🖨️ Send Test Receipt to Printer</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container" id="toastBox"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/printer.js"></script>
     <script>
         // AUTHENTICATION LOGIC
         function checkAuth() {
@@ -1214,11 +1248,91 @@
 
             document.getElementById('modalActions').innerHTML = `
                 ${stepBtnHtml}
+                <button class="btn-step btn-serve" style="background:rgba(59, 130, 246, 0.2); color:#60a5fa; border:1px solid rgba(59, 130, 246, 0.4);" onclick="printCurrentTableBill()">🖨️ Print Receipt / Bill</button>
                 <button class="btn-bill-clear" onclick="clearSelectedTable()">💳 Bill & Clear Table (₹${Math.round(grandTotalAmt)})</button>
                 <button class="btn-bill-clear" style="background: linear-gradient(135deg, #dc2626, #b91c1c); margin-top: 6px; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);" onclick="cancelSelectedTable()">🚫 Cancel Order</button>
             `;
 
             document.getElementById('tableModal').classList.add('open');
+        }
+
+        // PRINTER HANDLERS
+        function openPrinterModal() {
+            if (document.getElementById('printerIpInput')) {
+                document.getElementById('printerIpInput').value = localStorage.getItem('printerIp') || '';
+            }
+            if (document.getElementById('printerPortInput')) {
+                document.getElementById('printerPortInput').value = localStorage.getItem('printerPort') || '9100';
+            }
+            if (document.getElementById('autoPrintToggle')) {
+                document.getElementById('autoPrintToggle').checked = localStorage.getItem('autoPrint') === 'true';
+            }
+            document.getElementById('printerModal')?.classList.add('open');
+        }
+
+        function closePrinterModal(e) {
+            if (e && e.target !== document.getElementById('printerModal') && !e.target.classList.contains('modal-close')) return;
+            document.getElementById('printerModal')?.classList.remove('open');
+        }
+
+        function handleSavePrinterSettings() {
+            const ip = (document.getElementById('printerIpInput')?.value || '').trim();
+            const port = (document.getElementById('printerPortInput')?.value || '').trim() || '9100';
+            const auto = document.getElementById('autoPrintToggle')?.checked ? 'true' : 'false';
+
+            localStorage.setItem('printerIp', ip);
+            localStorage.setItem('printerPort', port);
+            localStorage.setItem('autoPrint', auto);
+
+            showToast('💾 Printer settings saved!');
+            closePrinterModal();
+        }
+
+        async function handleTestPrint() {
+            const ip = (document.getElementById('printerIpInput')?.value || '').trim();
+            const port = (document.getElementById('printerPortInput')?.value || '').trim() || '9100';
+            showToast('⏳ Connecting to printer...');
+            const res = await window.printer.testPrint(ip, port);
+            if (res.success) {
+                showToast('✅ Test print sent!');
+            } else {
+                showToast('❌ ' + res.message);
+            }
+        }
+
+        async function printCurrentTableBill() {
+            if (!selectedTableNum) return;
+            const orders = activeTableOrdersMap[selectedTableNum] || [];
+            if (!orders.length) return;
+
+            const summaryOrder = {
+                id: orders[0].id || 'BILL',
+                table_number: selectedTableNum,
+                order_type: orders[0].order_type || (selectedTableNum === 'Online' ? 'online' : 'dine-in'),
+                customer_name: orders.map(o => o.customer_name).filter(Boolean).join(', '),
+                customer_phone: orders[0].customer_phone || '',
+                address: orders[0].address || '',
+                created_at: orders[0].created_at || new Date().toISOString(),
+                items: [],
+                subtotal: 0,
+                gst: 0,
+                total: 0
+            };
+
+            orders.forEach(o => {
+                summaryOrder.subtotal += Number(o.subtotal || o.total || 0);
+                summaryOrder.gst += Number(o.gst || 0);
+                summaryOrder.total += Number(o.total || (o.subtotal + o.gst));
+                (o.items || []).forEach(it => summaryOrder.items.push(it));
+            });
+
+            showToast('🖨️ Printing receipt...');
+            const res = await window.printer.printOrder(summaryOrder);
+            if (res.success) {
+                showToast('✅ Bill receipt printed!');
+            } else {
+                showToast('⚠️ ' + res.message);
+            }
         }
 
         function closeTableModal(e) {
@@ -1246,6 +1360,11 @@
 
         async function clearSelectedTable() {
             if (!selectedTableNum) return;
+
+            if (localStorage.getItem('autoPrint') === 'true') {
+                printCurrentTableBill();
+            }
+
             const ok = await sbClearTableOrders(selectedTableNum);
             if (ok) {
                 seenNotificationTables.delete(selectedTableNum);
@@ -1379,7 +1498,7 @@
             }
         }
         // IN-APP AUTO-UPDATE SYSTEM
-        const CURRENT_APP_VERSION = 5; // Version Code
+        const CURRENT_APP_VERSION = 6; // Version Code
         let latestApkUrl = 'https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk';
 
         async function checkAppUpdates() {

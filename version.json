@@ -1,7 +1,7 @@
 {
-  "versionCode": 5,
-  "versionName": "1.3.0",
+  "versionCode": 6,
+  "versionName": "1.4.0",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "New side-by-side split layout: Online & Dining orders visible simultaneously with updated top toolbar icons."
+  "changelog": "Added ESC/POS Thermal Receipt Printer setup, IP connection test, manual & auto bill receipt printing."
 }
