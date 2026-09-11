@@ -159,7 +159,8 @@ async function sbSaveOrder(orderData) {
     _lastSavedOrderHash = currentHash;
     _lastSavedOrderTime = now;
 
-    const { data, error } = await _supaClient.from('orders').insert([{
+    // Core mandatory payload (compatible with all table schemas)
+    const basePayload = {
         table_number: String(orderData.tableNumber || '').trim(),
         customer_name: orderData.customerName || 'Guest',
         customer_phone: orderData.customerPhone || null,
@@ -169,14 +170,27 @@ async function sbSaveOrder(orderData) {
         total: Number(orderData.total || 0),
         notes: orderData.notes || null,
         status: 'pending',
-        order_type: orderData.order_type || 'dining',
-        address: orderData.address || null,
-        landmark: orderData.landmark || null,
-        latitude: orderData.latitude || null,
-        longitude: orderData.longitude || null,
-        utr_number: orderData.utr_number || null,
-        payment_proof_url: orderData.payment_proof_url || null
-    }]);
+        order_type: orderData.order_type || 'dining'
+    };
+
+    // Full payload including optional fields if provided
+    const fullPayload = { ...basePayload };
+    if (orderData.address) fullPayload.address = orderData.address;
+    if (orderData.landmark) fullPayload.landmark = orderData.landmark;
+    if (orderData.latitude) fullPayload.latitude = orderData.latitude;
+    if (orderData.longitude) fullPayload.longitude = orderData.longitude;
+    if (orderData.utr_number) fullPayload.utr_number = orderData.utr_number;
+    if (orderData.payment_proof_url) fullPayload.payment_proof_url = orderData.payment_proof_url;
+
+    let { data, error } = await _supaClient.from('orders').insert([fullPayload]);
+
+    // Fallback: If database schema lacks optional columns (PGRST204 or missing column error), insert base payload
+    if (error && (error.code === 'PGRST204' || (error.message && error.message.includes('column')))) {
+        console.warn('[SB] Retrying order save with base schema fields...', error.message);
+        const retryResult = await _supaClient.from('orders').insert([basePayload]);
+        error = retryResult.error;
+    }
+
     if (error) {
         console.error('[SB] saveOrder error:', error.message, error.details);
         return null;
