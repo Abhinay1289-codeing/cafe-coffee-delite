@@ -9,8 +9,8 @@
     <!-- Load environment variables for both local and Netlify -->
     <script>
       window.ENV = {
-        SUPABASE_URL: 'https://luhwhzsyjsiwdmwrohwc.supabase.co',
-        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1aHdoenN5anNpd2Rtd3JvaHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTE5NTUsImV4cCI6MjEwMzM4Nzk1NX0.ZtNOL4PAvdY8udDYki3vTjuCw4jb8UdeZ4_abOMaWT0'
+        SUPABASE_URL: 'YOUR_SUPABASE_URL',
+        SUPABASE_KEY: 'YOUR_SUPABASE_ANON_KEY'
       };
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -207,54 +207,21 @@
         </header>
         <div class="screen-body">
             <div class="checkout-summary" id="checkoutSummary"></div>
-            
-            <div class="form-group" style="display: flex; gap: 8px;">
-                <button type="button" class="btn-ghost" id="getLocationBtn" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--primary); color: var(--primary);">
-                    📍 Use Current Location
-                </button>
-            </div>
-            
-            <div class="form-group">
-                <label for="checkoutAddress">Delivery Address*</label>
-                <textarea id="checkoutAddress" class="field-input" placeholder="House/Flat No, Street, Area..." rows="2" required></textarea>
-                <input type="hidden" id="checkoutLat">
-                <input type="hidden" id="checkoutLng">
-            </div>
-            
-            <div class="form-group">
-                <label for="checkoutLandmark">Landmark</label>
-                <input type="text" id="checkoutLandmark" class="field-input" placeholder="Optional near by landmark">
-            </div>
-
-            <div class="form-group">
-                <label for="checkoutName">Your Name*</label>
-                <input type="text" id="checkoutName" class="field-input" placeholder="Full Name" required>
+            <div class="form-group" style="display:none;">
+                <label for="checkoutTable">Table Number</label>
+                <input type="text" id="checkoutTable" class="field-input" placeholder="Enter your table number">
             </div>
             <div class="form-group">
-                <label for="checkoutPhone">Phone Number*</label>
-                <input type="tel" id="checkoutPhone" class="field-input" placeholder="10-digit number" required>
+                <label for="checkoutName">Your Name</label>
+                <input type="text" id="checkoutName" class="field-input" placeholder="Optional">
             </div>
-            
-            <!-- UPI Payment Section -->
-            <div class="form-group" style="background: rgba(34,197,94,0.08); padding: 14px; border-radius: 12px; border: 1px solid rgba(34,197,94,0.3);">
-                <h3 style="font-size: 1.1rem; margin-bottom: 8px; font-weight: 800; color: #22c55e;">Pay on Delivery (UPI)</h3>
-                <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;">Scan the QR code to pay using PhonePe, GPay, Paytm etc. Enter UTR after payment, or leave blank for Cash on Delivery.</p>
-                <div style="display:flex; justify-content:center; margin-bottom: 12px;">
-                    <img id="upiQrCode" src="" alt="UPI QR" style="width:160px; height:160px; display:none; background: #fff; padding: 4px; border-radius: 8px;">
-                </div>
-                <div class="form-group">
-                    <label for="checkoutUtr">Payment UTR Number (If paid)</label>
-                    <input type="text" id="checkoutUtr" class="field-input" placeholder="12-digit UTR from your UPI app">
-                </div>
-                <div class="form-group">
-                    <label for="checkoutProof">Payment Screenshot (Optional)</label>
-                    <input type="file" id="checkoutProof" accept="image/*" class="field-input" style="padding: 8px;">
-                </div>
-            </div>
-
             <div class="form-group">
-                <label for="checkoutNotes">Cooking Instructions</label>
-                <textarea id="checkoutNotes" class="field-input" placeholder="Any special requests..." rows="2"></textarea>
+                <label for="checkoutPhone">Phone</label>
+                <input type="tel" id="checkoutPhone" class="field-input" placeholder="Optional">
+            </div>
+            <div class="form-group">
+                <label for="checkoutNotes">Notes</label>
+                <textarea id="checkoutNotes" class="field-input" placeholder="Any special requests..." rows="3"></textarea>
             </div>
             <button type="button" class="btn-primary" id="placeOrderBtn">🚀 Confirm & Send Order to Kitchen</button>
         </div>
@@ -304,7 +271,6 @@
     <script src="js/menu-data.js"></script>
     <!-- Helpers -->
     <script src="js/app.js"></script>
-    <script src="js/online-app.js"></script>
 
 <!-- Service Worker -->
 <script>

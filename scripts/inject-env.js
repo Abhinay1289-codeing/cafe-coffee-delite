@@ -6,9 +6,10 @@ require('dotenv').config();
 // Map original HTML files to their templates
 const templateMap = {
   'index.html': 'index.template.html',
+  'table.html': 'table.template.html',
   'admin.html': 'admin.template.html',
   'admin-orders.html': 'admin-orders.template.html',
-  'table.html': 'table.template.html'
+  'qr-setup.html': 'qr-setup.template.html'
 };
 
 // First, make sure we have templates for all files
@@ -28,6 +29,10 @@ Object.values(templateMap).forEach(templateFile => {
       content = content.replace(
         /SUPABASE_KEY:\s*['"][^'"]*['"]/g,
         "SUPABASE_KEY: 'YOUR_SUPABASE_ANON_KEY'"
+      );
+      content = content.replace(
+        /GOOGLE_MAPS_API_KEY:\s*['"][^'"]*['"]/g,
+        "GOOGLE_MAPS_API_KEY: 'YOUR_GOOGLE_MAPS_API_KEY'"
       );
       fs.writeFileSync(templatePath, content, 'utf8');
       console.log(`✅ Created template ${templateFile} from ${originalFile}`);
@@ -51,9 +56,14 @@ Object.entries(templateMap).forEach(([targetFile, templateFile]) => {
     const useKey = (process.env.SUPABASE_KEY && !process.env.SUPABASE_KEY.includes('YOUR') && !process.env.SUPABASE_KEY.includes('your-anon')) 
       ? process.env.SUPABASE_KEY 
       : 'YOUR_SUPABASE_ANON_KEY';
+      
+    const useMapsKey = (process.env.GOOGLE_MAPS_API_KEY && !process.env.GOOGLE_MAPS_API_KEY.includes('YOUR'))
+      ? process.env.GOOGLE_MAPS_API_KEY
+      : 'YOUR_GOOGLE_MAPS_API_KEY';
     
     html = html.replace('YOUR_SUPABASE_URL', useUrl);
     html = html.replace('YOUR_SUPABASE_ANON_KEY', useKey);
+    html = html.replace('YOUR_GOOGLE_MAPS_API_KEY', useMapsKey);
     
     fs.writeFileSync(targetPath, html, 'utf8');
     console.log(`✅ Injected env vars into ${targetFile}`);

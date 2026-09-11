@@ -1,0 +1,2930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Coffee Delight — 6-Page Balanced Zero Gap Masterpiece</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Outfit:wght@400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #F8F4EA;
+            --parchment-grad: linear-gradient(155deg, #FCFAF4 0%, #F1E9D7 100%);
+            --forest-dark: #122B1E;
+            --forest-mid: #1D4330;
+            --forest-light: #E4ECE3;
+            --gold-foil: linear-gradient(135deg, #FBE088 0%, #DFB235 50%, #9B761A 100%);
+            --gold: #C59B27;
+            --gold-bright: #E4B838;
+            --gold-glow: rgba(228, 184, 56, 0.4);
+            --charcoal: #1A1E1C;
+            --price-bg: #122B1E;
+            --price-color: #E4B838;
+            --muted: #535E56;
+            --border-line: #C8D4C7;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0E100F;
+            background-image: radial-gradient(circle at 50% 50%, #202622 0%, #080A09 100%);
+            color: var(--charcoal);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+            min-height: 100vh;
+        }
+
+        /* Top Toolbar Wrapper (STOPS OVERLAPPING CONTENT!) */
+        .toolbar-wrapper {
+            position: relative;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            z-index: 9999;
+        }
+
+        .top-toolbar {
+            display: flex;
+            gap: 14px;
+            background: rgba(18, 43, 30, 0.96) !important;
+            backdrop-filter: blur(16px);
+            border: 2px solid var(--gold-bright);
+            padding: 10px 24px;
+            border-radius: 50px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 20px var(--gold-glow);
+        }
+
+        .top-toolbar button {
+            background: var(--gold-foil) !important;
+            color: var(--forest-dark) !important;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 10pt;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 18px rgba(228, 184, 56, 0.5);
+            transition: all 0.25s ease;
+        }
+
+        .top-toolbar button:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 25px rgba(228, 184, 56, 0.7);
+        }
+
+        .top-toolbar button.secondary {
+            background: transparent !important;
+            color: #FFFFFF !important;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            box-shadow: none;
+        }
+
+        .top-toolbar button.secondary:hover {
+            background: rgba(255,255,255,0.15) !important;
+        }
+
+        /* Page Container (Exact A4 Ratio) */
+        .menu-page {
+            width: 210mm;
+            height: 297mm;
+            background: var(--parchment-grad) !important;
+            margin-bottom: 35px;
+            padding: 6mm 8mm 6mm 8mm;
+            position: relative;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        /* Page Double Gold Border Frame */
+        .page-inner-border {
+            position: absolute;
+            top: 4mm;
+            left: 4mm;
+            right: 4mm;
+            bottom: 4mm;
+            border: 1.8px solid var(--gold) !important;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .page-inner-border::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
+            border: 1px solid var(--forest-dark) !important;
+            opacity: 0.7;
+        }
+
+        /* Corner Leaf Art Watermarks */
+        .corner-leaf {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.2;
+            width: 75px;
+        }
+        .corner-leaf.tl { top: 3mm; left: 3mm; }
+        .corner-leaf.tr { top: 3mm; right: 3mm; transform: scaleX(-1); }
+        .corner-leaf.bl { bottom: 3mm; left: 3mm; transform: scaleY(-1); }
+        .corner-leaf.br { bottom: 3mm; right: 3mm; transform: scale(-1, -1); }
+
+        /* Header Layout */
+        .header-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px double var(--gold) !important;
+            padding-bottom: 3px;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-stamp-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1.8px solid var(--gold-bright) !important;
+            padding: 1.5px;
+            background: #FFFFFF !important;
+            box-shadow: 0 3px 10px rgba(18, 43, 30, 0.14);
+            position: relative;
+        }
+
+        .brand-stamp-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .brand-text-block h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 17pt;
+            font-weight: 900;
+            color: var(--forest-dark) !important;
+            letter-spacing: 1px;
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        .brand-text-block .sub-tagline {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 7.2pt;
+            color: var(--muted) !important;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .heart-icon {
+            color: var(--gold) !important;
+            font-size: 8pt;
+        }
+
+        /* Top Right Hero Cutout Photo */
+        .top-hero-cutout {
+            position: relative;
+            width: 44px;
+            height: 44px;
+        }
+
+        .top-hero-cutout .backdrop-circle {
+            position: absolute;
+            inset: -2px;
+            background: var(--forest-light) !important;
+            border: 1.2px solid var(--gold) !important;
+            border-radius: 50%;
+            transform: translate(-2px, 2px);
+        }
+
+        .top-hero-cutout img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1.5px solid #FFFFFF !important;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.14);
+            outline: 1.2px solid var(--gold-bright) !important;
+        }
+
+        /* Grand Section Banner Bar */
+        .grand-section-banner {
+            background: linear-gradient(135deg, #122B1E, #1D4330) !important;
+            border: 1.2px solid #E4B838 !important;
+            border-radius: 6px;
+            padding: 3px 10px;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 8.8pt;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            color: #E4B838 !important;
+            box-shadow: 0 2px 8px rgba(18, 43, 30, 0.18);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Grid Layout for Categories (Left & Right 2-Column Split) */
+        .page-two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            flex-grow: 1;
+            align-content: start;
+            position: relative;
+            z-index: 2;
+        }
+
+        .col-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        /* Category Card Block */
+        .cat-block-card {
+            background: #FFFFFF !important;
+            border: 1px solid var(--border-line) !important;
+            border-top: 2.5px solid var(--gold) !important;
+            border-radius: 9px;
+            padding: 3.5px 6px;
+            box-shadow: 0 2px 6px rgba(18, 43, 30, 0.03);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .cat-block-card.alt-bg {
+            background: var(--forest-light) !important;
+            border: 1px dashed var(--border-line) !important;
+            border-top: 2.5px solid var(--forest-dark) !important;
+        }
+
+        /* Dedicated Clean Header Row inside Card */
+        .card-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            padding-bottom: 1.5px;
+            border-bottom: 1px solid var(--gold) !important;
+        }
+
+        .cat-pill-badge {
+            background: linear-gradient(135deg, #122B1E, #1D4330) !important;
+            color: #FFFFFF !important;
+            font-family: 'Cinzel', serif;
+            font-size: 7.8pt;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 5px rgba(18, 43, 30, 0.18);
+            border: 1px solid #E4B838 !important;
+        }
+
+        .cat-pill-badge .icon-circle {
+            background: rgba(228, 184, 56, 0.2) !important;
+            border: 1px solid var(--gold-bright) !important;
+            border-radius: 50%;
+            width: 15px; height: 15px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Card Header Food Photo Thumbnail */
+        .card-food-header-img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #FFFFFF !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+            outline: 1px solid var(--gold-bright) !important;
+            flex-shrink: 0;
+        }
+
+        /* Menu Items Formatting */
+        .cat-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .item-row {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            border-radius: 2px;
+        }
+
+        .item-row.bestseller-highlight {
+            background: linear-gradient(90deg, rgba(228, 184, 56, 0.14), transparent) !important;
+            border-left: 2px solid var(--gold) !important;
+            padding-left: 2px;
+        }
+
+        .item-top-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 7.5pt;
+            line-height: 1.08;
+        }
+
+        .item-title {
+            font-weight: 700;
+            color: var(--forest-dark) !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            max-width: 72%;
+        }
+
+        .item-dots-leader {
+            flex-grow: 1;
+            border-bottom: 1px dotted #A4B5A6 !important;
+            margin: 0 3px;
+            position: relative;
+            top: -2px;
+        }
+
+        .item-price-tag {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            color: #E4B838 !important;
+            background: #122B1E !important;
+            border: 1px solid #C59B27 !important;
+            padding: 0px 4px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 7.5pt;
+        }
+
+        .item-combo-desc {
+            font-size: 6.2pt;
+            font-style: italic;
+            color: var(--muted) !important;
+            margin-top: 0.5px;
+            padding-left: 2px;
+        }
+
+        /* Bottom Legend Footer Bar */
+        .footer-legend-pill {
+            background: linear-gradient(135deg, #122B1E, #1D4330) !important;
+            color: #FFFFFF !important;
+            border-radius: 25px;
+            padding: 3.5px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 7pt;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            margin-top: 3px;
+            box-shadow: 0 3px 10px rgba(18, 43, 30, 0.25);
+            border: 1px solid var(--gold-bright) !important;
+            position: relative;
+            z-index: 2;
+        }
+
+        .legend-items-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .footer-thankyou-badge {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border: 1px solid var(--gold-bright) !important;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 7pt;
+            color: var(--gold-bright) !important;
+        }
+
+        /* PRINT MEDIA STYLES */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            body {
+                background: none !important;
+                padding: 0;
+            }
+            .toolbar-wrapper {
+                display: none !important;
+            }
+            .menu-page {
+                width: 210mm;
+                height: 297mm !important;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                page-break-after: always;
+                page-break-inside: avoid;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .grand-section-banner, .cat-pill-badge, .item-price-tag, .footer-legend-pill {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Top Toolbar Wrapper -->
+    <div class="toolbar-wrapper">
+        <div class="top-toolbar">
+            <button onclick="window.print()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print / Export PDF Book
+            </button>
+            <button class="secondary" onclick="location.href='index.html'">
+                ← Return to Digital Menu
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE 1 -->
+    <div class="menu-page" id="page-1">
+        <div class="page-inner-border"></div>
+        
+<svg class="corner-leaf tl" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M65,50 Q60,65 75,68 Q78,55 65,50 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+<svg class="corner-leaf br" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+
+
+        <!-- Header -->
+        <header class="header-section">
+            <div class="header-brand-wrap">
+                <div class="brand-stamp-logo">
+                    <img src="assets/logo.jpeg" alt="Logo">
+                </div>
+                <div class="brand-text-block">
+                    <h1>Cafe Coffee Delight</h1>
+                    <div class="sub-tagline">
+                        <span>Good Food, Good Mood</span>
+                        <span class="heart-icon">♥</span>
+                        <span>Estd. 2024</span>
+                    </div>
+                </div>
+            </div>
+            <div class="top-hero-cutout">
+                <div class="backdrop-circle"></div>
+                <img src="assets/images/veg-maggi.jpeg" alt="Hero Specialty">
+            </div>
+        </header>
+
+        <!-- Grand Section Banner -->
+        <div class="grand-section-banner">
+            ✨ MAGGI, OMELETTES, COMBOS & QUICK BITES ✨
+        </div>
+
+        <!-- 2-Column Equal Height Balanced Grid -->
+        <div class="page-two-col-grid">
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M8 12s1.5-2 4-2 4 2 4 2"/><path d="M9 15s1 1.5 3 1.5 3-1.5 3-1.5"/></svg></span>
+                        <span>MAGGI</span>
+                    </div>
+        <img src="assets/images/veg-maggi.jpeg" class="card-food-header-img" alt="Maggi"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹89</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Egg Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Cheese Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Cheese Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹159</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Chicken Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Chicken Cheese Maggi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card alt-bg">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><ellipse cx="12" cy="13" rx="7" ry="5"/><path d="M12 3v5"/></svg></span>
+                        <span>OMELETTES</span>
+                    </div>
+        <img src="assets/images/cheese-omelette.jpeg" class="card-food-header-img" alt="Omelettes"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Omelette</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Omelette</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Bread Omelette</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Bread Omelette</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card alt-bg">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 3L2 19h20L12 3z"/></svg></span>
+                        <span>SAMOSAS & MOMOS</span>
+                    </div>
+        <img src="assets/images/veg-momos.jpeg" class="card-food-header-img" alt="Samosas & Momos"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Corn Samosa (4 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Samosa (4 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Momos (Steamed/Fried) (5 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Momos (Steamed/Fried) (5 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></span>
+                        <span>COMBO OFFERS</span>
+                    </div>
+        <img src="assets/images/snack-combo.jpeg" class="card-food-header-img" alt="Combo Offers"></div><div class="cat-items-list">
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Snack Combo</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹179</span>
+                    </div>
+            <div class="item-combo-desc">Corn Samosa + Veg Burger + Ocean Mojito</div></div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Pizza Combo</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹349</span>
+                    </div>
+            <div class="item-combo-desc">French Fries + Veg Pizza + Virgin Mojito</div></div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Combo</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹379</span>
+                    </div>
+            <div class="item-combo-desc">Chicken Popcorn + Chicken Sandwich + Caramel Mojito</div></div></div></div>
+            </div>
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 4a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8z"/><path d="M4 14h16"/><path d="M4 17h16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span>
+                        <span>BURGERS</span>
+                    </div>
+        <img src="assets/images/veg-burger.jpeg" class="card-food-header-img" alt="Burgers"></div><div class="cat-items-list">
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> veg Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Aloo Tikki Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Cheese Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Egg Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Cheese Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Crispy Chicken Burger</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">CCD Chicken Burger (Served with Fries)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card alt-bg">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span>
+                        <span>WAFFLES & PANCAKES</span>
+                    </div>
+        <img src="assets/images/chocolate-waffle.jpeg" class="card-food-header-img" alt="Waffles & Pancakes"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Classic Waffle</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Classic Pancake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Waffle</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Pancake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M6 3l2 18h8l2-18H6z"/><path d="M10 3v4"/><path d="M14 3v4"/></svg></span>
+                        <span>FRIED FOOD & QUICK BITES</span>
+                    </div>
+        <img src="assets/images/french-fries.jpeg" class="card-food-header-img" alt="FRIED FOOD & QUICK BITES"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Nachos with Salsa</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Onion Rings (6 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Spring Roll (6 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Crispy Corn</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">French Fries</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Nachos</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Nuggets (6 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Shots (6 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div></div></div>
+            </div>
+        </div>
+
+        <!-- Footer Legend Bar -->
+        <footer class="footer-legend-pill">
+            <div class="legend-items-group">
+                <div class="legend-badge-item"><span>🌿</span> VEG</div>
+                <div class="legend-badge-item"><span>🌶️</span> SPICY</div>
+                <div class="legend-badge-item"><span>👨‍🍳</span> CHEF'S SPECIAL</div>
+                <div class="legend-badge-item"><span>⭐</span> SIGNATURE</div>
+            </div>
+            <div class="footer-thankyou-badge">
+                THANK YOU! — VISIT AGAIN ♥ &nbsp;•&nbsp; PAGE 1 OF 6
+            </div>
+        </footer>
+    </div>
+    
+    <!-- PAGE 2 -->
+    <div class="menu-page" id="page-2">
+        <div class="page-inner-border"></div>
+        
+<svg class="corner-leaf tl" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M65,50 Q60,65 75,68 Q78,55 65,50 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+<svg class="corner-leaf br" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+
+
+        <!-- Header -->
+        <header class="header-section">
+            <div class="header-brand-wrap">
+                <div class="brand-stamp-logo">
+                    <img src="assets/logo.jpeg" alt="Logo">
+                </div>
+                <div class="brand-text-block">
+                    <h1>Cafe Coffee Delight</h1>
+                    <div class="sub-tagline">
+                        <span>Good Food, Good Mood</span>
+                        <span class="heart-icon">♥</span>
+                        <span>Estd. 2024</span>
+                    </div>
+                </div>
+            </div>
+            <div class="top-hero-cutout">
+                <div class="backdrop-circle"></div>
+                <img src="assets/images/ccd-club-sandwich.jpeg" alt="Hero Specialty">
+            </div>
+        </header>
+
+        <!-- Grand Section Banner -->
+        <div class="grand-section-banner">
+            ✨ SANDWICHES, ROLLS, PASTA & FRIED SPECIALS ✨
+        </div>
+
+        <!-- 2-Column Equal Height Balanced Grid -->
+        <div class="page-two-col-grid">
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M3 11l9-7 9 7v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7z"/></svg></span>
+                        <span>SANDWICHES</span>
+                    </div>
+        <img src="assets/images/ccd-club-sandwich.jpeg" class="card-food-header-img" alt="Sandwiches"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Sandwich</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹89</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Sandwich</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Sandwich</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Egg Sandwich</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Egg Sandwich</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Sandwich</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">CCD Club Sandwich (Served with Fries)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹179</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Extra Cheese (Add-on)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹25</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M4 12c0 4 3.5 7 8 7s8-3 8-7"/><path d="M12 5v7"/></svg></span>
+                        <span>PASTA</span>
+                    </div>
+        <img src="assets/images/penne-white-sauce-veg-pasta.jpeg" class="card-food-header-img" alt="Pasta"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Penne White Sauce Veg Pasta</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span>  Veg cheese Pasta</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Pasta</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹179</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Cheese Pasta</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 2a5 5 0 0 1 5 5c0 3.5-3 6-5 10-2-4-5-6.5-5-10a5 5 0 0 1 5-5z"/></svg></span>
+                        <span>FRIED CHICKEN & FISH</span>
+                    </div>
+        <img src="assets/images/chicken-strips.jpeg" class="card-food-header-img" alt="Fried Chicken & Fish"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Nuggets (8 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Wings (4 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹159</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Popcorn (12 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Strips (4 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹179</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Fish Fingers (6 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Popcorn (20 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹250</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Wings (8 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹289</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Strips (8 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹319</span>
+                    </div>
+            </div></div></div>
+            </div>
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><rect x="4" y="6" width="16" height="12" rx="6"/></svg></span>
+                        <span>ROLLS</span>
+                    </div>
+        <img src="assets/images/chicken-roll.jpeg" class="card-food-header-img" alt="Rolls"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹89</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Single Egg Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Single Egg Cheese Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹109</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Cheese Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Cheese Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Chicken Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Egg Chicken Cheese Roll</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Extra Egg (Add-on)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹10</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M6 3l2 18h8l2-18H6z"/><path d="M10 3v4"/><path d="M14 3v4"/></svg></span>
+                        <span>CHEESE & LOADED SPECIALS</span>
+                    </div>
+        <img src="assets/images/cheese-loaded-fries.jpeg" class="card-food-header-img" alt="CHEESE & LOADED SPECIALS"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Chilli Garlic Potato Shots (10 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Peri Peri Fries</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Cheese Chilli Toast (8 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cheese Loaded Fries</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Nuggets (16 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Fried Chicken Cheese Nachos</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹159</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Chicken Cheese Chilli Toast</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹149</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Cheese Loaded Fries</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div></div></div>
+            </div>
+        </div>
+
+        <!-- Footer Legend Bar -->
+        <footer class="footer-legend-pill">
+            <div class="legend-items-group">
+                <div class="legend-badge-item"><span>🌿</span> VEG</div>
+                <div class="legend-badge-item"><span>🌶️</span> SPICY</div>
+                <div class="legend-badge-item"><span>👨‍🍳</span> CHEF'S SPECIAL</div>
+                <div class="legend-badge-item"><span>⭐</span> SIGNATURE</div>
+            </div>
+            <div class="footer-thankyou-badge">
+                THANK YOU! — VISIT AGAIN ♥ &nbsp;•&nbsp; PAGE 2 OF 6
+            </div>
+        </footer>
+    </div>
+    
+    <!-- PAGE 3 -->
+    <div class="menu-page" id="page-3">
+        <div class="page-inner-border"></div>
+        
+<svg class="corner-leaf tl" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M65,50 Q60,65 75,68 Q78,55 65,50 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+<svg class="corner-leaf br" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+
+
+        <!-- Header -->
+        <header class="header-section">
+            <div class="header-brand-wrap">
+                <div class="brand-stamp-logo">
+                    <img src="assets/logo.jpeg" alt="Logo">
+                </div>
+                <div class="brand-text-block">
+                    <h1>Cafe Coffee Delight</h1>
+                    <div class="sub-tagline">
+                        <span>Good Food, Good Mood</span>
+                        <span class="heart-icon">♥</span>
+                        <span>Estd. 2024</span>
+                    </div>
+                </div>
+            </div>
+            <div class="top-hero-cutout">
+                <div class="backdrop-circle"></div>
+                <img src="assets/images/ccd-special-filter-coffee.jpeg" alt="Hero Specialty">
+            </div>
+        </header>
+
+        <!-- Grand Section Banner -->
+        <div class="grand-section-banner">
+            ✨ TEAS, COFFEES & HANDCRAFTED BREWS ✨
+        </div>
+
+        <!-- 2-Column Equal Height Balanced Grid -->
+        <div class="page-two-col-grid">
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/></svg></span>
+                        <span>TEAS</span>
+                    </div>
+        <img src="assets/images/masala-tea.jpeg" class="card-food-header-img" alt="Teas"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹30</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Black Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹20</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Green Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mint Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹30</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Lemon Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹30</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Bellam Tea (Jaggery Tea)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Badam Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Ginger Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Elaichi Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sonti Tea (Dry Ginger Tea)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Masala Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹69</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg></span>
+                        <span>HOT BEVERAGES</span>
+                    </div>
+        <img src="assets/images/badam-milk.jpeg" class="card-food-header-img" alt="Hot Beverages"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Milk</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹25</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Black Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹30</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹40</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Pepper Milk</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Turmeric Milk</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Badam Milk</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Horlicks</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Boost</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sonti Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹49</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">CCD Special Filter Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹69</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Hot Chocolate</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹89</span>
+                    </div>
+            </div></div></div>
+            </div>
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M6 14h12v4a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-4z"/></svg></span>
+                        <span>HOT BREWS</span>
+                    </div>
+        <img src="assets/images/cappuccino.jpeg" class="card-food-header-img" alt="Hot Brews"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Espresso</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹59</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Americano</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cappuccino</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Café Latte</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Café Mocha</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Hazelnut Cappuccino</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Vanilla Cappuccino</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Caramel Cappuccino</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M7 2h10l-1 18H8L7 2z"/></svg></span>
+                        <span>COLD BREWS</span>
+                    </div>
+        <img src="assets/images/iced-americano.jpeg" class="card-food-header-img" alt="Cold Brews"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Iced Americano</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Coffee Mojito</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cold Mocha</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M6 6h12l-2 15H8L6 6z"/></svg></span>
+                        <span>BLENDED BREWS</span>
+                    </div>
+        <img src="assets/images/cold-coffee.jpeg" class="card-food-header-img" alt="Blended Brews"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Cold Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Irish Cold Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Hazelnut Cold Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Choco Frappe</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Oreo Frappe</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Brownie Frappe</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Nutella Cold Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Peanut Butter Cold Coffee</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card alt-bg">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M7 4h10l-1 16H8L7 4z"/></svg></span>
+                        <span>LASSIS</span>
+                    </div>
+        <img src="assets/images/sweet-lassi.jpeg" class="card-food-header-img" alt="Lassis"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sweet Lassi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹69</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Butter Milk</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹69</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Banana Lassi</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div></div></div>
+            </div>
+        </div>
+
+        <!-- Footer Legend Bar -->
+        <footer class="footer-legend-pill">
+            <div class="legend-items-group">
+                <div class="legend-badge-item"><span>🌿</span> VEG</div>
+                <div class="legend-badge-item"><span>🌶️</span> SPICY</div>
+                <div class="legend-badge-item"><span>👨‍🍳</span> CHEF'S SPECIAL</div>
+                <div class="legend-badge-item"><span>⭐</span> SIGNATURE</div>
+            </div>
+            <div class="footer-thankyou-badge">
+                THANK YOU! — VISIT AGAIN ♥ &nbsp;•&nbsp; PAGE 3 OF 6
+            </div>
+        </footer>
+    </div>
+    
+    <!-- PAGE 4 -->
+    <div class="menu-page" id="page-4">
+        <div class="page-inner-border"></div>
+        
+<svg class="corner-leaf tl" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M65,50 Q60,65 75,68 Q78,55 65,50 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+<svg class="corner-leaf br" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+
+
+        <!-- Header -->
+        <header class="header-section">
+            <div class="header-brand-wrap">
+                <div class="brand-stamp-logo">
+                    <img src="assets/logo.jpeg" alt="Logo">
+                </div>
+                <div class="brand-text-block">
+                    <h1>Cafe Coffee Delight</h1>
+                    <div class="sub-tagline">
+                        <span>Good Food, Good Mood</span>
+                        <span class="heart-icon">♥</span>
+                        <span>Estd. 2024</span>
+                    </div>
+                </div>
+            </div>
+            <div class="top-hero-cutout">
+                <div class="backdrop-circle"></div>
+                <img src="assets/images/ferrero-rocher-milkshake.jpeg" alt="Hero Specialty">
+            </div>
+        </header>
+
+        <!-- Grand Section Banner -->
+        <div class="grand-section-banner">
+            ✨ MILK SHAKES, MOCKTAILS, PIZZAS & SOUPS ✨
+        </div>
+
+        <!-- 2-Column Equal Height Balanced Grid -->
+        <div class="page-two-col-grid">
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M8 6h8l-1.5 15h-5L8 6z"/></svg></span>
+                        <span>MILK SHAKES</span>
+                    </div>
+        <img src="assets/images/ferrero-rocher-milkshake.jpeg" class="card-food-header-img" alt="Milk Shakes"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Milkshake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Vanilla Milkshake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Oreo Milkshake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">KitKat Milkshake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Ferrero Rocher Milkshake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Dry Fruits Milkshake</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M5 4h14l-7 8v8"/></svg></span>
+                        <span>MOCKTAILS</span>
+                    </div>
+        <img src="assets/images/virgin-mojito.jpeg" class="card-food-header-img" alt="Mocktails"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Fresh Lime Soda (Sweet / Salt)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹50</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Lime and Mint</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Iced Tea</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Virgin Mojito</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Kiwi Mojito</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Black Currant Mojito</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Orange Mojito</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹69</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Blue Ocean</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><rect x="7" y="2" width="10" height="20" rx="3"/></svg></span>
+                        <span>SOFT DRINKS</span>
+                    </div>
+        <img src="assets/images/coke.jpeg" class="card-food-header-img" alt="Soft Drinks"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Coke</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">thumpsup</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sprite</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹39</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Masala Soda</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹59</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M4 11h16a8 8 0 0 1-16 0z"/></svg></span>
+                        <span>SOUPS</span>
+                    </div>
+        <img src="assets/images/veg-manchow-soup.jpeg" class="card-food-header-img" alt="Soups"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Manchow Soup</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Manchow Soup</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Hot N Sour Soup</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Hot N Sour Soup</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sweet Corn Soup</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹129</span>
+                    </div>
+            </div></div></div>
+            </div>
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 2L2 22h20L12 2z"/></svg></span>
+                        <span>PIZZAS</span>
+                    </div>
+        <img src="assets/images/margherita-pizza.jpeg" class="card-food-header-img" alt="Pizzas"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Pizza (6 Inch)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Margherita Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Corn Cheese Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Garden Exotic Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Spicy Mexican Veg Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹259</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Non-Veg Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹229</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Roasted Chicken Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹269</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Crispy Chicken Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹279</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Spicy Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹299</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Spicy Mexican Chicken Pizza</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹349</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M7 10l5 11 5-11H7z"/></svg></span>
+                        <span>ICE CREAMS & DESSERTS</span>
+                    </div>
+        <img src="assets/images/chocolate-sizzling-brownie.jpeg" class="card-food-header-img" alt="ICE CREAMS & DESSERTS"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Affogato</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Brownie</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Sizzling Brownie</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Vanilla Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹59</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Strawberry Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹69</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Butterscotch Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹79</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Pista Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹89</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Black Currant Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹99</span>
+                    </div>
+            </div></div></div>
+            </div>
+        </div>
+
+        <!-- Footer Legend Bar -->
+        <footer class="footer-legend-pill">
+            <div class="legend-items-group">
+                <div class="legend-badge-item"><span>🌿</span> VEG</div>
+                <div class="legend-badge-item"><span>🌶️</span> SPICY</div>
+                <div class="legend-badge-item"><span>👨‍🍳</span> CHEF'S SPECIAL</div>
+                <div class="legend-badge-item"><span>⭐</span> SIGNATURE</div>
+            </div>
+            <div class="footer-thankyou-badge">
+                THANK YOU! — VISIT AGAIN ♥ &nbsp;•&nbsp; PAGE 4 OF 6
+            </div>
+        </footer>
+    </div>
+    
+    <!-- PAGE 5 -->
+    <div class="menu-page" id="page-5">
+        <div class="page-inner-border"></div>
+        
+<svg class="corner-leaf tl" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M65,50 Q60,65 75,68 Q78,55 65,50 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+<svg class="corner-leaf br" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+
+
+        <!-- Header -->
+        <header class="header-section">
+            <div class="header-brand-wrap">
+                <div class="brand-stamp-logo">
+                    <img src="assets/logo.jpeg" alt="Logo">
+                </div>
+                <div class="brand-text-block">
+                    <h1>Cafe Coffee Delight</h1>
+                    <div class="sub-tagline">
+                        <span>Good Food, Good Mood</span>
+                        <span class="heart-icon">♥</span>
+                        <span>Estd. 2024</span>
+                    </div>
+                </div>
+            </div>
+            <div class="top-hero-cutout">
+                <div class="backdrop-circle"></div>
+                <img src="assets/images/chicken-65.jpeg" alt="Hero Specialty">
+            </div>
+        </header>
+
+        <!-- Grand Section Banner -->
+        <div class="grand-section-banner">
+            ✨ STARTERS & CHINESE DELICACIES ✨
+        </div>
+
+        <!-- 2-Column Equal Height Balanced Grid -->
+        <div class="page-two-col-grid">
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 3v18"/><path d="M3 12h18"/></svg></span>
+                        <span>CHICKEN STARTERS (A-H)</span>
+                    </div>
+        <img src="assets/images/chicken-65.jpeg" class="card-food-header-img" alt="CHICKEN STARTERS (A-H)"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken 65</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Manchurian</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Chilli Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Lollipop (6 Pcs)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹289</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Dragon Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹249</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Majestic</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken 555</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Garlic Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">8 to 8 Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Pepper Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹229</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sezwan Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Highway Delite Spl (Chicken)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹269</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card alt-bg">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M4 6h16"/><path d="M4 12h16"/></svg></span>
+                        <span>CHINESE</span>
+                    </div>
+        <img src="assets/images/chicken-lollipops.jpeg" class="card-food-header-img" alt="Chinese"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Lollipops (6 Pcs) (Dry/Wet)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹289</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Roast</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹230</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Schezwan Chicken</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹239</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Noodles</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">As Per Size</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Noodles</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">As Per Size</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M7 10l5 11 5-11H7z"/></svg></span>
+                        <span>CHEESECAKE JARS & PUDDINGS</span>
+                    </div>
+        <img src="assets/images/oreo-cheese-cake-jar.jpeg" class="card-food-header-img" alt="CHEESECAKE JARS & PUDDINGS"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Dry Fruits Ice Cream</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Coconut Pudding</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹159</span>
+                    </div>
+            <div class="item-combo-desc">Silky smooth coconut pudding · chilled & fresh</div></div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Oreo Cheese Cake Jar</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chocolate Cheese Cake Jar</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Biscoff Cheese Cake Jar</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div></div></div>
+            </div>
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 3v18"/><path d="M3 12h18"/></svg></span>
+                        <span>PEPPER & MUTTON STARTERS</span>
+                    </div>
+        <img src="assets/images/mutton-65.jpeg" class="card-food-header-img" alt="PEPPER & MUTTON STARTERS"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mutton 65</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹319</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mutton Manchurian</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹319</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Chilli Mutton</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹329</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mutton Roast</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹359</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Pepper Mutton</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹349</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sezwan Mutton</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹359</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z"/></svg></span>
+                        <span>GOBI & MUSHROOM STARTERS</span>
+                    </div>
+        <img src="assets/images/gobi-manchurian.jpeg" class="card-food-header-img" alt="GOBI & MUSHROOM STARTERS"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Gobi Manchurian</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹190</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Gobi Chilli</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹190</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Gobi 65</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹190</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Manchurian</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg 65</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Chilli</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Sezwan</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#ef4444; font-size:7.2pt;">🌶️</span> Chilli Mushroom</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mushroom 65</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mushroom Manchurian</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Pepper Mushroom</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sezwan Mushroom</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹229</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z"/></svg></span>
+                        <span>PANEER & BABYCORN STARTERS</span>
+                    </div>
+        <img src="assets/images/paneer-65.jpeg" class="card-food-header-img" alt="PANEER & BABYCORN STARTERS"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Babycorn Majestic</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Babycorn 555</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Babycorn Garlic</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer 65</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Chilli Paneer</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Manchurian</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Roast</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Majestic</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Highway Delite (Veg)</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹229</span>
+                    </div>
+            </div></div></div>
+            </div>
+        </div>
+
+        <!-- Footer Legend Bar -->
+        <footer class="footer-legend-pill">
+            <div class="legend-items-group">
+                <div class="legend-badge-item"><span>🌿</span> VEG</div>
+                <div class="legend-badge-item"><span>🌶️</span> SPICY</div>
+                <div class="legend-badge-item"><span>👨‍🍳</span> CHEF'S SPECIAL</div>
+                <div class="legend-badge-item"><span>⭐</span> SIGNATURE</div>
+            </div>
+            <div class="footer-thankyou-badge">
+                THANK YOU! — VISIT AGAIN ♥ &nbsp;•&nbsp; PAGE 5 OF 6
+            </div>
+        </footer>
+    </div>
+    
+    <!-- PAGE 6 -->
+    <div class="menu-page" id="page-6">
+        <div class="page-inner-border"></div>
+        
+<svg class="corner-leaf tl" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M65,50 Q60,65 75,68 Q78,55 65,50 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+<svg class="corner-leaf br" viewBox="0 0 100 100" fill="none" stroke="#1D4330" stroke-width="1.8">
+    <path d="M10,10 Q45,10 65,35 T95,95" />
+    <path d="M28,20 Q18,32 35,38 Q40,22 28,20 Z" fill="#1D4330" opacity="0.3" />
+    <path d="M45,30 Q38,45 55,48 Q58,35 45,30 Z" fill="#1D4330" opacity="0.3" />
+</svg>
+
+
+        <!-- Header -->
+        <header class="header-section">
+            <div class="header-brand-wrap">
+                <div class="brand-stamp-logo">
+                    <img src="assets/logo.jpeg" alt="Logo">
+                </div>
+                <div class="brand-text-block">
+                    <h1>Cafe Coffee Delight</h1>
+                    <div class="sub-tagline">
+                        <span>Good Food, Good Mood</span>
+                        <span class="heart-icon">♥</span>
+                        <span>Estd. 2024</span>
+                    </div>
+                </div>
+            </div>
+            <div class="top-hero-cutout">
+                <div class="backdrop-circle"></div>
+                <img src="assets/images/chicken-dum-biryani.jpeg" alt="Hero Specialty">
+            </div>
+        </header>
+
+        <!-- Grand Section Banner -->
+        <div class="grand-section-banner">
+            ✨ ROYAL BIRYANIS & RICE SPECIALTIES ✨
+        </div>
+
+        <!-- 2-Column Equal Height Balanced Grid -->
+        <div class="page-two-col-grid">
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M3 12h18v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-6z"/></svg></span>
+                        <span>CHICKEN & MUTTON BIRYANIS</span>
+                    </div>
+        <img src="assets/images/chicken-dum-biryani.jpeg" class="card-food-header-img" alt="CHICKEN & MUTTON BIRYANIS"></div><div class="cat-items-list">
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Fry Piece Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹200</span>
+                    </div>
+            <div class="item-combo-desc">Parcel ₹150 | Table ₹200</div></div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Dum Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹250</span>
+                    </div>
+            <div class="item-combo-desc">Parcel ₹180 | Table ₹250</div></div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Banana Leaf Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹329</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Moghalai Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹270</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Lollipop Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹260</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Boneless Chicken Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹240</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Mutton Fry Piece Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹379</span>
+                    </div>
+            <div class="item-combo-desc">Tender mutton fry pieces · fragrant dum biryani</div></div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M3 12h18v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-6z"/></svg></span>
+                        <span>SPECIAL & MIXED BIRYANIS</span>
+                    </div>
+        <img src="assets/images/mixed-biryani.jpeg" class="card-food-header-img" alt="SPECIAL & MIXED BIRYANIS"></div><div class="cat-items-list">
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Mutton Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">As Per Size</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Mixed Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹299</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Mixed Mughlai Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹329</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Pot Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹350</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Kheema Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹369</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Highway Delite Spl Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹399</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M3 12h18v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-6z"/></svg></span>
+                        <span>VEG BIRYANIS</span>
+                    </div>
+        <img src="assets/images/paneer-biryani.jpeg" class="card-food-header-img" alt="Veg Biryanis"></div><div class="cat-items-list">
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Mushroom Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹200</span>
+                    </div>
+            <div class="item-combo-desc">Fresh mushrooms · aromatic basmati · pure veg</div></div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Paneer Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹229</span>
+                    </div>
+            <div class="item-combo-desc">Soft paneer cubes · fragrant spiced rice · pure veg</div></div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Baby Corn Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Mixed Biryani</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹249</span>
+                    </div>
+            </div></div></div>
+            </div>
+            <div class="col-stack">
+                
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M4 12h16a8 8 0 0 1-16 0z"/></svg></span>
+                        <span>FRIED RICE</span>
+                    </div>
+        <img src="assets/images/spl-chicken-fried-rice.jpeg" class="card-food-header-img" alt="Fried Rice"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹179</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Spl Chicken Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Egg Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹159</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Double Egg Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Chicken Sezwan Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹199</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mutton Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹289</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Spl Mutton Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹319</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Spl Highway Delite Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹259</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M4 12h16a8 8 0 0 1-16 0z"/></svg></span>
+                        <span>VEG FRIED RICE</span>
+                    </div>
+        <img src="assets/images/spl-veg-fried-rice.jpeg" class="card-food-header-img" alt="Veg Fried Rice"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹139</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Spl Veg Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Babycorn Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹159</span>
+                    </div>
+            </div>
+                <div class="item-row bestseller-highlight">
+                    <div class="item-top-line">
+                        <span class="item-title">Spl Babycorn Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Mushroom Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Mix Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title"><span style="color:#22c55e; font-size:7.2pt;">🌿</span> Veg Manchurian Fried Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹169</span>
+                    </div>
+            </div></div></div>
+            <div class="cat-block-card ">
+                <div class="card-header-row">
+                    <div class="cat-pill-badge">
+                        <span class="icon-circle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E4B838" stroke-width="2.2"><path d="M4 12h16a8 8 0 0 1-16 0z"/></svg></span>
+                        <span>RICE</span>
+                    </div>
+        <img src="assets/images/curd-rice.jpeg" class="card-food-header-img" alt="Rice"></div><div class="cat-items-list">
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Curd Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹89</span>
+                    </div>
+            <div class="item-combo-desc">Served with pickle</div></div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sambar Rice</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹119</span>
+                    </div>
+            <div class="item-combo-desc">Served with papad</div></div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sambar Rice with Omlette</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹189</span>
+                    </div>
+            </div>
+                <div class="item-row ">
+                    <div class="item-top-line">
+                        <span class="item-title">Sambar Rice with Chicken Fry</span>
+                        <span class="item-dots-leader"></span>
+                        <span class="item-price-tag">₹219</span>
+                    </div>
+            </div></div></div>
+            </div>
+        </div>
+
+        <!-- Footer Legend Bar -->
+        <footer class="footer-legend-pill">
+            <div class="legend-items-group">
+                <div class="legend-badge-item"><span>🌿</span> VEG</div>
+                <div class="legend-badge-item"><span>🌶️</span> SPICY</div>
+                <div class="legend-badge-item"><span>👨‍🍳</span> CHEF'S SPECIAL</div>
+                <div class="legend-badge-item"><span>⭐</span> SIGNATURE</div>
+            </div>
+            <div class="footer-thankyou-badge">
+                THANK YOU! — VISIT AGAIN ♥ &nbsp;•&nbsp; PAGE 6 OF 6
+            </div>
+        </footer>
+    </div>
+    
+</body>
+</html>

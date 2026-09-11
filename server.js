@@ -26,7 +26,8 @@ function injectEnvVars(html) {
     <script>
       window.ENV = {
         SUPABASE_URL: '${process.env.SUPABASE_URL || ''}',
-        SUPABASE_KEY: '${process.env.SUPABASE_KEY || ''}'
+        SUPABASE_KEY: '${process.env.SUPABASE_KEY || ''}',
+        GOOGLE_MAPS_API_KEY: '${process.env.GOOGLE_MAPS_API_KEY || ''}'
       };
     </script>
   `;

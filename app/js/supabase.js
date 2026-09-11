@@ -113,6 +113,14 @@ async function sbSaveConfig(configData) {
     return true;
 }
 
+async function sbUpsertConfig(updates) {
+    if (!_supaClient) return false;
+    const current = await sbGetConfig() || {};
+    const newData = { ...current, ...updates };
+    return await sbSaveConfig(newData);
+}
+window.sbUpsertConfig = sbUpsertConfig;
+
 /* ===== CATEGORY OVERRIDES ===== */
 
 async function sbGetCategoryOverrides() {
@@ -160,7 +168,14 @@ async function sbSaveOrder(orderData) {
         gst: Number(orderData.gst || 0),
         total: Number(orderData.total || 0),
         notes: orderData.notes || null,
-        status: 'pending'
+        status: 'pending',
+        order_type: orderData.order_type || 'dining',
+        address: orderData.address || null,
+        landmark: orderData.landmark || null,
+        latitude: orderData.latitude || null,
+        longitude: orderData.longitude || null,
+        utr_number: orderData.utr_number || null,
+        payment_proof_url: orderData.payment_proof_url || null
     }]);
     if (error) {
         console.error('[SB] saveOrder error:', error.message, error.details);

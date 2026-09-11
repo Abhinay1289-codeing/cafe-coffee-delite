@@ -4,14 +4,16 @@ const path = require('path');
 
 const templateMap = {
   'index.html': 'index.template.html',
+  'table.html': 'table.template.html',
   'admin.html': 'admin.template.html',
   'admin-orders.html': 'admin-orders.template.html',
-  'table.html': 'table.template.html'
+  'qr-setup.html': 'qr-setup.template.html'
 };
 
 console.log('🔍 Checking environment variables:');
 console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
 console.log('SUPABASE_KEY exists:', !!process.env.SUPABASE_KEY);
+console.log('GOOGLE_MAPS_API_KEY exists:', !!process.env.GOOGLE_MAPS_API_KEY);
 
 Object.entries(templateMap).forEach(([targetFile, templateFile]) => {
     const templatePath = path.join(__dirname, '..', templateFile);
@@ -30,10 +32,15 @@ Object.entries(templateMap).forEach(([targetFile, templateFile]) => {
         const useKey = (process.env.SUPABASE_KEY && !process.env.SUPABASE_KEY.includes('YOUR') && !process.env.SUPABASE_KEY.includes('your-anon')) 
           ? process.env.SUPABASE_KEY 
           : 'YOUR_SUPABASE_ANON_KEY';
+          
+        const useMapsKey = (process.env.GOOGLE_MAPS_API_KEY && !process.env.GOOGLE_MAPS_API_KEY.includes('YOUR'))
+          ? process.env.GOOGLE_MAPS_API_KEY
+          : 'YOUR_GOOGLE_MAPS_API_KEY';
         
         // Replace placeholders with Netlify env vars
         html = html.replaceAll('YOUR_SUPABASE_URL', useUrl);
         html = html.replaceAll('YOUR_SUPABASE_ANON_KEY', useKey);
+        html = html.replaceAll('YOUR_GOOGLE_MAPS_API_KEY', useMapsKey);
         
         fs.writeFileSync(targetPath, html, 'utf8');
         console.log(`✅ Injected env vars into ${targetFile}`);

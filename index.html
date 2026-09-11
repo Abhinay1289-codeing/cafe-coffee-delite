@@ -10,8 +10,15 @@
     <script>
       window.ENV = {
         SUPABASE_URL: 'https://luhwhzsyjsiwdmwrohwc.supabase.co',
-        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1aHdoenN5anNpd2Rtd3JvaHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTE5NTUsImV4cCI6MjEwMzM4Nzk1NX0.ZtNOL4PAvdY8udDYki3vTjuCw4jb8UdeZ4_abOMaWT0'
+        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1aHdoenN5anNpd2Rtd3JvaHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTE5NTUsImV4cCI6MjEwMzM4Nzk1NX0.ZtNOL4PAvdY8udDYki3vTjuCw4jb8UdeZ4_abOMaWT0',
+        GOOGLE_MAPS_API_KEY: 'AIzaSyAljj1ovPfBETYzJU_amHvh-WhW4ym0msc'
       };
+    </script>
+    <script>
+      // QR Code Redirect: If a customer scans an old QR code (/?table=11), instantly redirect them to the Dining App
+      if (window.location.search.includes('table=')) {
+          window.location.replace('/table.html' + window.location.search);
+      }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,6 +26,65 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+    <!-- Customer Login Overlay for Online Delivery -->
+    <div id="customerLoginOverlay" class="admin-login-overlay" style="z-index: 10000; position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center;">
+        <div class="admin-login-card" style="width: 100%; max-width: 400px; padding: 30px; background: var(--card); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
+            <img src="assets/logo.jpeg" class="admin-login-logo" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 16px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 6px;">Login to Order</h2>
+            <p id="loginSubtitleText" style="color: var(--muted); font-size: 0.9rem; margin-bottom: 24px;">Log in to your account or create a new one.</p>
+            
+            <div id="authLoginView">
+                <form id="customerLoginForm">
+                    <div class="form-group" style="text-align: left;">
+                        <label for="loginEmailInput">Email Address</label>
+                        <input type="email" id="loginEmailInput" class="field-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group" style="text-align: left; margin-top: 12px;">
+                        <label for="loginPasswordInput">Password</label>
+                        <input type="password" id="loginPasswordInput" class="field-input" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="customerLoginBtn" style="margin-top: 18px; width: 100%;">Login</button>
+                </form>
+                <div style="margin-top: 20px; font-size: 0.9rem;">
+                    <span style="color: var(--muted);">Don't have an account?</span>
+                    <button type="button" class="btn-ghost" id="showRegisterBtn" style="display: inline; padding: 4px; font-weight: 700;">Sign up here</button>
+                </div>
+            </div>
+
+            <div id="authRegisterView" style="display: none;">
+                <form id="customerRegisterForm">
+                    <div class="form-group" style="text-align: left;">
+                        <label for="registerEmailInput">Email Address</label>
+                        <input type="email" id="registerEmailInput" class="field-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group" style="text-align: left; margin-top: 12px;">
+                        <label for="registerPasswordInput">Create Password</label>
+                        <input type="password" id="registerPasswordInput" class="field-input" placeholder="Minimum 6 characters" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="customerRegisterBtn" style="margin-top: 18px; width: 100%;">Create Account</button>
+                </form>
+                <div style="margin-top: 20px; font-size: 0.9rem;">
+                    <span style="color: var(--muted);">Already have an account?</span>
+                    <button type="button" class="btn-ghost" id="showLoginBtn" style="display: inline; padding: 4px; font-weight: 700;">Log in</button>
+                </div>
+            </div>
+
+            <div id="authOtpView" style="display: none;">
+                <form id="customerOtpForm">
+                    <p style="color: #22c55e; font-size: 0.85rem; margin-bottom: 16px; font-weight: 600;">Account created! Please check your email for the verification code.</p>
+                    <div class="form-group" style="text-align: left;">
+                        <label for="customerOtpInput">Enter 6-digit Code</label>
+                        <input type="text" id="customerOtpInput" class="field-input" placeholder="000000" pattern="[0-9]*" maxlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="customerVerifyCodeBtn" style="margin-top: 12px; width: 100%;">Verify Account</button>
+                    <button type="button" class="btn-ghost" id="customerBackToLoginBtn" style="margin-top: 8px; width: 100%;">← Back to Login</button>
+                </form>
+            </div>
+
+            <div id="customerLoginError" class="login-error is-hidden" style="margin-top: 16px;"></div>
+        </div>
+    </div>
 
     <!-- Welcome splash -->
     <div id="welcomeSplash" class="welcome-splash" aria-hidden="false">
@@ -30,7 +96,7 @@
             </div>
             <p class="welcome-greeting">Welcome</p>
             <h1 class="welcome-title">Cafe Coffee Delite</h1>
-            <p class="welcome-message">We're glad you're here · Order from your table</p>
+            <p class="welcome-message">We're glad you're here · Order online for delivery</p>
             <p class="welcome-sub" id="welcomeTagline">Sip, Savour, Smile</p>
         </div>
     </div>
@@ -50,10 +116,7 @@
                     <span class="header-cart-count" id="headerCartCount" data-count="0">0</span>
                 </button>
             </div>
-            <div class="header-table is-hidden" id="navTableBadge">
-                <span>🪑</span>
-                <span id="tableLabel">Table #—</span>
-            </div>
+
         </header>
 
         <!-- Hero -->
@@ -184,7 +247,7 @@
         <header class="cart-drawer-head">
             <div>
                 <h2>Your Cart</h2>
-                <p class="cart-table-line is-hidden" id="cartTableLine"></p>
+
             </div>
             <button type="button" id="closeCart" aria-label="Close">✕</button>
         </header>
@@ -207,21 +270,54 @@
         </header>
         <div class="screen-body">
             <div class="checkout-summary" id="checkoutSummary"></div>
+            
+            <div class="form-group" style="display: flex; gap: 8px;">
+                <button type="button" class="btn-ghost" id="getLocationBtn" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--primary); color: var(--primary);">
+                    📍 Use Current Location
+                </button>
+            </div>
+            
             <div class="form-group">
-                <label for="checkoutTable">Table Number</label>
-                <input type="text" id="checkoutTable" class="field-input" placeholder="Enter your table number">
+                <label for="checkoutAddress">Delivery Address*</label>
+                <input type="text" id="checkoutAddress" class="field-input" placeholder="House/Flat No, Street, Area..." required>
+                <input type="hidden" id="checkoutLat">
+                <input type="hidden" id="checkoutLng">
+            </div>
+            
+            <div class="form-group">
+                <label for="checkoutLandmark">Landmark</label>
+                <input type="text" id="checkoutLandmark" class="field-input" placeholder="Optional near by landmark">
+            </div>
+
+            <div class="form-group">
+                <label for="checkoutName">Your Name*</label>
+                <input type="text" id="checkoutName" class="field-input" placeholder="Full Name" required>
             </div>
             <div class="form-group">
-                <label for="checkoutName">Your Name</label>
-                <input type="text" id="checkoutName" class="field-input" placeholder="Optional">
+                <label for="checkoutPhone">Phone Number*</label>
+                <input type="tel" id="checkoutPhone" class="field-input" placeholder="10-digit number" required>
             </div>
-            <div class="form-group">
-                <label for="checkoutPhone">Phone</label>
-                <input type="tel" id="checkoutPhone" class="field-input" placeholder="Optional">
+            
+            <!-- UPI Payment Section -->
+            <div class="form-group" style="background: rgba(34,197,94,0.08); padding: 14px; border-radius: 12px; border: 1px solid rgba(34,197,94,0.3);">
+                <h3 style="font-size: 1.1rem; margin-bottom: 8px; font-weight: 800; color: #22c55e;">Pay on Delivery (UPI)</h3>
+                <p style="font-size: 0.8rem; color: var(--muted); margin-bottom: 12px;">Scan the QR code to pay using PhonePe, GPay, Paytm etc. Enter UTR after payment, or leave blank for Cash on Delivery.</p>
+                <div style="display:flex; justify-content:center; margin-bottom: 12px;">
+                    <img id="upiQrCode" src="" alt="UPI QR" style="width:160px; height:160px; display:none; background: #fff; padding: 4px; border-radius: 8px;">
+                </div>
+                <div class="form-group">
+                    <label for="checkoutUtr">Payment UTR Number (If paid)</label>
+                    <input type="text" id="checkoutUtr" class="field-input" placeholder="12-digit UTR from your UPI app">
+                </div>
+                <div class="form-group">
+                    <label for="checkoutProof">Payment Screenshot (Optional)</label>
+                    <input type="file" id="checkoutProof" accept="image/*" class="field-input" style="padding: 8px;">
+                </div>
             </div>
+
             <div class="form-group">
-                <label for="checkoutNotes">Notes</label>
-                <textarea id="checkoutNotes" class="field-input" placeholder="Any special requests..." rows="3"></textarea>
+                <label for="checkoutNotes">Cooking Instructions</label>
+                <textarea id="checkoutNotes" class="field-input" placeholder="Any special requests..." rows="2"></textarea>
             </div>
             <button type="button" class="btn-primary" id="placeOrderBtn">🚀 Confirm & Send Order to Kitchen</button>
         </div>
@@ -237,7 +333,7 @@
             
             <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; width: 100%; margin-bottom: 24px; text-align: left;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
-                    <span style="font-weight: 800; font-size: 1.1rem;" id="successTableBadge">Table #1</span>
+                    <span style="font-weight: 800; font-size: 1.1rem;">Delivery Order</span>
                     <span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 20px;">Sent to Kitchen</span>
                 </div>
                 <div id="successOrderItems" style="font-size: 0.88rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px;"></div>
@@ -271,6 +367,17 @@
     <script src="js/menu-data.js"></script>
     <!-- Helpers -->
     <script src="js/app.js"></script>
+    <!-- Load Google Maps if API key exists -->
+    <script>
+      if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY && !window.ENV.GOOGLE_MAPS_API_KEY.includes('YOUR_')) {
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${window.ENV.GOOGLE_MAPS_API_KEY}&libraries=places`;
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+      }
+    </script>
+    <script src="js/online-app.js"></script>
 
 <!-- Service Worker -->
 <script>

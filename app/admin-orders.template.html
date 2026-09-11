@@ -563,9 +563,8 @@
             <h2>🪑 Table Grid Layout</h2>
             <div class="filter-tabs">
                 <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="dining">Dining</button>
-                <button class="filter-btn" data-filter="online">Online</button>
                 <button class="filter-btn" data-filter="active">Occupied</button>
+                <button class="filter-btn" data-filter="vacant">Vacant</button>
             </div>
         </div>
 
@@ -841,8 +840,8 @@
             const container = document.getElementById('tablesContainer');
             if (!container) return;
 
-            // Default 12 Table Grid + Online Delivery (Matching Reference Image Layout)
-            const DEFAULT_TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'Online'];
+            // Default 12 Table Grid (Matching Reference Image Layout)
+            const DEFAULT_TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
             
             activeTableOrdersMap = {};
             const billedOrdersToday = allOrders.filter(o => o.status === 'billed' && isToday(o.created_at));
@@ -868,10 +867,6 @@
                 displayTables = sortedTables.filter(t => (activeTableOrdersMap[t] || []).length > 0);
             } else if (activeFilter === 'vacant') {
                 displayTables = sortedTables.filter(t => (!activeTableOrdersMap[t] || activeTableOrdersMap[t].length === 0));
-            } else if (activeFilter === 'online') {
-                displayTables = sortedTables.filter(t => String(t).toLowerCase() === 'online');
-            } else if (activeFilter === 'dining') {
-                displayTables = sortedTables.filter(t => String(t).toLowerCase() !== 'online');
             }
 
             // Update Stats
