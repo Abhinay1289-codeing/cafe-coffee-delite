@@ -159,8 +159,8 @@ async function sbSaveOrder(orderData) {
     _lastSavedOrderHash = currentHash;
     _lastSavedOrderTime = now;
 
-    // Core mandatory payload (compatible with all table schemas)
-    const basePayload = {
+    // Universal core payload (guaranteed to work on ALL Supabase orders schemas)
+    const legacyCorePayload = {
         table_number: String(orderData.tableNumber || '').trim(),
         customer_name: orderData.customerName || 'Guest',
         customer_phone: orderData.customerPhone || null,
@@ -169,12 +169,17 @@ async function sbSaveOrder(orderData) {
         gst: Number(orderData.gst || 0),
         total: Number(orderData.total || 0),
         notes: orderData.notes || null,
-        status: 'pending',
+        status: 'pending'
+    };
+
+    // Standard payload (includes order_type)
+    const standardPayload = {
+        ...legacyCorePayload,
         order_type: orderData.order_type || 'dining'
     };
 
-    // Full payload including optional fields if provided
-    const fullPayload = { ...basePayload };
+    // Full payload including optional delivery/payment fields if provided
+    const fullPayload = { ...standardPayload };
     if (orderData.address) fullPayload.address = orderData.address;
     if (orderData.landmark) fullPayload.landmark = orderData.landmark;
     if (orderData.latitude) fullPayload.latitude = orderData.latitude;
@@ -182,13 +187,21 @@ async function sbSaveOrder(orderData) {
     if (orderData.utr_number) fullPayload.utr_number = orderData.utr_number;
     if (orderData.payment_proof_url) fullPayload.payment_proof_url = orderData.payment_proof_url;
 
+    // 1. Attempt insert with full payload
     let { data, error } = await _supaClient.from('orders').insert([fullPayload]);
 
-    // Fallback: If database schema lacks optional columns (PGRST204 or missing column error), insert base payload
+    // 2. Fallback 1: If extra delivery/payment columns are missing, retry with standardPayload
     if (error && (error.code === 'PGRST204' || (error.message && error.message.includes('column')))) {
-        console.warn('[SB] Retrying order save with base schema fields...', error.message);
-        const retryResult = await _supaClient.from('orders').insert([basePayload]);
-        error = retryResult.error;
+        console.warn('[SB] Retrying with standard payload...', error.message);
+        const retry1 = await _supaClient.from('orders').insert([standardPayload]);
+        error = retry1.error;
+    }
+
+    // 3. Fallback 2: If order_type column is ALSO missing in legacy schema, retry with legacyCorePayload
+    if (error && (error.code === 'PGRST204' || (error.message && error.message.includes('column')))) {
+        console.warn('[SB] Retrying with legacy core payload...', error.message);
+        const retry2 = await _supaClient.from('orders').insert([legacyCorePayload]);
+        error = retry2.error;
     }
 
     if (error) {
