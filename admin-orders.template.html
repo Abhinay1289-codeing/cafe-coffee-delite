@@ -810,9 +810,17 @@
         window.addEventListener('click', onFirstGesture, true);
         window.addEventListener('touchstart', onFirstGesture, true);
 
-        function playChime() {
-            if (!audioCtx || audioCtx.state !== 'running') return;
+        async function playChime() {
             try {
+                if (!audioCtx) {
+                    const AudioClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioClass) audioCtx = new AudioClass();
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    await audioCtx.resume().catch(() => {});
+                }
+                if (!audioCtx) return;
+
                 const t = audioCtx.currentTime;
                 // School bell uses a lower pitch and rapid tremolo
                 const osc1 = audioCtx.createOscillator();
