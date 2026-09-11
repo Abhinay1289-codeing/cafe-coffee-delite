@@ -1,7 +1,7 @@
 {
-  "versionCode": 4,
-  "versionName": "1.2.0",
+  "versionCode": 5,
+  "versionName": "1.3.0",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Added Delivery Order flow, Wi-Fi Printer support, device offline mode, and UPI QR payments."
+  "changelog": "New side-by-side split layout: Online & Dining orders visible simultaneously with updated top toolbar icons."
 }

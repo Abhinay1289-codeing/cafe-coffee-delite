@@ -157,15 +157,24 @@
             border: 1px solid var(--border);
             color: var(--text);
             font-family: inherit;
-            font-size: 0.76rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 8px;
             cursor: pointer;
             display: inline-flex;
+            flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            gap: 2px;
+            min-width: 46px;
         }
+        .icon-btn .btn-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: var(--muted);
+        }
+        .icon-btn:hover .btn-label { color: #fff; }
         .icon-btn.btn-test-sound {
             background: rgba(234, 179, 8, 0.15);
             border-color: rgba(234, 179, 8, 0.35);
@@ -188,7 +197,7 @@
         .dash-body {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 14px 12px 60px;
+            padding: 14px 10px 60px;
         }
 
         /* ===== STATS ROW ===== */
@@ -208,40 +217,88 @@
         .stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
         .stat-value { font-size: 1.4rem; font-weight: 900; line-height: 1.1; }
 
-        /* ===== FILTER BAR ===== */
-        .filter-bar {
+        /* ===== SIDE-BY-SIDE SPLIT VIEW LAYOUT (MATCHING WIREFRAME SKETCH) ===== */
+        .split-view-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 12px;
+            align-items: start;
+        }
+        @media (max-width: 480px) {
+            .split-view-container {
+                gap: 8px;
+            }
+        }
+
+        .split-column {
+            background: rgba(20, 22, 34, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 10px;
+            min-height: 420px;
+        }
+        .online-column {
+            border-right: 2px solid rgba(59, 130, 246, 0.35);
+        }
+        .dining-column {
+            border-left: 2px solid rgba(245, 158, 11, 0.35);
+        }
+
+        .column-header {
+            background: #141622;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .online-header { border-bottom: 2px solid #3b82f6; }
+        .dining-header { border-bottom: 2px solid #f59e0b; }
+
+        .column-title {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 14px;
+            justify-content: center;
+            gap: 6px;
         }
-        .filter-bar h2 { font-size: 0.95rem; font-weight: 800; }
-        .filter-tabs { display: flex; gap: 6px; }
-        .filter-btn {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--muted);
-            font-family: inherit;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
+        .column-title h2 {
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.5px;
         }
-        .filter-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .column-badge {
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+        .badge-online { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge-dining { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
 
-        /* ===== COMPACT PHONE TABLE GRID (Matching Reference Image Layout) ===== */
-        .table-grid {
+        .column-subtitle {
+            font-size: 0.68rem;
+            color: var(--muted);
+            font-weight: 700;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .online-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 Columns on Phone */
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
         }
-        @media (min-width: 700px) {
-            .table-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .dining-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns for Tables 1-12 as shown in sketch */
+            gap: 8px;
         }
-        @media (min-width: 1000px) {
-            .table-grid { grid-template-columns: repeat(6, 1fr); gap: 16px; }
+        @media (max-width: 400px) {
+            .dining-grid { grid-template-columns: repeat(2, 1fr); }
+            .online-grid { grid-template-columns: 1fr; }
         }
 
         /* ===== COMPACT SQUARE TABLE CARD ===== */
@@ -512,15 +569,15 @@
         <div class="dash-logo">
             <img src="assets/logo.jpeg" alt="Logo">
             <span>Cafe Delite</span>
-            <span class="dash-badge">Live Orders</span>
+            <span class="dash-badge">Live</span>
         </div>
         <div class="dash-actions">
             <span class="live-dot" title="Real-time live connection active"></span>
-            <button class="icon-btn" onclick="openHistoryModal()" title="History">📜</button>
-            <button class="icon-btn" onclick="clearAllData()" style="color:#ef4444" title="Clear Data">🗑️</button>
-            <button class="icon-btn btn-test-sound" onclick="testSound()" title="Test Sound">🔔</button>
-            <button class="icon-btn" onclick="loadOrders()" title="Refresh">↻</button>
-            <button class="icon-btn" onclick="handleLogout()" style="color:var(--primary)" title="Logout">🚪</button>
+            <button class="icon-btn" onclick="openHistoryModal()" title="History"><span style="font-size:1.05rem;">📜</span><span class="btn-label">History</span></button>
+            <button class="icon-btn" onclick="loadOrders()" title="Refresh"><span style="font-size:1.05rem;">↻</span><span class="btn-label">Refresh</span></button>
+            <button class="icon-btn btn-test-sound" onclick="testSound()" title="Test Sound"><span style="font-size:1.05rem;">🔔</span><span class="btn-label">Bell</span></button>
+            <button class="icon-btn" onclick="clearAllData()" style="color:#ef4444" title="Clear Data"><span style="font-size:1.05rem;">🗑️</span><span class="btn-label">Clean</span></button>
+            <button class="icon-btn" onclick="handleLogout()" style="color:var(--primary)" title="Logout"><span style="font-size:1.05rem;">🚪</span><span class="btn-label">Logout</span></button>
         </div>
     </header>
 
@@ -558,20 +615,37 @@
             </div>
         </div>
 
-        <!-- FILTER BAR -->
-        <div class="filter-bar">
-            <h2>🪑 Table Grid Layout</h2>
-            <div class="filter-tabs">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="dining">Dining</button>
-                <button class="filter-btn" data-filter="online">Online</button>
-                <button class="filter-btn" data-filter="active">Occupied</button>
-            </div>
-        </div>
+        <!-- SIDE-BY-SIDE SPLIT VIEW DASHBOARD (ONLINE vs DINING) -->
+        <div class="split-view-container">
 
-        <!-- COMPACT PHONE TABLE GRID -->
-        <div class="table-grid" id="tablesContainer">
-            <div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--muted)">⏳ Loading table cards...</div>
+            <!-- LEFT COLUMN: ONLINE ORDERS -->
+            <div class="split-column online-column">
+                <div class="column-header online-header">
+                    <div class="column-title">
+                        <span class="column-badge badge-online">📱 Online</span>
+                        <h2>Online</h2>
+                    </div>
+                    <div class="column-subtitle">Payed / Accept orders place</div>
+                </div>
+                <div class="online-grid" id="onlineTablesContainer">
+                    <div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--muted)">⏳ Loading online orders...</div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: DINING TABLES -->
+            <div class="split-column dining-column">
+                <div class="column-header dining-header">
+                    <div class="column-title">
+                        <span class="column-badge badge-dining">🍽️ Dining</span>
+                        <h2>Dining</h2>
+                    </div>
+                    <div class="column-subtitle">Need to be delivered</div>
+                </div>
+                <div class="dining-grid" id="diningTablesContainer">
+                    <div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--muted)">⏳ Loading dining tables...</div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -836,17 +910,18 @@
             }).join('');
         }
 
-        // RENDER COMPACT TABLE GRID
+        // RENDER COMPACT TABLE GRID (SPLIT VIEW: ONLINE vs DINING)
         function renderTableGrid() {
-            const container = document.getElementById('tablesContainer');
-            if (!container) return;
+            const onlineContainer = document.getElementById('onlineTablesContainer');
+            const diningContainer = document.getElementById('diningTablesContainer');
+            if (!onlineContainer || !diningContainer) return;
 
-            // Default 12 Table Grid + Online Delivery (Matching Reference Image Layout)
-            const DEFAULT_TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'Online'];
+            const DEFAULT_DINING_TABLES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
             
             activeTableOrdersMap = {};
             const billedOrdersToday = allOrders.filter(o => o.status === 'billed' && isToday(o.created_at));
 
+            // Group active orders by table_number
             allOrders.forEach(o => {
                 if (o.status === 'billed' || o.status === 'cancelled') return;
                 const tNum = String(o.table_number || 'Unknown').trim();
@@ -854,45 +929,83 @@
                 activeTableOrdersMap[tNum].push(o);
             });
 
-            const allTableKeys = new Set(DEFAULT_TABLES.map(String));
-            Object.keys(activeTableOrdersMap).forEach(k => allTableKeys.add(k));
-
-            const sortedTables = Array.from(allTableKeys).sort((a, b) => {
-                const na = parseInt(a), nb = parseInt(b);
-                if (!isNaN(na) && !isNaN(nb)) return na - nb;
-                return a.localeCompare(b);
-            });
-
-            let displayTables = sortedTables;
-            if (activeFilter === 'active') {
-                displayTables = sortedTables.filter(t => (activeTableOrdersMap[t] || []).length > 0);
-            } else if (activeFilter === 'vacant') {
-                displayTables = sortedTables.filter(t => (!activeTableOrdersMap[t] || activeTableOrdersMap[t].length === 0));
-            } else if (activeFilter === 'online') {
-                displayTables = sortedTables.filter(t => String(t).toLowerCase() === 'online');
-            } else if (activeFilter === 'dining') {
-                displayTables = sortedTables.filter(t => String(t).toLowerCase() !== 'online');
-            }
-
-            // Update Stats
+            // Calculate Stats
             const occupiedCount = Object.keys(activeTableOrdersMap).length;
             const pendingCount = allOrders.filter(o => o.status === 'pending').length;
             const billedCount = billedOrdersToday.length;
             const todayRevenue = billedOrdersToday.reduce((sum, o) => sum + (o.total || 0), 0);
 
-            document.getElementById('statOccupied').textContent = occupiedCount;
-            document.getElementById('statPending').textContent = pendingCount;
-            document.getElementById('statBilled').textContent = billedCount;
-            document.getElementById('statRevenue').textContent = '₹' + todayRevenue;
+            if (document.getElementById('statOccupied')) document.getElementById('statOccupied').textContent = occupiedCount;
+            if (document.getElementById('statPending')) document.getElementById('statPending').textContent = pendingCount;
+            if (document.getElementById('statBilled')) document.getElementById('statBilled').textContent = billedCount;
+            if (document.getElementById('statRevenue')) document.getElementById('statRevenue').textContent = '₹' + todayRevenue;
 
-            if (displayTables.length === 0) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted)">No tables in ${activeFilter} filter</div>`;
-                return;
+            // 1. RENDER ONLINE ORDERS (LEFT COLUMN: "Accept orders place / Payed")
+            onlineContainer.innerHTML = '';
+            const onlineKeys = Object.keys(activeTableOrdersMap).filter(k => 
+                k.toLowerCase() === 'online' || 
+                (activeTableOrdersMap[k] && activeTableOrdersMap[k].some(o => String(o.order_type).toLowerCase() === 'online'))
+            );
+
+            if (onlineKeys.length === 0) {
+                onlineContainer.innerHTML = `
+                    <div class="table-card vacant" style="grid-column:1/-1; padding: 28px 10px; border-style: dashed;">
+                        <div style="font-size:1.8rem; margin-bottom:4px;">📱</div>
+                        <div class="table-num" style="font-size:1rem; color:var(--muted);">Online</div>
+                        <div class="table-sub" style="font-size:0.62rem; color:#60a5fa; margin-top:4px;">Accept orders place</div>
+                        <div style="font-size:0.62rem; color:var(--muted); margin-top:4px;">No Active Orders</div>
+                    </div>
+                `;
+            } else {
+                onlineKeys.forEach(tNum => {
+                    const ordersForTable = activeTableOrdersMap[tNum] || [];
+                    const statuses = ordersForTable.map(o => o.status);
+                    let domStatus = 'pending';
+                    if (statuses.every(s => s === 'served')) domStatus = 'served';
+                    else if (statuses.includes('ready')) domStatus = 'ready';
+                    else if (statuses.includes('preparing')) domStatus = 'preparing';
+
+                    let totalAmt = 0;
+                    let itemCount = 0;
+                    ordersForTable.forEach(ord => {
+                        totalAmt += Number(ord.total || 0);
+                        (ord.items || []).forEach(it => itemCount += (it.qty || 1));
+                    });
+
+                    const isNewAlert = !seenNotificationTables.has(tNum) || ordersForTable.length > 1;
+                    const notifyBadgeHtml = isNewAlert ? `<div class="table-notify-badge">🔔 NEW</div>` : '';
+
+                    const card = document.createElement('div');
+                    card.className = `table-card occupied status-${domStatus}`;
+                    card.onclick = () => openTableModal(tNum);
+
+                    const firstOrd = ordersForTable[0] || {};
+                    const custName = esc(firstOrd.customer_name || 'Online Order');
+
+                    card.innerHTML = `
+                        ${notifyBadgeHtml}
+                        <div class="table-num" style="font-size:1.1rem;">📱 Online</div>
+                        <div style="font-size:0.68rem; font-weight:800; color:#fff; max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${custName}</div>
+                        <div class="item-count-badge">${itemCount} items</div>
+                        <div class="card-total">₹${totalAmt}</div>
+                    `;
+                    onlineContainer.appendChild(card);
+                });
             }
 
-            container.innerHTML = '';
+            // 2. RENDER DINING TABLES (RIGHT COLUMN: "Need to be delivered")
+            diningContainer.innerHTML = '';
+            const activeDiningKeys = Object.keys(activeTableOrdersMap).filter(k => k.toLowerCase() !== 'online');
+            const allDiningSet = new Set(DEFAULT_DINING_TABLES.map(String));
+            activeDiningKeys.forEach(k => allDiningSet.add(k));
 
-            displayTables.forEach(tNum => {
+            const sortedDining = Array.from(allDiningSet).sort((a, b) => {
+                const na = parseInt(a), nb = parseInt(b);
+                if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                return a.localeCompare(b);
+            });
+
+            sortedDining.forEach(tNum => {
                 const ordersForTable = activeTableOrdersMap[tNum] || [];
                 const isOccupied = ordersForTable.length > 0;
 
@@ -900,19 +1013,16 @@
                 card.className = `table-card ${isOccupied ? 'occupied' : 'vacant'}`;
 
                 if (!isOccupied) {
-                    // VACANT STATE (compact square tile with table number matching reference layout)
                     card.innerHTML = `
                         <div class="table-num">${tNum}</div>
                         <div class="table-sub">Vacant</div>
                     `;
                 } else {
-                    // OCCUPIED STATE
                     const statuses = ordersForTable.map(o => o.status);
                     let domStatus = 'pending';
                     if (statuses.every(s => s === 'served')) domStatus = 'served';
                     else if (statuses.includes('ready')) domStatus = 'ready';
                     else if (statuses.includes('preparing')) domStatus = 'preparing';
-                    else if (statuses.includes('pending')) domStatus = 'pending';
 
                     card.classList.add(`status-${domStatus}`);
 
@@ -923,7 +1033,6 @@
                         (ord.items || []).forEach(it => itemCount += (it.qty || 1));
                     });
 
-                    // Notification edge badge check
                     const isNewAlert = !seenNotificationTables.has(tNum) || ordersForTable.length > 1;
                     const notifyBadgeHtml = isNewAlert ? `<div class="table-notify-badge">🔔 NEW</div>` : '';
 
@@ -937,7 +1046,7 @@
                     `;
                 }
 
-                container.appendChild(card);
+                diningContainer.appendChild(card);
             });
         }
 
