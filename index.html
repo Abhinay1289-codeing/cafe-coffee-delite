@@ -400,15 +400,26 @@
                 <h3 id="profileAccountEmail" style="font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 4px;">Loading email...</h3>
                 <p style="font-size: 0.82rem; color: #22c55e; font-weight: 700; margin-bottom: 20px;">Logged In Customer Account</p>
 
-                <div style="text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-                    <div style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Saved Phone</div>
-                    <div id="profileAccountPhone" style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 2px;">Not provided</div>
-                </div>
+                <form id="profileForm" style="text-align: left; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label for="profileNameInput" style="font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Your Name</label>
+                        <input type="text" id="profileNameInput" class="field-input" placeholder="Enter your full name" style="margin-top: 4px;">
+                    </div>
 
-                <div style="text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 24px;">
-                    <div style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Saved Delivery Address</div>
-                    <div id="profileAccountAddress" style="font-size: 0.9rem; font-weight: 600; color: var(--text); margin-top: 2px; line-height: 1.4;">Not set</div>
-                </div>
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label for="profilePhoneInput" style="font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Saved Phone Number</label>
+                        <input type="tel" id="profilePhoneInput" class="field-input" placeholder="Enter 10-digit mobile number" style="margin-top: 4px;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label for="profileAddressInput" style="font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Saved Delivery Address</label>
+                        <textarea id="profileAddressInput" class="field-input" placeholder="Enter house no, street, landmark, area" rows="3" style="margin-top: 4px; resize: none;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="saveProfileBtn" style="width: 100%; font-weight: 800; margin-bottom: 14px;">
+                        💾 Save Profile Details
+                    </button>
+                </form>
 
                 <button type="button" class="btn-primary" id="customerLogoutBtn" style="width: 100%; background: #ef4444; border-color: #ef4444; color: #fff; font-weight: 800; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);">
                     🚪 Log Out of Account
@@ -420,11 +431,11 @@
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Helpers -->
-    <script src="js/supabase.js?v=1.5.2"></script>
+    <script src="js/supabase.js?v=1.5.3"></script>
     <!-- Menu data -->
-    <script src="js/menu-data.js?v=1.5.2"></script>
+    <script src="js/menu-data.js?v=1.5.3"></script>
     <!-- Helpers -->
-    <script src="js/app.js?v=1.5.2"></script>
+    <script src="js/app.js?v=1.5.3"></script>
     <!-- Load Google Maps if API key exists -->
     <script>
       if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY && !window.ENV.GOOGLE_MAPS_API_KEY.includes('YOUR_')) {
@@ -435,7 +446,7 @@
           document.head.appendChild(script);
       }
     </script>
-    <script src="js/online-app.js?v=1.5.2"></script>
+    <script src="js/online-app.js?v=1.5.3"></script>
 
 <!-- Service Worker -->
 <script>

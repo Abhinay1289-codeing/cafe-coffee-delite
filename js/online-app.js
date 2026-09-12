@@ -317,6 +317,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Auto save to profile for future checkouts
+        if (name) localStorage.setItem('ccd_profile_name', name);
+        if (phone) localStorage.setItem('ccd_profile_phone', phone);
+        if (address) localStorage.setItem('ccd_profile_address', address);
+
         // Upload payment proof if provided
         let proofUrl = null;
         const proofFile = document.getElementById('checkoutProof').files[0];
@@ -471,6 +476,49 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // --- PROFILE AUTO PRE-FILL & SAVING ---
+    const loadProfileFields = () => {
+        const savedName = localStorage.getItem('ccd_profile_name') || '';
+        const savedPhone = localStorage.getItem('ccd_profile_phone') || '';
+        const savedAddress = localStorage.getItem('ccd_profile_address') || '';
+
+        const inputName = document.getElementById('profileNameInput');
+        const inputPhone = document.getElementById('profilePhoneInput');
+        const inputAddress = document.getElementById('profileAddressInput');
+
+        if (inputName) inputName.value = savedName;
+        if (inputPhone) inputPhone.value = savedPhone;
+        if (inputAddress) inputAddress.value = savedAddress;
+
+        // Auto pre-fill checkout form inputs
+        const checkName = document.getElementById('checkoutName');
+        const checkPhone = document.getElementById('checkoutPhone');
+        const checkAddr = document.getElementById('checkoutAddress');
+
+        if (checkName && savedName && !checkName.value) checkName.value = savedName;
+        if (checkPhone && savedPhone && !checkPhone.value) checkPhone.value = savedPhone;
+        if (checkAddr && savedAddress && !checkAddr.value) checkAddr.value = savedAddress;
+    };
+
+    setTimeout(loadProfileFields, 300);
+
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = (document.getElementById('profileNameInput')?.value || '').trim();
+            const phone = (document.getElementById('profilePhoneInput')?.value || '').trim();
+            const address = (document.getElementById('profileAddressInput')?.value || '').trim();
+
+            localStorage.setItem('ccd_profile_name', name);
+            localStorage.setItem('ccd_profile_phone', phone);
+            localStorage.setItem('ccd_profile_address', address);
+
+            loadProfileFields();
+            showToast('💾 Profile details saved!');
+        });
+    }
+
     const btnProfile = document.getElementById('headerProfileBtn');
     if (btnProfile) {
         btnProfile.addEventListener('click', () => {
@@ -485,12 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const emailEl = document.getElementById('profileAccountEmail');
                 if (emailEl) emailEl.textContent = currentUserSession.user.email || 'Customer Account';
             }
-            const savedPhone = document.getElementById('checkoutPhone')?.value || '';
-            const savedAddr = document.getElementById('checkoutAddress')?.value || '';
-            const phoneEl = document.getElementById('profileAccountPhone');
-            const addrEl = document.getElementById('profileAccountAddress');
-            if (phoneEl) phoneEl.textContent = savedPhone || 'Not provided yet';
-            if (addrEl) addrEl.textContent = savedAddr || 'Not set yet';
+            loadProfileFields();
         });
     }
 
