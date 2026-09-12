@@ -15,9 +15,13 @@
       };
     </script>
     <script>
-      // QR Code Redirect: If a customer scans an old QR code (/?table=11), instantly redirect them to the Dining App
-      if (window.location.search.includes('table=')) {
-          window.location.replace('/table.html' + window.location.search);
+      // 1. Android Native App Launch Check: If launched inside native Android APK (file: protocol or Capacitor WebView), launch Admin Orders Dashboard
+      if (window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+          window.location.replace('admin-orders.html');
+      }
+      // 2. QR Code Redirect: If a customer scans an old QR code (/?table=11), instantly redirect them to the Dining App
+      else if (window.location.search.includes('table=')) {
+          window.location.replace('table.html' + window.location.search);
       }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

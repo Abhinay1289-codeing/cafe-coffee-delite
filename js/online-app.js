@@ -3,6 +3,13 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // --- Android Native App Check ---
+    // If launched inside native Android APK (file: protocol or Capacitor WebView), redirect to Admin Orders Dashboard
+    if (window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+        window.location.replace('admin-orders.html');
+        return;
+    }
+
     // --- QR Code Redirect ---
     // If a customer scans an old QR code (/?table=11), instantly redirect them to the Dining App
     const urlParams = new URLSearchParams(window.location.search);

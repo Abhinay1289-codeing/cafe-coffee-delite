@@ -1,7 +1,7 @@
 {
-  "versionCode": 13,
-  "versionName": "1.5.4",
+  "versionCode": 14,
+  "versionName": "1.5.5",
   "apkUrl": "https://github.com/Abhinay1289-codeing/cafe-coffee-delite/raw/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Permanent Supabase Cloud Customer Account Sync for profile details, authentication, and live order tracking."
+  "changelog": "Admin Android App launcher fix: Native APK automatically opens Admin Orders Kitchen Dashboard."
 }
