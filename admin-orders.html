@@ -1513,10 +1513,14 @@
             }
         }
         // IN-APP AUTO-UPDATE SYSTEM
-        const CURRENT_APP_VERSION = 7; // Version Code
+        const CURRENT_APP_VERSION = 10; // Version Code
         let latestApkUrl = 'https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk';
 
         async function checkAppUpdates() {
+            // Only check for APK updates if running inside native mobile app (Capacitor)
+            if (!window.Capacitor || !window.Capacitor.isNativePlatform || !window.Capacitor.isNativePlatform()) {
+                return;
+            }
             try {
                 const res = await fetch('https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/version.json?t=' + Date.now());
                 if (!res.ok) return;

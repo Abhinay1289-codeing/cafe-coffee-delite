@@ -406,34 +406,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- USER SESSION & PROFILE ---
     let currentUserSession = null;
 
+    // Instant local check on startup to prevent login modal flash/erasure on reload
+    const storedAuthActive = localStorage.getItem('ccd_customer_logged_in');
+    if (storedAuthActive === 'true' && loginOverlay) {
+        loginOverlay.style.display = 'none';
+    }
+
     const updateCustomerUI = (session) => {
         currentUserSession = session;
         if (session && session.user) {
+            localStorage.setItem('ccd_customer_logged_in', 'true');
+            if (loginOverlay) loginOverlay.style.display = 'none';
             const email = session.user.email || 'Customer Account';
             const emailEl = document.getElementById('profileAccountEmail');
             if (emailEl) emailEl.textContent = email;
             loadCustomerOrders();
+        } else {
+            localStorage.removeItem('ccd_customer_logged_in');
+            if (loginOverlay) loginOverlay.style.display = 'flex';
         }
     };
 
-    if (loginOverlay) {
-        const checkSession = async () => {
-            if (window.sb && window.sb.auth) {
-                try {
-                    const { data: { session } } = await window.sb.auth.getSession();
-                    if (session) {
-                        loginOverlay.style.display = 'none';
-                        updateCustomerUI(session);
-                        return true;
-                    }
-                } catch (e) {}
-            }
-            loginOverlay.style.display = 'flex';
-            return false;
-        };
+    if (window.sb && window.sb.auth) {
+        window.sb.auth.onAuthStateChange((event, session) => {
+            updateCustomerUI(session);
+        });
 
-        checkSession();
-        setTimeout(checkSession, 500);
+        window.sb.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                updateCustomerUI(session);
+            } else if (storedAuthActive !== 'true') {
+                if (loginOverlay) loginOverlay.style.display = 'flex';
+            }
+        });
     }
 
     // --- LOGOUT ACTION ---
@@ -444,6 +449,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await window.sb.auth.signOut();
             }
             currentUserSession = null;
+            localStorage.removeItem('ccd_customer_logged_in');
             if (window.closeScreens) window.closeScreens();
             if (loginOverlay) loginOverlay.style.display = 'flex';
             showToast('🚪 Logged out successfully');

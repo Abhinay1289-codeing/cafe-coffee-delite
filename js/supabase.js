@@ -19,7 +19,14 @@ let _supaClient = null;
 
 try {
     if (SUPABASE_URL && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_URL !== 'https://your-project-id.supabase.co' && SUPABASE_KEY && SUPABASE_KEY !== 'YOUR_SUPABASE_ANON_KEY' && SUPABASE_KEY !== 'your-anon-public-key') {
-        _supaClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        _supaClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true,
+                storageKey: 'ccd_customer_auth_v1'
+            }
+        });
         window.sb = _supaClient;
     }
 } catch (e) {

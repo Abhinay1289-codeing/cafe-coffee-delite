@@ -1,7 +1,7 @@
 {
-  "versionCode": 10,
-  "versionName": "1.5.1",
+  "versionCode": 11,
+  "versionName": "1.5.2",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Added Driver Reached Location button and customer arrival confirmation for Online Delivery."
+  "changelog": "Fixed persistent customer login across page reloads and restricted APK update popups to mobile app only."
 }
