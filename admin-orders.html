@@ -589,11 +589,14 @@
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:1.2rem;">🚀</span>
                 <div>
-                    <div style="font-weight:800; font-size:0.88rem;">New App Update Available (<span id="updateVersionTag">v1.1.0</span>)!</div>
+                    <div style="font-weight:800; font-size:0.88rem;">New App Update Available (<span id="updateVersionTag">v1.5.4</span>)!</div>
                     <div style="font-size:0.75rem; opacity:0.9;" id="updateChangelog">Itemized receipt, multi-device ringing auto-stop & UI fixes.</div>
                 </div>
             </div>
-            <button onclick="triggerAppUpdate()" style="background:#fff; color:#1d4ed8; border:none; padding:8px 14px; border-radius:8px; font-family:inherit; font-size:0.8rem; font-weight:900; cursor:pointer; white-space:nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">📥 Update Now</button>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <button onclick="triggerAppUpdate()" style="background:#fff; color:#1d4ed8; border:none; padding:8px 14px; border-radius:8px; font-family:inherit; font-size:0.8rem; font-weight:900; cursor:pointer; white-space:nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">📥 Update Now</button>
+                <button onclick="dismissAppUpdate()" style="background:rgba(255,255,255,0.2); color:#fff; border:none; width:30px; height:30px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Dismiss update notification">✕</button>
+            </div>
         </div>
 
         <!-- STATS ROW -->
@@ -1513,8 +1516,9 @@
             }
         }
         // IN-APP AUTO-UPDATE SYSTEM
-        const CURRENT_APP_VERSION = 10; // Version Code
+        const CURRENT_APP_VERSION = 13; // Version Code (v1.5.4)
         let latestApkUrl = 'https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk';
+        let currentUpdateVersionCode = 13;
 
         async function checkAppUpdates() {
             // Only check for APK updates if running inside native mobile app (Capacitor)
@@ -1526,20 +1530,32 @@
                 if (!res.ok) return;
                 const data = await res.json();
                 
-                if (data && data.versionCode && data.versionCode > CURRENT_APP_VERSION) {
-                    latestApkUrl = data.apkUrl || latestApkUrl;
-                    document.getElementById('updateVersionTag').textContent = data.versionName || ('v' + data.versionCode);
-                    if (data.changelog) document.getElementById('updateChangelog').textContent = data.changelog;
-                    const banner = document.getElementById('updateBanner');
-                    if (banner) banner.style.display = 'flex';
+                if (data && data.versionCode) {
+                    currentUpdateVersionCode = data.versionCode;
+                    const dismissed = localStorage.getItem('dismissed_version_code');
+                    if (data.versionCode > CURRENT_APP_VERSION && String(dismissed) !== String(data.versionCode)) {
+                        latestApkUrl = data.apkUrl || latestApkUrl;
+                        document.getElementById('updateVersionTag').textContent = data.versionName || ('v' + data.versionCode);
+                        if (data.changelog) document.getElementById('updateChangelog').textContent = data.changelog;
+                        const banner = document.getElementById('updateBanner');
+                        if (banner) banner.style.display = 'flex';
+                    }
                 }
             } catch (e) {
                 console.log('Update check error:', e);
             }
         }
 
+        function dismissAppUpdate() {
+            const banner = document.getElementById('updateBanner');
+            if (banner) banner.style.display = 'none';
+            localStorage.setItem('dismissed_version_code', String(currentUpdateVersionCode));
+            if (window.showToast) showToast('✅ Update notification dismissed');
+        }
+
         function triggerAppUpdate() {
             showToast('⬇️ Redirecting to update installer...');
+            dismissAppUpdate();
             if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
                 window.Capacitor.Plugins.Browser.open({ url: latestApkUrl });
             } else {
