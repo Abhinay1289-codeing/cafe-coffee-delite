@@ -55,10 +55,18 @@
             <div id="authRegisterView" style="display: none;">
                 <form id="customerRegisterForm">
                     <div class="form-group" style="text-align: left;">
+                        <label for="registerNameInput">Full Name</label>
+                        <input type="text" id="registerNameInput" class="field-input" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group" style="text-align: left; margin-top: 10px;">
+                        <label for="registerPhoneInput">Mobile Phone Number</label>
+                        <input type="tel" id="registerPhoneInput" class="field-input" placeholder="10-digit mobile number" required>
+                    </div>
+                    <div class="form-group" style="text-align: left; margin-top: 10px;">
                         <label for="registerEmailInput">Email Address</label>
                         <input type="email" id="registerEmailInput" class="field-input" placeholder="you@example.com" required>
                     </div>
-                    <div class="form-group" style="text-align: left; margin-top: 12px;">
+                    <div class="form-group" style="text-align: left; margin-top: 10px;">
                         <label for="registerPasswordInput">Create Password</label>
                         <input type="password" id="registerPasswordInput" class="field-input" placeholder="Minimum 6 characters" minlength="6" required>
                     </div>
@@ -111,6 +119,12 @@
                     <input type="search" id="searchInput" placeholder="Search dishes..." autocomplete="off" aria-label="Search menu">
                 </div>
                 <button type="button" class="header-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button type="button" class="header-btn" id="headerMyOrdersBtn" title="My Orders" style="position:relative;">
+                    🛵 <span id="myOrdersBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#e11d48; color:#fff; font-size:0.65rem; font-weight:800; padding:2px 5px; border-radius:10px;">0</span>
+                </button>
+                <button type="button" class="header-btn" id="headerProfileBtn" title="My Profile">
+                    👤
+                </button>
                 <button type="button" class="header-btn header-cart" id="headerCartBtn" aria-label="Cart">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
                     <span class="header-cart-count" id="headerCartCount" data-count="0">0</span>
@@ -359,14 +373,77 @@
         </div>
     </section>
 
+    <!-- My Orders Screen -->
+    <section class="full-screen" id="screenMyOrders" aria-hidden="true">
+        <header class="screen-head">
+            <button type="button" class="screen-back" data-screen-close>←</button>
+            <h2>My Orders & Live Tracking</h2>
+        </header>
+        <div class="screen-body" style="max-width: 600px; margin: 0 auto; padding: 20px 16px;">
+            <div id="myOrdersActiveSection">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: var(--text);">🛵 Active Orders in Progress</h3>
+                <div id="myOrdersActiveList">
+                    <div style="text-align: center; padding: 20px; color: var(--muted);">No active orders right now.</div>
+                </div>
+            </div>
+
+            <div id="myOrdersHistorySection" style="margin-top: 30px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: var(--text);">📜 Past Order History</h3>
+                <div id="myOrdersHistoryList">
+                    <div style="text-align: center; padding: 20px; color: var(--muted);">Loading past orders...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Profile & Account Screen -->
+    <section class="full-screen" id="screenCustomerProfile" aria-hidden="true">
+        <header class="screen-head">
+            <button type="button" class="screen-back" data-screen-close>←</button>
+            <h2>My Account Profile</h2>
+        </header>
+        <div class="screen-body" style="max-width: 500px; margin: 0 auto; padding: 24px 16px;">
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.06);">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin: 0 auto 16px;">👤</div>
+                <h3 id="profileAccountEmail" style="font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 4px;">Loading email...</h3>
+                <p style="font-size: 0.8rem; color: #22c55e; font-weight: 700; margin-bottom: 20px; background: rgba(34,197,94,0.1); padding: 6px 14px; border-radius: 14px; border: 1px solid rgba(34,197,94,0.2); display: inline-block;">☁️ Permanent Supabase Cloud Account</p>
+
+                <form id="profileForm" style="text-align: left; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label for="profileNameInput" style="font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Your Name</label>
+                        <input type="text" id="profileNameInput" class="field-input" placeholder="Enter your full name" style="margin-top: 4px;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label for="profilePhoneInput" style="font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Saved Phone Number</label>
+                        <input type="tel" id="profilePhoneInput" class="field-input" placeholder="Enter 10-digit mobile number" style="margin-top: 4px;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 18px;">
+                        <label for="profileAddressInput" style="font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Saved Delivery Address</label>
+                        <textarea id="profileAddressInput" class="field-input" placeholder="Enter house no, street, landmark, area" rows="3" style="margin-top: 4px; resize: none;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="saveProfileBtn" style="width: 100%; font-weight: 800; margin-bottom: 14px;">
+                        💾 Save Profile Details
+                    </button>
+                </form>
+
+                <button type="button" class="btn-primary" id="customerLogoutBtn" style="width: 100%; background: #ef4444; border-color: #ef4444; color: #fff; font-weight: 800; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);">
+                    🚪 Log Out of Account
+                </button>
+            </div>
+        </div>
+    </section>
+
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Helpers -->
-    <script src="js/supabase.js"></script>
+    <script src="js/supabase.js?v=1.5.4"></script>
     <!-- Menu data -->
-    <script src="js/menu-data.js"></script>
+    <script src="js/menu-data.js?v=1.5.4"></script>
     <!-- Helpers -->
-    <script src="js/app.js"></script>
+    <script src="js/app.js?v=1.5.4"></script>
     <!-- Load Google Maps if API key exists -->
     <script>
       if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY && !window.ENV.GOOGLE_MAPS_API_KEY.includes('YOUR_')) {
@@ -377,7 +454,7 @@
           document.head.appendChild(script);
       }
     </script>
-    <script src="js/online-app.js"></script>
+    <script src="js/online-app.js?v=1.5.4"></script>
 
 <!-- Service Worker -->
 <script>

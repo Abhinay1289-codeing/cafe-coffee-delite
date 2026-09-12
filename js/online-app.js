@@ -104,6 +104,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (registerForm) {
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const name = document.getElementById('registerNameInput')?.value.trim() || '';
+                const phone = document.getElementById('registerPhoneInput')?.value.trim() || '';
                 const email = document.getElementById('registerEmailInput').value.trim();
                 const password = document.getElementById('registerPasswordInput').value;
                 if (!email || !password) return;
@@ -113,7 +115,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 btn.disabled = true;
                 loginError.classList.add('is-hidden');
 
-                const { error, data } = await window.sb.auth.signUp({ email, password });
+                const { error, data } = await window.sb.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name,
+                            phone: phone
+                        }
+                    }
+                });
                 
                 btn.innerHTML = 'Create Account';
                 btn.disabled = false;
@@ -122,6 +133,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     loginError.textContent = error.message;
                     loginError.classList.remove('is-hidden');
                 } else {
+                    if (name) localStorage.setItem('ccd_profile_name', name);
+                    if (phone) localStorage.setItem('ccd_profile_phone', phone);
                     // Check if auto-logged in (email confirmation disabled)
                     if (data.session) {
                         loginOverlay.style.display = 'none';
@@ -317,10 +330,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Auto save to profile for future checkouts
+        // Auto save to profile for future checkouts (both local and Supabase Cloud)
         if (name) localStorage.setItem('ccd_profile_name', name);
         if (phone) localStorage.setItem('ccd_profile_phone', phone);
         if (address) localStorage.setItem('ccd_profile_address', address);
+
+        if (window.sb && window.sb.auth && currentUserSession) {
+            window.sb.auth.updateUser({
+                data: {
+                    full_name: name,
+                    phone: phone,
+                    address: address
+                }
+            }).catch(e => console.warn('[SB] Auto profile sync exception:', e));
+        }
 
         // Upload payment proof if provided
         let proofUrl = null;
@@ -425,6 +448,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const email = session.user.email || 'Customer Account';
             const emailEl = document.getElementById('profileAccountEmail');
             if (emailEl) emailEl.textContent = email;
+            loadProfileFields();
             loadCustomerOrders();
         } else {
             localStorage.removeItem('ccd_customer_logged_in');
@@ -478,9 +502,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- PROFILE AUTO PRE-FILL & SAVING ---
     const loadProfileFields = () => {
-        const savedName = localStorage.getItem('ccd_profile_name') || '';
-        const savedPhone = localStorage.getItem('ccd_profile_phone') || '';
-        const savedAddress = localStorage.getItem('ccd_profile_address') || '';
+        const meta = (currentUserSession && currentUserSession.user && currentUserSession.user.user_metadata) ? currentUserSession.user.user_metadata : {};
+        const savedName = meta.full_name || localStorage.getItem('ccd_profile_name') || '';
+        const savedPhone = meta.phone || localStorage.getItem('ccd_profile_phone') || '';
+        const savedAddress = meta.address || localStorage.getItem('ccd_profile_address') || '';
 
         const inputName = document.getElementById('profileNameInput');
         const inputPhone = document.getElementById('profilePhoneInput');
@@ -504,7 +529,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
-        profileForm.addEventListener('submit', (e) => {
+        profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = (document.getElementById('profileNameInput')?.value || '').trim();
             const phone = (document.getElementById('profilePhoneInput')?.value || '').trim();
@@ -514,8 +539,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.setItem('ccd_profile_phone', phone);
             localStorage.setItem('ccd_profile_address', address);
 
+            const saveBtn = document.getElementById('saveProfileBtn');
+            if (saveBtn) { saveBtn.innerHTML = '⏳ Syncing to Supabase Cloud...'; saveBtn.disabled = true; }
+
+            if (window.sb && window.sb.auth && currentUserSession) {
+                try {
+                    const { data, error } = await window.sb.auth.updateUser({
+                        data: {
+                            full_name: name,
+                            phone: phone,
+                            address: address
+                        }
+                    });
+                    if (error) {
+                        console.error('[SB] Profile cloud save error:', error.message);
+                    } else if (data && data.user) {
+                        currentUserSession.user = data.user;
+                    }
+                } catch (err) {
+                    console.error('[SB] Profile update exception:', err);
+                }
+            }
+
+            if (saveBtn) { saveBtn.innerHTML = '💾 Save Profile Details'; saveBtn.disabled = false; }
             loadProfileFields();
-            showToast('💾 Profile details saved!');
+            showToast('☁️ Profile permanently saved to Supabase Cloud!');
         });
     }
 
@@ -544,8 +592,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const badgeEl = document.getElementById('myOrdersBadge');
         if (!activeListEl || !historyListEl) return;
 
+        const meta = (currentUserSession && currentUserSession.user && currentUserSession.user.user_metadata) ? currentUserSession.user.user_metadata : {};
         const userId = currentUserSession && currentUserSession.user ? currentUserSession.user.id : null;
-        const phone = document.getElementById('checkoutPhone')?.value || null;
+        const phone = document.getElementById('checkoutPhone')?.value || meta.phone || localStorage.getItem('ccd_profile_phone') || null;
 
         if (window.sbGetCustomerOrders) {
             const orders = await window.sbGetCustomerOrders(phone, userId);
