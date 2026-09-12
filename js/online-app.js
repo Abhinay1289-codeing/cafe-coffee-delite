@@ -349,6 +349,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (window.sb) {
                 await window.sbSaveOrder({
                     order_type: 'online',
+                    user_id: currentUserSession && currentUserSession.user ? currentUserSession.user.id : null,
                     tableNumber: 'Online',
                     customerName: name,
                     customerPhone: phone,
@@ -397,7 +398,223 @@ document.addEventListener('DOMContentLoaded', async () => {
         showToast('🎉 Order sent!');
         if(window.launchConfetti) launchConfetti();
         if(window.startOrderTracking) startOrderTracking();
+        loadCustomerOrders();
 
         setTimeout(() => { _isPlacingOrder = false; }, 2000);
     });
+
+    // --- USER SESSION & PROFILE ---
+    let currentUserSession = null;
+
+    const updateCustomerUI = (session) => {
+        currentUserSession = session;
+        if (session && session.user) {
+            const email = session.user.email || 'Customer Account';
+            const emailEl = document.getElementById('profileAccountEmail');
+            if (emailEl) emailEl.textContent = email;
+            loadCustomerOrders();
+        }
+    };
+
+    if (loginOverlay) {
+        const checkSession = async () => {
+            if (window.sb && window.sb.auth) {
+                try {
+                    const { data: { session } } = await window.sb.auth.getSession();
+                    if (session) {
+                        loginOverlay.style.display = 'none';
+                        updateCustomerUI(session);
+                        return true;
+                    }
+                } catch (e) {}
+            }
+            loginOverlay.style.display = 'flex';
+            return false;
+        };
+
+        checkSession();
+        setTimeout(checkSession, 500);
+    }
+
+    // --- LOGOUT ACTION ---
+    const logoutBtn = document.getElementById('customerLogoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (window.sb && window.sb.auth) {
+                await window.sb.auth.signOut();
+            }
+            currentUserSession = null;
+            if (window.closeScreens) window.closeScreens();
+            if (loginOverlay) loginOverlay.style.display = 'flex';
+            showToast('🚪 Logged out successfully');
+        });
+    }
+
+    // --- HEADER BUTTON LISTENERS ---
+    const btnMyOrders = document.getElementById('headerMyOrdersBtn');
+    if (btnMyOrders) {
+        btnMyOrders.addEventListener('click', () => {
+            if (window.closeScreens) window.closeScreens();
+            const screen = document.getElementById('screenMyOrders');
+            if (screen) {
+                screen.classList.add('open');
+                screen.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+            loadCustomerOrders();
+        });
+    }
+
+    const btnProfile = document.getElementById('headerProfileBtn');
+    if (btnProfile) {
+        btnProfile.addEventListener('click', () => {
+            if (window.closeScreens) window.closeScreens();
+            const screen = document.getElementById('screenCustomerProfile');
+            if (screen) {
+                screen.classList.add('open');
+                screen.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+            if (currentUserSession && currentUserSession.user) {
+                const emailEl = document.getElementById('profileAccountEmail');
+                if (emailEl) emailEl.textContent = currentUserSession.user.email || 'Customer Account';
+            }
+            const savedPhone = document.getElementById('checkoutPhone')?.value || '';
+            const savedAddr = document.getElementById('checkoutAddress')?.value || '';
+            const phoneEl = document.getElementById('profileAccountPhone');
+            const addrEl = document.getElementById('profileAccountAddress');
+            if (phoneEl) phoneEl.textContent = savedPhone || 'Not provided yet';
+            if (addrEl) addrEl.textContent = savedAddr || 'Not set yet';
+        });
+    }
+
+    // --- REALTIME CUSTOMER ORDER TRACKER & HISTORY ---
+    async function loadCustomerOrders() {
+        const activeListEl = document.getElementById('myOrdersActiveList');
+        const historyListEl = document.getElementById('myOrdersHistoryList');
+        const badgeEl = document.getElementById('myOrdersBadge');
+        if (!activeListEl || !historyListEl) return;
+
+        const userId = currentUserSession && currentUserSession.user ? currentUserSession.user.id : null;
+        const phone = document.getElementById('checkoutPhone')?.value || null;
+
+        if (window.sbGetCustomerOrders) {
+            const orders = await window.sbGetCustomerOrders(phone, userId);
+            
+            const activeOrders = orders.filter(o => o.status !== 'billed' && o.status !== 'cancelled');
+            const historyOrders = orders.filter(o => o.status === 'billed' || o.status === 'cancelled');
+
+            // Update badge
+            if (badgeEl) {
+                if (activeOrders.length > 0) {
+                    badgeEl.textContent = activeOrders.length;
+                    badgeEl.style.display = 'block';
+                } else {
+                    badgeEl.style.display = 'none';
+                }
+            }
+
+            // Render Active Orders Cards (Swiggy / Zomato style live status)
+            if (activeOrders.length === 0) {
+                activeListEl.innerHTML = `<div style="text-align:center; padding:24px; color:var(--muted); background:var(--card); border:1px dashed var(--border); border-radius:16px;">🛵 No active orders in progress right now.</div>`;
+            } else {
+                activeListEl.innerHTML = activeOrders.map(ord => {
+                    const status = ord.status || 'pending';
+                    
+                    let statusLabel = '📝 Order Received';
+                    let stepClass1 = 'active';
+                    let stepClass2 = '';
+                    let stepClass3 = '';
+                    let stepClass4 = '';
+
+                    if (status === 'preparing') {
+                        statusLabel = '🍳 Preparing your food...';
+                        stepClass1 = 'active';
+                        stepClass2 = 'active';
+                    } else if (status === 'ready') {
+                        statusLabel = '🛵 Ready / Out for Delivery!';
+                        stepClass1 = 'active';
+                        stepClass2 = 'active';
+                        stepClass3 = 'active';
+                    } else if (status === 'served') {
+                        statusLabel = '🎉 Delivered!';
+                        stepClass1 = 'active';
+                        stepClass2 = 'active';
+                        stepClass3 = 'active';
+                        stepClass4 = 'active';
+                    }
+
+                    const itemsStr = (ord.items || []).map(i => `${i.qty || 1}× ${esc(i.name)}`).join(', ');
+                    const dateStr = ord.created_at ? new Date(ord.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : '';
+
+                    return `
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px; margin-bottom: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                <div>
+                                    <span style="font-weight:900; font-size:1rem; color:var(--text);">Order #${String(ord.id || '').substring(0,6).toUpperCase()}</span>
+                                    <span style="font-size:0.75rem; color:var(--muted); margin-left:8px;">${dateStr}</span>
+                                </div>
+                                <span style="background:rgba(245, 158, 11, 0.15); color:#f59e0b; font-size:0.78rem; font-weight:800; padding:4px 10px; border-radius:12px; border:1px solid rgba(245, 158, 11, 0.3);">${statusLabel}</span>
+                            </div>
+
+                            <!-- Live Progress Step Bar -->
+                            <div style="display:flex; justify-content:space-between; margin:16px 0 12px; position:relative; padding:0 8px;">
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass1 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.2rem;">📝</span>
+                                    <span>Received</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass2 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.2rem;">🍳</span>
+                                    <span>Preparing</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass3 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.2rem;">🛵</span>
+                                    <span>On The Way</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass4 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.2rem;">🎉</span>
+                                    <span>Delivered</span>
+                                </div>
+                            </div>
+
+                            <div style="font-size:0.85rem; color:var(--text); font-weight:600; padding:10px 0; border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); margin-bottom:10px;">
+                                ${esc(itemsStr)}
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.9rem;">
+                                <span style="color:var(--muted); font-size:0.8rem;">📍 ${esc(ord.address || 'Delivery')}</span>
+                                <span style="font-weight:900; color:#22c55e; font-size:1.05rem;">₹${ord.total}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Render History List
+            if (historyOrders.length === 0) {
+                historyListEl.innerHTML = `<div style="text-align:center; padding:16px; color:var(--muted);">No past orders found.</div>`;
+            } else {
+                historyListEl.innerHTML = historyOrders.map(ord => {
+                    const itemsStr = (ord.items || []).map(i => `${i.qty || 1}× ${esc(i.name)}`).join(', ');
+                    const dateStr = ord.created_at ? new Date(ord.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                    const isCancelled = ord.status === 'cancelled';
+                    return `
+                        <div style="background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <span style="font-size:0.82rem; font-weight:700; color:var(--muted);">📅 ${dateStr}</span>
+                                <span style="font-size:0.75rem; font-weight:800; color:${isCancelled ? '#ef4444' : '#22c55e'}; background:${isCancelled ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)'}; padding:2px 8px; border-radius:10px;">${isCancelled ? 'Cancelled' : 'Completed ₹' + ord.total}</span>
+                            </div>
+                            <div style="font-size:0.85rem; font-weight:600; color:var(--text); line-height:1.4;">${esc(itemsStr)}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    }
+
+    if (window.sbSubscribeOrderChanges) {
+        window.sbSubscribeOrderChanges(() => {
+            loadCustomerOrders();
+        });
+    }
 });

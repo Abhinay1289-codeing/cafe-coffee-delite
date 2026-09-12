@@ -178,8 +178,9 @@ async function sbSaveOrder(orderData) {
         order_type: orderData.order_type || 'dining'
     };
 
-    // Full payload including optional delivery/payment fields if provided
+    // Full payload including optional delivery/payment/user fields if provided
     const fullPayload = { ...standardPayload };
+    if (orderData.user_id) fullPayload.user_id = orderData.user_id;
     if (orderData.address) fullPayload.address = orderData.address;
     if (orderData.landmark) fullPayload.landmark = orderData.landmark;
     if (orderData.latitude) fullPayload.latitude = orderData.latitude;
@@ -190,7 +191,7 @@ async function sbSaveOrder(orderData) {
     // 1. Attempt insert with full payload
     let { data, error } = await _supaClient.from('orders').insert([fullPayload]);
 
-    // 2. Fallback 1: If extra delivery/payment columns are missing, retry with standardPayload
+    // 2. Fallback 1: If extra delivery/payment/user columns are missing, retry with standardPayload
     if (error && (error.code === 'PGRST204' || (error.message && error.message.includes('column')))) {
         console.warn('[SB] Retrying with standard payload...', error.message);
         const retry1 = await _supaClient.from('orders').insert([standardPayload]);
@@ -219,6 +220,27 @@ async function sbGetOrders(limit = 200) {
             .order('created_at', { ascending: false }).limit(limit);
         if (error) return [];
         return data || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+async function sbGetCustomerOrders(phone, userId) {
+    if (!_supaClient) return [];
+    try {
+        const { data, error } = await _supaClient
+            .from('orders')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50);
+        if (error || !data) return [];
+        
+        // Filter by userId or phone number in JS if database RLS/columns vary
+        return data.filter(o => {
+            if (userId && o.user_id === userId) return true;
+            if (phone && String(o.customer_phone).trim() === String(phone).trim()) return true;
+            return false;
+        });
     } catch (e) {
         return [];
     }

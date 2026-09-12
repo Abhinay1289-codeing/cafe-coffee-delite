@@ -111,6 +111,12 @@
                     <input type="search" id="searchInput" placeholder="Search dishes..." autocomplete="off" aria-label="Search menu">
                 </div>
                 <button type="button" class="header-btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button type="button" class="header-btn" id="headerMyOrdersBtn" title="My Orders" style="position:relative;">
+                    🛵 <span id="myOrdersBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:#e11d48; color:#fff; font-size:0.65rem; font-weight:800; padding:2px 5px; border-radius:10px;">0</span>
+                </button>
+                <button type="button" class="header-btn" id="headerProfileBtn" title="My Profile">
+                    👤
+                </button>
                 <button type="button" class="header-btn header-cart" id="headerCartBtn" aria-label="Cart">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
                     <span class="header-cart-count" id="headerCartCount" data-count="0">0</span>
@@ -359,14 +365,66 @@
         </div>
     </section>
 
+    <!-- My Orders Screen -->
+    <section class="full-screen" id="screenMyOrders" aria-hidden="true">
+        <header class="screen-head">
+            <button type="button" class="screen-back" data-screen-close>←</button>
+            <h2>My Orders & Live Tracking</h2>
+        </header>
+        <div class="screen-body" style="max-width: 600px; margin: 0 auto; padding: 20px 16px;">
+            <div id="myOrdersActiveSection">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: var(--text);">🛵 Active Orders in Progress</h3>
+                <div id="myOrdersActiveList">
+                    <div style="text-align: center; padding: 20px; color: var(--muted);">No active orders right now.</div>
+                </div>
+            </div>
+
+            <div id="myOrdersHistorySection" style="margin-top: 30px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px; color: var(--text);">📜 Past Order History</h3>
+                <div id="myOrdersHistoryList">
+                    <div style="text-align: center; padding: 20px; color: var(--muted);">Loading past orders...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Profile & Account Screen -->
+    <section class="full-screen" id="screenCustomerProfile" aria-hidden="true">
+        <header class="screen-head">
+            <button type="button" class="screen-back" data-screen-close>←</button>
+            <h2>My Account Profile</h2>
+        </header>
+        <div class="screen-body" style="max-width: 500px; margin: 0 auto; padding: 24px 16px;">
+            <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.06);">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin: 0 auto 16px;">👤</div>
+                <h3 id="profileAccountEmail" style="font-size: 1.2rem; font-weight: 800; color: var(--text); margin-bottom: 4px;">Loading email...</h3>
+                <p style="font-size: 0.82rem; color: #22c55e; font-weight: 700; margin-bottom: 20px;">Logged In Customer Account</p>
+
+                <div style="text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+                    <div style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Saved Phone</div>
+                    <div id="profileAccountPhone" style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 2px;">Not provided</div>
+                </div>
+
+                <div style="text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 24px;">
+                    <div style="font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase;">Saved Delivery Address</div>
+                    <div id="profileAccountAddress" style="font-size: 0.9rem; font-weight: 600; color: var(--text); margin-top: 2px; line-height: 1.4;">Not set</div>
+                </div>
+
+                <button type="button" class="btn-primary" id="customerLogoutBtn" style="width: 100%; background: #ef4444; border-color: #ef4444; color: #fff; font-weight: 800; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);">
+                    🚪 Log Out of Account
+                </button>
+            </div>
+        </div>
+    </section>
+
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Helpers -->
-    <script src="js/supabase.js?v=1.4.4"></script>
+    <script src="js/supabase.js?v=1.5.0"></script>
     <!-- Menu data -->
-    <script src="js/menu-data.js?v=1.4.4"></script>
+    <script src="js/menu-data.js?v=1.5.0"></script>
     <!-- Helpers -->
-    <script src="js/app.js?v=1.4.4"></script>
+    <script src="js/app.js?v=1.5.0"></script>
     <!-- Load Google Maps if API key exists -->
     <script>
       if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY && !window.ENV.GOOGLE_MAPS_API_KEY.includes('YOUR_')) {
@@ -377,7 +435,7 @@
           document.head.appendChild(script);
       }
     </script>
-    <script src="js/online-app.js?v=1.4.4"></script>
+    <script src="js/online-app.js?v=1.5.0"></script>
 
 <!-- Service Worker -->
 <script>

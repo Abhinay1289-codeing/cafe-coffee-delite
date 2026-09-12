@@ -1,7 +1,7 @@
 {
-  "versionCode": 8,
-  "versionName": "1.4.2",
+  "versionCode": 9,
+  "versionName": "1.5.0",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Fixed table QR URL matching for clean Firebase Hosting URLs (/table?table=3)."
+  "changelog": "Added Swiggy-style real-time order tracking, My Orders screen, Customer Profile, and Logout."
 }
