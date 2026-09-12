@@ -201,18 +201,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize Google Places Autocomplete if available
     if (window.google && window.google.maps && window.google.maps.places) {
-        const autocomplete = new window.google.maps.places.Autocomplete(addressInput, {
-            fields: ["formatted_address", "geometry", "name"],
-        });
-        
-        autocomplete.addListener("place_changed", () => {
-            const place = autocomplete.getPlace();
-            if (place.geometry && place.geometry.location) {
-                latInput.value = place.geometry.location.lat();
-                lngInput.value = place.geometry.location.lng();
-                addressInput.value = place.formatted_address || place.name;
+        try {
+            if (typeof window.google.maps.places.Autocomplete === 'function') {
+                const autocomplete = new window.google.maps.places.Autocomplete(addressInput, {
+                    fields: ["formatted_address", "geometry", "name"],
+                });
+                
+                autocomplete.addListener("place_changed", () => {
+                    const place = autocomplete.getPlace();
+                    if (place.geometry && place.geometry.location) {
+                        latInput.value = place.geometry.location.lat();
+                        lngInput.value = place.geometry.location.lng();
+                        addressInput.value = place.formatted_address || place.name;
+                    }
+                });
             }
-        });
+        } catch (e) {
+            console.log('[Google Maps Autocomplete] Notice:', e);
+        }
         
         // Prevent form submission on Enter key in address field
         addressInput.addEventListener('keydown', (e) => {

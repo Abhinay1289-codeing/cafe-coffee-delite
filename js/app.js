@@ -1022,6 +1022,9 @@ function openCheckout() {
 }
 
 function closeScreens() {
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+    }
     document.querySelectorAll(".full-screen.open").forEach(s => {
         s.classList.remove("open");
         s.setAttribute("aria-hidden", "true");
