@@ -1245,13 +1245,20 @@
             document.getElementById('modalItemsList').innerHTML = (custInfoHtml + deliveryInfoHtml + notesHtml + itemsHeaderHtml + (itemsRowsHtml || '<div style="padding:10px; color:#8c92a4; text-align:center;">No items listed</div>') + billSummaryHtml);
             document.getElementById('modalTotalAmount').textContent = `₹${Math.round(grandTotalAmt)}`;
 
+            const isOnlineOrder = selectedTableNum === 'Online' || (firstOrd && firstOrd.order_type === 'online');
             let stepBtnHtml = '';
             if (domStatus === 'pending') {
                 stepBtnHtml = `<button class="btn-step btn-prepare" onclick="advanceSelectedStatus('preparing')">🍳 Start Preparing</button>`;
             } else if (domStatus === 'preparing') {
-                stepBtnHtml = `<button class="btn-step btn-ready" onclick="advanceSelectedStatus('ready')">✅ Mark Ready</button>`;
+                stepBtnHtml = isOnlineOrder 
+                    ? `<button class="btn-step btn-ready" onclick="advanceSelectedStatus('ready')">🛵 Dispatch / Out for Delivery</button>`
+                    : `<button class="btn-step btn-ready" onclick="advanceSelectedStatus('ready')">✅ Mark Ready</button>`;
             } else if (domStatus === 'ready') {
-                stepBtnHtml = `<button class="btn-step btn-serve" onclick="advanceSelectedStatus('served')">🍽️ Mark Served</button>`;
+                stepBtnHtml = isOnlineOrder 
+                    ? `<button class="btn-step btn-ready" style="background:#8b5cf6;" onclick="advanceSelectedStatus('reached')">📍 Driver Reached Location</button>`
+                    : `<button class="btn-step btn-serve" onclick="advanceSelectedStatus('served')">🍽️ Mark Served</button>`;
+            } else if (domStatus === 'reached') {
+                stepBtnHtml = `<button class="btn-step btn-serve" style="background:#22c55e;" onclick="advanceSelectedStatus('served')">🎉 Mark Delivered & Complete</button>`;
             }
 
             document.getElementById('modalActions').innerHTML = `

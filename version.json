@@ -1,7 +1,7 @@
 {
-  "versionCode": 9,
-  "versionName": "1.5.0",
+  "versionCode": 10,
+  "versionName": "1.5.1",
   "apkUrl": "https://raw.githubusercontent.com/Abhinay1289-codeing/cafe-coffee-delite/master/Cafe_Orders_Debug.apk",
   "forceUpdate": false,
-  "changelog": "Added Swiggy-style real-time order tracking, My Orders screen, Customer Profile, and Logout."
+  "changelog": "Added Driver Reached Location button and customer arrival confirmation for Online Delivery."
 }

@@ -526,22 +526,40 @@ document.addEventListener('DOMContentLoaded', async () => {
                     let stepClass2 = '';
                     let stepClass3 = '';
                     let stepClass4 = '';
+                    let stepClass5 = '';
+                    let reachedBannerHtml = '';
 
                     if (status === 'preparing') {
                         statusLabel = '🍳 Preparing your food...';
                         stepClass1 = 'active';
                         stepClass2 = 'active';
                     } else if (status === 'ready') {
-                        statusLabel = '🛵 Ready / Out for Delivery!';
+                        statusLabel = '🛵 Out for Delivery!';
                         stepClass1 = 'active';
                         stepClass2 = 'active';
                         stepClass3 = 'active';
+                    } else if (status === 'reached') {
+                        statusLabel = '📍 Driver Reached Location!';
+                        stepClass1 = 'active';
+                        stepClass2 = 'active';
+                        stepClass3 = 'active';
+                        stepClass4 = 'active';
+                        reachedBannerHtml = `
+                            <div style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 12px; padding: 12px; margin-top: 10px; text-align: center;">
+                                <div style="font-weight: 800; color: #a78bfa; font-size: 0.95rem;">📍 Driver Has Arrived at Your Location!</div>
+                                <div style="font-size: 0.8rem; color: var(--text); margin-top: 2px;">Your delivery agent is waiting with your fresh food.</div>
+                                <button type="button" class="btn-primary" style="margin-top: 10px; width: 100%; background: #22c55e; border-color: #22c55e; font-size: 0.88rem; font-weight:800;" onclick="confirmCustomerReceipt('${ord.id}')">
+                                    ✅ I Received My Order
+                                </button>
+                            </div>
+                        `;
                     } else if (status === 'served') {
                         statusLabel = '🎉 Delivered!';
                         stepClass1 = 'active';
                         stepClass2 = 'active';
                         stepClass3 = 'active';
                         stepClass4 = 'active';
+                        stepClass5 = 'active';
                     }
 
                     const itemsStr = (ord.items || []).map(i => `${i.qty || 1}× ${esc(i.name)}`).join(', ');
@@ -558,26 +576,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
 
                             <!-- Live Progress Step Bar -->
-                            <div style="display:flex; justify-content:space-between; margin:16px 0 12px; position:relative; padding:0 8px;">
-                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass1 ? '#22c55e' : 'var(--muted)'};">
-                                    <span style="font-size:1.2rem;">📝</span>
+                            <div style="display:flex; justify-content:space-between; margin:16px 0 12px; position:relative; padding:0 4px;">
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.65rem; font-weight:700; color: ${stepClass1 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.1rem;">📝</span>
                                     <span>Received</span>
                                 </div>
-                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass2 ? '#22c55e' : 'var(--muted)'};">
-                                    <span style="font-size:1.2rem;">🍳</span>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.65rem; font-weight:700; color: ${stepClass2 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.1rem;">🍳</span>
                                     <span>Preparing</span>
                                 </div>
-                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass3 ? '#22c55e' : 'var(--muted)'};">
-                                    <span style="font-size:1.2rem;">🛵</span>
-                                    <span>On The Way</span>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.65rem; font-weight:700; color: ${stepClass3 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.1rem;">🛵</span>
+                                    <span>On Way</span>
                                 </div>
-                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.7rem; font-weight:700; color: ${stepClass4 ? '#22c55e' : 'var(--muted)'};">
-                                    <span style="font-size:1.2rem;">🎉</span>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.65rem; font-weight:700; color: ${stepClass4 ? '#8b5cf6' : 'var(--muted)'};">
+                                    <span style="font-size:1.1rem;">📍</span>
+                                    <span>Reached</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.65rem; font-weight:700; color: ${stepClass5 ? '#22c55e' : 'var(--muted)'};">
+                                    <span style="font-size:1.1rem;">🎉</span>
                                     <span>Delivered</span>
                                 </div>
                             </div>
 
-                            <div style="font-size:0.85rem; color:var(--text); font-weight:600; padding:10px 0; border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); margin-bottom:10px;">
+                            ${reachedBannerHtml}
+
+                            <div style="font-size:0.85rem; color:var(--text); font-weight:600; padding:10px 0; border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); margin-top:10px; margin-bottom:10px;">
                                 ${esc(itemsStr)}
                             </div>
 
@@ -618,3 +642,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 });
+
+window.confirmCustomerReceipt = async function(orderId) {
+    if (!orderId || !window.sbUpdateOrderStatus) return;
+    showToast('⏳ Confirming order receipt...');
+    const ok = await window.sbUpdateOrderStatus(orderId, 'served');
+    if (ok) {
+        showToast('🎉 Thank you! Enjoy your meal!');
+        if (window.launchConfetti) window.launchConfetti();
+    } else {
+        showToast('❌ Failed to update status', true);
+    }
+};
